@@ -108,6 +108,16 @@
       .match{background:#fff;border-color:#bbb;grid-template-columns:95px 100px 1fr auto 1fr 60px 60px;}
       .time-badge,.pitch-badge,.tag,.chip{color:#111;background:#f5f5f5;border-color:#bbb;}
     }
+  
+
+    /* Režim pro export obrázků: zjednoduší vzhled do bíla a skryje ovládací prvky */
+    .capture-mode body{background:#fff !important;}
+    .capture-mode .card{box-shadow:none !important; border:1px solid #999 !important; background:#fff !important; color:#111 !important;}
+    .capture-mode h1,.capture-mode h2,.capture-mode h3,.capture-mode p,.capture-mode td,.capture-mode th{color:#111 !important;}
+    .capture-mode .table th{background:#eee !important; color:#111 !important;}
+    .capture-mode .muted,.capture-mode .small,.capture-mode .badge,.capture-mode .lockbar,.capture-mode .controls-panel,.capture-mode .json-panel,.capture-mode .export-panel,.capture-mode .actions-wrap,.capture-mode .match-tools,.capture-mode .inline-editor{display:none !important;}
+    .capture-mode .match{background:#fff !important; border-color:#bbb !important; grid-template-columns:95px 100px 1fr auto 1fr 60px !important;}
+
   </style>
 </head>
 <body>
@@ -159,6 +169,9 @@
       <div class="actions-wrap export-panel">
         <button id="exportPdfBtn" type="button" class="secondary">Export do PDF</button>
         <button id="exportHtmlBtn" type="button" class="secondary">Nahrát / vytvořit HTML stránku</button>
+        <button id="exportImgStandingsBtn" type="button" class="secondary">Export tabulka (PNG)</button>
+        <button id="exportImgMatchesBtn" type="button" class="secondary">Export zápasy (PNG)</button>
+        <button id="exportImgScorersBtn" type="button" class="secondary">Export střelci (PNG)</button>
       </div>
 
       <p class="muted" style="margin-top:10px;">
@@ -258,6 +271,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';
@@ -308,6 +322,9 @@
   const elImportBtn = document.getElementById('importBtn');
   const elExportPdfBtn = document.getElementById('exportPdfBtn');
   const elExportHtmlBtn = document.getElementById('exportHtmlBtn');
+  const elExportImgStandingsBtn = document.getElementById('exportImgStandingsBtn');
+  const elExportImgMatchesBtn = document.getElementById('exportImgMatchesBtn');
+  const elExportImgScorersBtn = document.getElementById('exportImgScorersBtn');
   const elJsonBox = document.getElementById('jsonBox');
   const elStatus = document.getElementById('status');
   const elUnlockBtn = document.getElementById('unlockBtn');
@@ -845,6 +862,7 @@
 
   function renderAll(){
     syncInputsFromState();
+    initImageExportButtons();
     renderTeams();
     renderMatches();
     renderStandings();
@@ -870,6 +888,152 @@
     html2pdf().set(options).from(elPdfArea).save();
   }
 
+
+
+  /*********************** EXPORT DO OBRÁZKU (PNG/JPG) ************************
+   * Cíl: místo RTF exportu exportovat vybrané sekce jako obrázek.
+   * - Tabulka (standings)
+   * - Zápasy (matches)
+   * - Střelci (scorers)
+   *
+   * Pozn.: Používá html2canvas (přidané přes CDN).
+   ***************************************************************************/
+
+  function makeImgFilename(prefix, ext = 'png'){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    return `${prefix}_${yyyy}-${mm}-${dd}_${hh}${mi}.${ext}`;
+  }
+
+  async function exportDomToImage(domNode, filenamePrefix, format = 'png'){
+    if(!domNode){ setStatus('Nelze exportovat: prvek nebyl nalezen.', 'err'); return; }
+
+    // dočasně přepneme vzhled do "print" stylu pro čistý výstup
+    document.documentElement.classList.add('capture-mode');
+
+    // html2canvas někdy potřebuje 1 frame na přepočet stylů
+    await new Promise(r => requestAnimationFrame(() => r()));
+
+    try{
+      const canvas = await html2canvas(domNode, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true,
+        scrollX: 0,
+        scrollY: -window.scrollY
+      });
+
+      const ext = (format === 'jpg' || format === 'jpeg') ? 'jpg' : 'png';
+      const mime = (ext === 'jpg') ? 'image/jpeg' : 'image/png';
+
+      const dataUrl = canvas.toDataURL(mime, ext === 'jpg' ? 0.95 : undefined);
+
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = makeImgFilename(filenamePrefix, ext);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      setStatus('Obrázek byl vygenerován a stažen.', 'ok');
+    }catch(e){
+      console.error(e);
+      setStatus('Export do obrázku selhal (zkuste prosím znovu).', 'err');
+    }finally{
+      document.documentElement.classList.remove('capture-mode');
+    }
+  }
+
+  function buildTempCaptureNode(titleText, nodes){
+    // vytvoří dočasný "papír" (bílý box), do kterého naklonujeme obsah
+    const wrap = document.createElement('div');
+    wrap.style.position = 'fixed';
+    wrap.style.left = '-10000px';
+    wrap.style.top = '0';
+    wrap.style.width = '1200px';
+    wrap.style.background = '#fff';
+    wrap.style.color = '#111';
+    wrap.style.padding = '16px';
+    wrap.style.border = '1px solid #999';
+    wrap.style.borderRadius = '10px';
+
+    const h = document.createElement('h2');
+    h.textContent = titleText;
+    h.style.margin = '0 0 10px 0';
+    wrap.appendChild(h);
+
+    (nodes || []).forEach(n => wrap.appendChild(n));
+
+    document.body.appendChild(wrap);
+    return wrap;
+  }
+
+  function cloneClean(node){
+    const c = node.cloneNode(true);
+    // některé vstupy mohou v klonu zůstat; v exportu chceme jen hodnoty jako text
+    c.querySelectorAll('input,select,button,textarea').forEach(el => {
+      // u selectů zkusíme nahradit textem vybrané možnosti
+      if(el.tagName === 'SELECT'){
+        const span = document.createElement('span');
+        const opt = el.options[el.selectedIndex];
+        span.textContent = opt ? opt.textContent : '';
+        span.className = 'tag';
+        el.replaceWith(span);
+      }else if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'){
+        const span = document.createElement('span');
+        span.textContent = el.value || '';
+        el.replaceWith(span);
+      }else{
+        // button pryč
+        el.remove();
+      }
+    });
+    return c;
+  }
+
+  async function exportStandingsImage(){
+    const table = document.getElementById('standingsTable');
+    if(!table){ setStatus('Tabulka nebyla nalezena.', 'err'); return; }
+    const note = table.nextElementSibling && table.nextElementSibling.tagName === 'P' ? table.nextElementSibling : null;
+
+    const temp = buildTempCaptureNode('Tabulka', [cloneClean(table), note ? cloneClean(note) : document.createElement('div')]);
+    await exportDomToImage(temp, 'tabulka', 'png');
+    temp.remove();
+  }
+
+  async function exportMatchesImage(){
+    const matches = document.getElementById('matches');
+    if(!matches){ setStatus('Zápasy nebyly nalezeny.', 'err'); return; }
+    const note = matches.nextElementSibling && matches.nextElementSibling.tagName === 'P' ? matches.nextElementSibling : null;
+
+    const temp = buildTempCaptureNode('Zápasy', [cloneClean(matches), note ? cloneClean(note) : document.createElement('div')]);
+    await exportDomToImage(temp, 'zapasy', 'png');
+    temp.remove();
+  }
+
+  async function exportScorersImage(){
+    const top = document.getElementById('topScorerBox');
+    const table = document.getElementById('scorersTable');
+    if(!table){ setStatus('Střelci nebyli nalezeni.', 'err'); return; }
+
+    const nodes = [];
+    if(top) nodes.push(cloneClean(top));
+    nodes.push(cloneClean(table));
+
+    const temp = buildTempCaptureNode('Střelci', nodes);
+    await exportDomToImage(temp, 'strelci', 'png');
+    temp.remove();
+  }
+
+  function initImageExportButtons(){
+    if(elExportImgStandingsBtn) elExportImgStandingsBtn.addEventListener('click', exportStandingsImage);
+    if(elExportImgMatchesBtn) elExportImgMatchesBtn.addEventListener('click', exportMatchesImage);
+    if(elExportImgScorersBtn) elExportImgScorersBtn.addEventListener('click', exportScorersImage);
+  }
   function createSnapshotHtml(){
     const standingsRows = Array.from(elStandingsBody.querySelectorAll('tr')).map(tr => tr.outerHTML).join('');
     const scorerRows = Array.from(elScorersBody.querySelectorAll('tr')).map(tr => tr.outerHTML.replace(/<td class="export-panel">[\s\S]*?<\/td>/g, '')).join('');
