@@ -178,6 +178,10 @@
         <button id="exportImgStandingsBtn" type="button" class="secondary">Export tabulka (PNG)</button>
         <button id="exportImgMatchesBtn" type="button" class="secondary">Export zápasy (PNG)</button>
         <button id="exportImgScorersBtn" type="button" class="secondary">Export střelci (PNG)</button>
+        <button id="exportCsvStandingsBtn" type="button" class="secondary">CSV – tabulka</button>
+        <button id="exportCsvMatchesBtn" type="button" class="secondary">CSV – zápasy</button>
+        <button id="exportCsvScorersBtn" type="button" class="secondary">CSV – střelci</button>
+        <button id="exportCsvAllBtn" type="button" class="secondary">CSV – vše</button>
       </div>
 
       <p class="muted" style="margin-top:10px;">
@@ -331,6 +335,10 @@
   const elExportImgStandingsBtn = document.getElementById('exportImgStandingsBtn');
   const elExportImgMatchesBtn = document.getElementById('exportImgMatchesBtn');
   const elExportImgScorersBtn = document.getElementById('exportImgScorersBtn');
+  const elExportCsvStandingsBtn = document.getElementById('exportCsvStandingsBtn');
+  const elExportCsvMatchesBtn = document.getElementById('exportCsvMatchesBtn');
+  const elExportCsvScorersBtn = document.getElementById('exportCsvScorersBtn');
+  const elExportCsvAllBtn = document.getElementById('exportCsvAllBtn');
   const elJsonBox = document.getElementById('jsonBox');
   const elStatus = document.getElementById('status');
   const elUnlockBtn = document.getElementById('unlockBtn');
@@ -868,6 +876,7 @@
 
   function renderAll(){
     syncInputsFromState();
+    initCsvExportButtons();
     initImageExportButtons();
     renderTeams();
     renderMatches();
@@ -1035,10 +1044,138 @@
     temp.remove();
   }
 
+  let imageButtonsInited = false;
+
   function initImageExportButtons(){
+    if(imageButtonsInited) return;
+    imageButtonsInited = true;
     if(elExportImgStandingsBtn) elExportImgStandingsBtn.addEventListener('click', exportStandingsImage);
     if(elExportImgMatchesBtn) elExportImgMatchesBtn.addEventListener('click', exportMatchesImage);
     if(elExportImgScorersBtn) elExportImgScorersBtn.addEventListener('click', exportScorersImage);
+  }
+
+
+  /*********************** EXPORT DO CSV ************************
+   * - oddělovač: ';' (lepší pro CZ Excel)
+   * - UTF-8 BOM: aby se správně zobrazila čeština v Excelu
+   * - Střelci: VŽDY VŠICHNI (ignoruje filtr týmu)
+   *************************************************************/
+
+  function csvEscape(value, sep = ';'){
+    const s = String(value ?? '');
+    const mustQuote = s.includes(sep) || s.includes('"') || s.includes('\n') || s.includes('\r');
+    const escaped = s.replace(/"/g, '""');
+    return mustQuote ? `"${escaped}"` : escaped;
+  }
+
+  function buildCsv(rows, sep = ';'){
+    return rows.map(r => r.map(v => csvEscape(v, sep)).join(sep)).join('\r\n');
+  }
+
+  function downloadCsv(filename, csvText){
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + csvText], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function makeCsvFilename(prefix){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    return `${prefix}_${yyyy}-${mm}-${dd}_${hh}${mi}.csv`;
+  }
+
+  function buildStandingsCsvRows(){
+    const standings = computeStandingsWithH2H(state.teams, state.rounds);
+    const rows = [];
+    rows.push(['Pořadí','Tým','Z','V','R','P','VG','OG','RG','Body']);
+    standings.forEach((r, idx) => {
+      rows.push([idx + 1, r.team, r.P, r.W, r.D, r.L, r.GF, r.GA, r.GD, r.Pts]);
+    });
+    return rows;
+  }
+
+  function buildMatchesCsvRows(){
+    const matches = getFlatMatches();
+    const rows = [];
+    rows.push(['Čas od','Čas do','Hřiště','Domácí','Hosté','Skóre dom','Skóre host']);
+    matches.forEach(m => {
+      rows.push([
+        m.slotStart || '',
+        m.slotEnd || '',
+        m.pitch ? `H${m.pitch}` : '',
+        m.home || '',
+        m.away || '',
+        (m.hs ?? ''),
+        (m.as ?? '')
+      ]);
+    });
+    return rows;
+  }
+
+  function buildScorersCsvRowsAll(){
+    // VŽDY všichni střelci (ignoruje filter)
+    const scorers = [...state.scorers].sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
+    const rows = [];
+    rows.push(['Pořadí','Hráč','Tým','Góly']);
+    scorers.forEach((s, idx) => {
+      rows.push([idx + 1, s.name || '', s.team || '', (s.goals ?? 0)]);
+    });
+    return rows;
+  }
+
+  function exportStandingsToCSV(){
+    const csv = buildCsv(buildStandingsCsvRows(), ';');
+    downloadCsv(makeCsvFilename('tabulka'), csv);
+    setStatus('CSV – tabulka stažena.', 'ok');
+  }
+
+  function exportMatchesToCSV(){
+    const csv = buildCsv(buildMatchesCsvRows(), ';');
+    downloadCsv(makeCsvFilename('zapasy'), csv);
+    setStatus('CSV – zápasy staženy.', 'ok');
+  }
+
+  function exportScorersToCSV(){
+    const csv = buildCsv(buildScorersCsvRowsAll(), ';');
+    downloadCsv(makeCsvFilename('strelci'), csv);
+    setStatus('CSV – střelci staženi (vždy všichni).', 'ok');
+  }
+
+  function exportAllToCSV(){
+    const sep = ';';
+    const parts = [];
+    parts.push('TABULKA');
+    parts.push(buildCsv(buildStandingsCsvRows(), sep));
+    parts.push(''); parts.push('');
+    parts.push('ZÁPASY');
+    parts.push(buildCsv(buildMatchesCsvRows(), sep));
+    parts.push(''); parts.push('');
+    parts.push('STŘELCI');
+    parts.push(buildCsv(buildScorersCsvRowsAll(), sep));
+    const csv = parts.join('\r\n');
+    downloadCsv(makeCsvFilename('turnaj_export'), csv);
+    setStatus('CSV – vše staženo.', 'ok');
+  }
+
+  let csvButtonsInited = false;
+  function initCsvExportButtons(){
+    if(csvButtonsInited) return;
+    csvButtonsInited = true;
+    if(elExportCsvStandingsBtn) elExportCsvStandingsBtn.addEventListener('click', exportStandingsToCSV);
+    if(elExportCsvMatchesBtn) elExportCsvMatchesBtn.addEventListener('click', exportMatchesToCSV);
+    if(elExportCsvScorersBtn) elExportCsvScorersBtn.addEventListener('click', exportScorersToCSV);
+    if(elExportCsvAllBtn) elExportCsvAllBtn.addEventListener('click', exportAllToCSV);
   }
   function createSnapshotHtml(){
     const standingsRows = Array.from(elStandingsBody.querySelectorAll('tr')).map(tr => tr.outerHTML).join('');
