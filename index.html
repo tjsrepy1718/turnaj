@@ -208,6 +208,8 @@
           <textarea id="jsonBox" placeholder="Sem se zobrazí exportovaný JSON… nebo sem JSON vložte pro import"></textarea>
           <div class="small" id="status"></div>
         </div>
+
+        <div class="notice small" style="margin-top:10px;" id="backupHistory"></div>
       </div>
     </div>
 
@@ -276,6 +278,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script type="module">  const LOCAL_LS_KEY = 'league_manager_v7_local_backup';
+  const BACKUP_HISTORY_KEY = 'league_manager_backup_history_v1';
+  const BACKUP_HISTORY_LIMIT = 5;
 
   const firebaseConfig = {
     apiKey: 'DOPLNIT',
@@ -319,6 +323,7 @@
   const elDownloadBackupBtn = document.getElementById('downloadBackupBtn');
   const elLoadBackupBtn = document.getElementById('loadBackupBtn');
   const elBackupFileInput = document.getElementById('backupFileInput');
+  const elBackupHistory = document.getElementById('backupHistory');
   const elExportPdfBtn = document.getElementById('exportPdfBtn');
   const elExportHtmlBtn = document.getElementById('exportHtmlBtn');
   const elExportImgStandingsBtn = document.getElementById('exportImgStandingsBtn');
@@ -390,6 +395,107 @@
   }
 
   function saveLocalBackup(){ localStorage.setItem(LOCAL_LS_KEY, JSON.stringify(state)); }
+
+  function loadBackupHistory(){
+    try{
+      const raw = localStorage.getItem(BACKUP_HISTORY_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function saveBackupHistory(list){
+    try{
+      const arr = (Array.isArray(list) ? list : []).slice(0, BACKUP_HISTORY_LIMIT);
+      localStorage.setItem(BACKUP_HISTORY_KEY, JSON.stringify(arr));
+    }catch(e){
+      // ignore
+    }
+  }
+
+  function addBackupToHistory(note = ''){
+    try{
+      const data = JSON.stringify(state);
+      const ts = new Date().toISOString();
+      const item = { ts, note: String(note || ''), data };
+      const list = loadBackupHistory();
+      const filtered = list.filter(x => x && x.data !== data);
+      filtered.unshift(item);
+      saveBackupHistory(filtered);
+    }catch(e){
+      // ignore
+    }
+  }
+
+  function deleteBackupFromHistory(ts){
+    const list = loadBackupHistory().filter(x => x && x.ts !== ts);
+    saveBackupHistory(list);
+    renderBackupHistory();
+  }
+
+  async function restoreBackupFromHistory(ts){
+    const item = loadBackupHistory().find(x => x && x.ts === ts);
+    if(!item){ setStatus('Záloha nebyla nalezena.', 'warn'); return; }
+    await importBackupFromText(item.data);
+  }
+
+  function downloadBackupFromHistory(ts){
+    const item = loadBackupHistory().find(x => x && x.ts === ts);
+    if(!item){ setStatus('Záloha nebyla nalezena.', 'warn'); return; }
+    try{
+      const blob = new Blob([item.data], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `liga-zaloha-${(item.ts || '').slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }catch(e){
+      console.error(e);
+      setStatus('Nepodařilo se stáhnout zálohu.', 'warn');
+    }
+  }
+
+  function renderBackupHistory(){
+    if(!elBackupHistory) return;
+    const list = loadBackupHistory();
+    if(list.length === 0){
+      elBackupHistory.innerHTML = '<strong>Historie záloh</strong><br><span class="muted">Zatím nemáte žádné uložené zálohy (max. 5).</span>';
+      return;
+    }
+    const rows = list.map(x => {
+      const dt = (x.ts || '').replace('T',' ').slice(0,16);
+      const note = x.note ? ` — ${escapeHtml(x.note)}` : '';
+      return `
+        <div class="row" style="justify-content:space-between; gap:8px; align-items:center; margin:6px 0;">
+          <div style="flex:1; min-width:180px;">
+            <span class="tag">${escapeHtml(dt)}</span>${note}
+          </div>
+          <div class="row" style="gap:6px;">
+            <button type="button" class="secondary tiny-btn" data-bk-restore="${escapeAttr(x.ts)}">Obnovit</button>
+            <button type="button" class="secondary tiny-btn" data-bk-download="${escapeAttr(x.ts)}">Stáhnout</button>
+            <button type="button" class="danger tiny-btn" data-bk-del="${escapeAttr(x.ts)}">Smazat</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    elBackupHistory.innerHTML = `<strong>Historie záloh</strong><br>${rows}`;
+
+    elBackupHistory.querySelectorAll('[data-bk-restore]').forEach(btn => btn.addEventListener('click', async () => {
+      if(!confirm('Opravdu chcete obnovit tuto zálohu? Současná data budou přepsána.')) return;
+      await restoreBackupFromHistory(btn.dataset.bkRestore);
+    }));
+    elBackupHistory.querySelectorAll('[data-bk-download]').forEach(btn => btn.addEventListener('click', () => downloadBackupFromHistory(btn.dataset.bkDownload)));
+    elBackupHistory.querySelectorAll('[data-bk-del]').forEach(btn => btn.addEventListener('click', () => {
+      if(!confirm('Smazat tuto zálohu z historie?')) return;
+      deleteBackupFromHistory(btn.dataset.bkDel);
+    }));
+  }
+
   function isAdminUnlocked(){ return true; }
   function setAdminUnlocked(v){ /* ochrana vypnuta */ }
   function setStatus(msg, kind = 'muted'){
@@ -1232,8 +1338,16 @@
   });
 
   elResetBtn.addEventListener('click', async () => {
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
-    if(!confirm('Opravdu chcete vše resetovat? Týmy, zápasy, střelci i skóre budou smazány pro všechny návštěvníky.')) return;
+    // Nabídka rychlé zálohy před resetem
+    const wantBackup = confirm('Chcete PŘED resetem stáhnout rychlou zálohu do souboru?');
+    if(wantBackup){
+      downloadBackupFile();
+    }
+    if(!confirm('Opravdu chcete vše resetovat? Týmy, zápasy, střelci i skóre budou smazány (v tomto prohlížeči).')) return;
+
+    addBackupToHistory('Automatická záloha před resetem');
+    renderBackupHistory();
+
     state = defaultState();
     await persistState();
     renderAll();
@@ -1256,7 +1370,9 @@
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      setStatus('Záloha byla stažena jako soubor .json.', 'ok');
+      addBackupToHistory('Ruční záloha');
+      renderBackupHistory();
+      setStatus('Záloha byla stažena jako soubor .json. (uložena i do historie)', 'ok');
     }catch(e){
       console.error(e);
       setStatus('Nepodařilo se vytvořit zálohu do souboru.', 'warn');
@@ -1269,6 +1385,8 @@
       state = normalizeState(JSON.parse(raw));
       await persistState();
       renderAll();
+      addBackupToHistory('Obnova zálohy');
+      renderBackupHistory();
       setStatus('Záloha byla úspěšně načtena.', 'ok');
     }catch(e){
       console.error(e);
@@ -1312,6 +1430,7 @@
     syncInputsFromState();
     initCsvExportButtons();
     initImageExportButtons();
+    renderBackupHistory();
   });
 
   setStorageNotice();
