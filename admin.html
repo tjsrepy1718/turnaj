@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Správce ligy zdarma</title>
+  <title>Správce ligy zdarma – admin</title>
   <style>
     :root{
       --bg:#f3f6f4;            /* pozadí stránky */
@@ -163,7 +163,7 @@
 
       <div class="actions-wrap export-panel">
         <button id="exportPdfBtn" type="button" class="secondary">Export do PDF</button>
-        <button id="exportHtmlBtn" type="button" class="secondary">Nahrát / vytvořit HTML stránku</button>
+        <button id="exportHtmlBtn" type="button" class="secondary">Stáhnout public-data.json</button>
         <button id="exportImgStandingsBtn" type="button" class="secondary">Export tabulka (PNG)</button>
         <button id="exportImgMatchesBtn" type="button" class="secondary">Export zápasy (PNG)</button>
         <button id="exportImgScorersBtn" type="button" class="secondary">Export střelci (PNG)</button>
@@ -198,7 +198,7 @@
         <h3>Záloha / sdílení</h3>
         <p class="muted" style="margin:0 0 8px;">Udělejte si lokální zálohu do souboru (JSON) a kdykoliv ji zase načtěte zpět. Hodí se pro přenos na jiné zařízení nebo jako pojistka před resetem.</p>
         <div class="row">
-          <button id="exportBtn" type="button" class="secondary">Export JSON</button>
+          <button id="exportBtn" type="button" class="secondary">Export JSON jako public-data.json</button>
           <button id="importBtn" type="button" class="secondary">Import JSON</button>
           <button id="downloadBackupBtn" type="button" class="secondary">Stáhnout zálohu (.json)</button>
           <button id="loadBackupBtn" type="button" class="secondary">Načíst zálohu ze souboru</button>
@@ -1262,6 +1262,86 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
     if(elExportCsvScorersBtn) elExportCsvScorersBtn.addEventListener('click', exportScorersToCSV);
     if(elExportCsvAllBtn) elExportCsvAllBtn.addEventListener('click', exportAllToCSV);
   }
+
+
+  function buildPublicData(){
+    const standings = computeStandingsWithH2H(state.teams, state.rounds).map((r, idx) => ({
+      position: idx + 1,
+      team: r.team,
+      played: r.P,
+      wins: r.W,
+      draws: r.D,
+      losses: r.L,
+      goalsFor: r.GF,
+      goalsAgainst: r.GA,
+      goalDifference: r.GD,
+      points: r.Pts
+    }));
+
+    const matches = getFlatMatches().map(m => ({
+      id: m.id || '',
+      slot: m.slot || '',
+      pitch: m.pitch || 1,
+      start: m.slotStart || '',
+      end: m.slotEnd || '',
+      home: m.home || '',
+      away: m.away || '',
+      homeScore: m.hs === '' ? null : Number(m.hs),
+      awayScore: m.as === '' ? null : Number(m.as)
+    }));
+
+    const scorers = [...state.scorers]
+      .sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'))
+      .map((s, idx) => ({
+        position: idx + 1,
+        name: s.name || '',
+        team: s.team || '',
+        goals: Number(s.goals || 0)
+      }));
+
+    const topScorer = scorers.length ? scorers[0] : null;
+    const completedMatches = matches.filter(m => Number.isFinite(m.homeScore) && Number.isFinite(m.awayScore)).length;
+
+    return {
+      meta: {
+        title: 'TJ SŘepy – turnaj',
+        subtitle: 'Veřejný přehled pro rodiče',
+        updatedAt: state.updatedAt || new Date().toISOString(),
+        teamCount: state.teams.length,
+        matchCount: matches.length,
+        completedMatches,
+        pitchCount: state.pitchCount,
+        matchDuration: state.matchDuration,
+        breakDuration: state.breakDuration,
+        startTime: state.startTime
+      },
+      teams: [...state.teams],
+      standings,
+      matches,
+      scorers,
+      topScorer
+    };
+  }
+
+  function downloadPublicDataFile(){
+    try{
+      const data = JSON.stringify(buildPublicData(), null, 2);
+      const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'public-data.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setStatus('Soubor public-data.json byl vytvořen a stažen.', 'ok');
+    }catch(e){
+      console.error(e);
+      setStatus('Nepodařilo se vytvořit public-data.json.', 'warn');
+    }
+  }
+
   function createSnapshotHtml(){
     const standingsRows = Array.from(elStandingsBody.querySelectorAll('tr')).map(tr => tr.outerHTML).join('');
     const scorerRows = Array.from(elScorersBody.querySelectorAll('tr')).map(tr => tr.outerHTML.replace(/<td class="export-panel">[\s\S]*?<\/td>/g, '')).join('');
@@ -1280,7 +1360,7 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
     a.download = `liga-report-${new Date().toISOString().slice(0,10)}.html`;
     document.body.appendChild(a);
     a.click(); a.remove(); URL.revokeObjectURL(url);
-    setStatus('HTML stránka byla vytvořena a stažena.', 'ok');
+    setStatus('Soubor public-data.json byl vytvořen a stažen.', 'ok');
   }
 
   async function regenerateScheduleAfterSettingsChange(message){
@@ -1424,7 +1504,7 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
   elScorerFilterTeam.addEventListener('change', () => { state.scorerFilterTeam = elScorerFilterTeam.value; renderScorers(); });
 
   elExportPdfBtn.addEventListener('click', exportPdf);
-  elExportHtmlBtn.addEventListener('click', exportHtmlSnapshot);
+  elExportHtmlBtn.addEventListener('click', downloadPublicDataFile);
   document.addEventListener('DOMContentLoaded', () => {
     syncInputsFromState();
     initCsvExportButtons();
