@@ -47,5 +47,8 @@ index.html pak při načtení vezme nová data z public-data.json.
 
 výsledky pro rodiče jsou tady https://tjsrepy1718.github.io/turnaj/
 
+PŘÍPADNĚ QR KÓD PRO RODIČE JE TADY <img width="450" height="450" alt="image" src="https://github.com/user-attachments/assets/973448b4-076c-4475-ba9b-630c2866dca3" />
+
+
 
 
