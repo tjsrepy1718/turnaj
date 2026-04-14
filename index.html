@@ -516,8 +516,16 @@
   function timeToMinutes(timeStr){ const [hh, mm] = String(timeStr).split(':').map(Number); return (hh * 60) + mm; }
   function minutesToTime(totalMinutes){ const safe = ((totalMinutes % 1440) + 1440) % 1440; return `${String(Math.floor(safe/60)).padStart(2,'0')}:${String(safe%60).padStart(2,'0')}`; }
   function cryptoRandomId(){ return (window.crypto && typeof window.crypto.randomUUID === 'function') ? window.crypto.randomUUID() : ('id_' + Math.random().toString(16).slice(2) + Date.now()); }
-  function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
-  function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
+  function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    '': '&#39;'
+  }[s]));
+}
+function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
   function normalizeName(s){ return String(s || '').trim().replace(/\s+/g, ' '); }
   function scorerKey(name, team){ return `${normalizeName(name).toLowerCase()}||${normalizeName(team).toLowerCase()}`; }
 
@@ -838,23 +846,14 @@
   }
 
   function setEditingEnabled(enabled){
-    // Ochrana vypnuta – vše je vždy editovatelné (lokální režim).
-    const on = true;
-    [elTeamName, elAddTeamBtn, elGenerateBtn, elResetBtn, elExportBtn, elImportBtn, elJsonBox,
-     elPitchCount, elMatchDuration, elBreakDuration, elStartTime, elScorerName, elScorerTeam,
-     elScorerGoals, elAddGoalsBtn, elRemoveGoalsBtn].forEach(el => { if(el) el.disabled = !on; });
-
-    document.querySelectorAll('[data-del],[data-add-scorer],[data-sub-scorer],[data-match-scorers]').forEach(btn => { btn.disabled = !on; });
-    document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !on; });
-  }
-
-    [elTeamName, elAddTeamBtn, elGenerateBtn, elResetBtn, elExportBtn, elImportBtn, elJsonBox,
-     elPitchCount, elMatchDuration, elBreakDuration, elStartTime, elScorerName, elScorerTeam,
-     elScorerGoals, elAddGoalsBtn, elRemoveGoalsBtn].forEach(el => { if(el) el.disabled = !enabled; });
-
-    document.querySelectorAll('[data-del],[data-add-scorer],[data-sub-scorer],[data-match-scorers]').forEach(btn => { btn.disabled = !enabled; });
-    document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !enabled; }); elUnlockBtn.style.zIndex = '6000'; elLockBtn.style.zIndex = '6000';
-  }
+  // Ochrana je vypnuta – vše je vždy editovatelné (lokální režim).
+  const on = true;
+  [elTeamName, elAddTeamBtn, elGenerateBtn, elResetBtn, elExportBtn, elImportBtn, elJsonBox,
+   elPitchCount, elMatchDuration, elBreakDuration, elStartTime, elScorerName, elScorerTeam,
+   elScorerGoals, elAddGoalsBtn, elRemoveGoalsBtn].forEach(el => { if(el) el.disabled = !on; });
+  document.querySelectorAll('[data-del],[data-add-scorer],[data-sub-scorer],[data-match-scorers]').forEach(btn => { btn.disabled = !on; });
+  document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !on; });
+}
 
   function renderTeams(){
     elTeamList.innerHTML = '';
