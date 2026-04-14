@@ -1,0 +1,132 @@
+{
+  "teams": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ],
+  "rounds": [
+    {
+      "matches": [
+        {
+          "id": "2f90df25-ee94-4a4c-a14a-40f71eb843cd",
+          "home": "A",
+          "away": "B",
+          "hs": "1",
+          "as": "1",
+          "pitch": 1,
+          "slot": 1,
+          "slotStart": "09:00",
+          "slotEnd": "09:12"
+        },
+        {
+          "id": "9c86e0ae-c127-4d4c-9358-ed25821e049d",
+          "home": "C",
+          "away": "D",
+          "hs": "2",
+          "as": "2",
+          "pitch": 1,
+          "slot": 2,
+          "slotStart": "09:15",
+          "slotEnd": "09:27"
+        },
+        {
+          "id": "9507a433-f063-40bc-bb60-b0393f228001",
+          "home": "A",
+          "away": "E",
+          "hs": "4",
+          "as": "4",
+          "pitch": 1,
+          "slot": 3,
+          "slotStart": "09:30",
+          "slotEnd": "09:42"
+        },
+        {
+          "id": "9e094f50-2d64-4e8d-ac73-f0653f241082",
+          "home": "B",
+          "away": "C",
+          "hs": "4",
+          "as": "3",
+          "pitch": 1,
+          "slot": 4,
+          "slotStart": "09:45",
+          "slotEnd": "09:57"
+        },
+        {
+          "id": "4fa19e2d-22f4-45a3-86fd-9e840ddf00ac",
+          "home": "A",
+          "away": "D",
+          "hs": "5",
+          "as": "7",
+          "pitch": 1,
+          "slot": 5,
+          "slotStart": "10:00",
+          "slotEnd": "10:12"
+        },
+        {
+          "id": "77fabe1d-9e66-4d1c-9a28-55b298ff20c1",
+          "home": "B",
+          "away": "E",
+          "hs": "8",
+          "as": "7",
+          "pitch": 1,
+          "slot": 6,
+          "slotStart": "10:15",
+          "slotEnd": "10:27"
+        },
+        {
+          "id": "5732b5db-3007-44fd-99f0-b8a4ebd60e5b",
+          "home": "A",
+          "away": "C",
+          "hs": "9",
+          "as": "8",
+          "pitch": 1,
+          "slot": 7,
+          "slotStart": "10:30",
+          "slotEnd": "10:42"
+        },
+        {
+          "id": "05c1c7ec-5d12-4c75-8343-cbf9283a7bd1",
+          "home": "B",
+          "away": "D",
+          "hs": "7",
+          "as": "8",
+          "pitch": 1,
+          "slot": 8,
+          "slotStart": "10:45",
+          "slotEnd": "10:57"
+        },
+        {
+          "id": "3817e4c6-9bf7-48ea-8f12-847127a9ab02",
+          "home": "C",
+          "away": "E",
+          "hs": "8",
+          "as": "6",
+          "pitch": 1,
+          "slot": 9,
+          "slotStart": "11:00",
+          "slotEnd": "11:12"
+        },
+        {
+          "id": "b0691112-9df5-4fbc-84a1-ff8f435e0ec6",
+          "home": "D",
+          "away": "E",
+          "hs": "8",
+          "as": "7",
+          "pitch": 1,
+          "slot": 10,
+          "slotStart": "11:15",
+          "slotEnd": "11:27"
+        }
+      ]
+    }
+  ],
+  "scorers": [],
+  "pitchCount": 1,
+  "matchDuration": 12,
+  "breakDuration": 3,
+  "startTime": "09:00",
+  "scorerFilterTeam": "ALL",
+  "updatedAt": "2026-04-14T20:46:17.628Z"
+}
