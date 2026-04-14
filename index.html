@@ -15,147 +15,84 @@
       --gold:#6a5200;
       --silver:#3d4654;
       --bronze:#5c3b2f;
+      --success:#1d6b46;
+      --danger:#7a2030;
     }
 
     *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      background:linear-gradient(180deg,#081022,#0b1220);
-      color:var(--text);
-    }
-
-    .wrap{max-width:1200px;margin:0 auto;padding:18px;}
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#081022,#0b1220);color:var(--text);}
+    .wrap{max-width:1380px;margin:0 auto;padding:18px;}
     h1{font-size:22px;margin:0 0 12px;}
-
+    h2{margin:0 0 8px;font-size:16px;}
+    h3{margin:0 0 8px;font-size:15px;}
     .grid{display:grid;grid-template-columns:1fr;gap:12px;}
-    @media(min-width:980px){.grid{grid-template-columns:380px 1fr;}}
-
-    .card{
-      background:rgba(18,26,43,.92);
-      border:1px solid var(--line);
-      border-radius:18px;
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
-      padding:14px;
-      position:relative;
-      overflow:visible;
-      isolation:isolate;
-      z-index:1;
-    }
-
+    @media(min-width:980px){.grid{grid-template-columns:420px 1fr;}}
+    .card{background:rgba(18,26,43,.92);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:14px;position:relative;overflow:visible;isolation:isolate;z-index:1;}
     .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:relative;}
-
     .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+    .actions-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    label.small-label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:110px;}
 
-    label.small-label{
-      font-size:13px;
-      color:var(--muted);
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      min-width:110px;
-    }
-
-    input, select, button, textarea{
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:#0b1326;
-      color:var(--text);
-      padding:10px 12px;
-      font-size:14px;
-      position:relative;
-      width:100%;
-    }
-
-    input:focus, textarea:focus, select:focus{
-      outline:2px solid rgba(106,167,255,.35);
-      border-color:rgba(106,167,255,.6);
-    }
-
+    input, select, button, textarea{border-radius:12px;border:1px solid var(--line);background:#0b1326;color:var(--text);padding:10px 12px;font-size:14px;position:relative;width:100%;}
+    input:focus, textarea:focus, select:focus{outline:2px solid rgba(106,167,255,.35);border-color:rgba(106,167,255,.6);}
     button{cursor:pointer;background:linear-gradient(180deg,#1a2b52,#132441);border-color:#2a3f6f;width:auto;}
     button:hover{filter:brightness(1.05);}
     button.secondary{background:#0b1326;}
+    button.success{background:linear-gradient(180deg,#1f6b46,#14472f);border-color:#2d8b5d;}
     button.danger{background:linear-gradient(180deg,#5a1f2b,#3c1420);border-color:#6d2a39;}
-
     button:disabled, input:disabled, textarea:disabled, select:disabled{opacity:.45;cursor:not-allowed;}
 
     .muted{color:var(--muted);font-size:13px;line-height:1.4;}
+    .small{font-size:12px;color:var(--muted);}
+    .ok{color:#8cffb0;}
+    .warn{color:#ffd28c;}
+    .notice{padding:10px 12px;border-radius:12px;background:#0f1b35;border:1px solid var(--line);margin-top:10px;}
     ul{margin:10px 0 0;padding-left:18px;}
     li{margin:6px 0;}
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      border:1px solid var(--line);
-      padding:6px 10px;
-      border-radius:999px;
-      background:#0b1326;
-      white-space:nowrap;
-    }
-
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#0b1326;white-space:nowrap;}
     .pill b{font-weight:600;}
+    .split{display:grid;grid-template-columns:1fr;gap:12px;}
+    @media(min-width:1180px){.split{grid-template-columns:1.05fr 1.15fr;}}
 
-    .table{
-      width:100%;
-      border-collapse:collapse;
-      overflow:hidden;
-      border-radius:16px;
-      border:1px solid var(--line);
-      position:relative;
-      z-index:1;
-    }
-
+    .table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:16px;border:1px solid var(--line);position:relative;z-index:1;}
     .table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;font-size:13px;}
     .table th{background:#0b1326;color:#cfe0ff;font-weight:600;}
-    .table td.team{text-align:left;}
+    .table td.team,.table td.left{text-align:left;}
     .table tr:nth-child(even) td{background:rgba(11,19,38,.4);}
+    .table tr.pos1 td{background:rgba(106,82,0,.35)!important;}
+    .table tr.pos2 td{background:rgba(61,70,84,.45)!important;}
+    .table tr.pos3 td{background:rgba(92,59,47,.45)!important;}
+    .table tr.pos1 td:first-child,.table tr.pos2 td:first-child,.table tr.pos3 td:first-child{font-weight:700;}
 
-    .table tr.pos1 td{background:rgba(106,82,0,.35) !important;}
-    .table tr.pos2 td{background:rgba(61,70,84,.45) !important;}
-    .table tr.pos3 td{background:rgba(92,59,47,.45) !important;}
-    .table tr.pos1 td:first-child,
-    .table tr.pos2 td:first-child,
-    .table tr.pos3 td:first-child{font-weight:700;}
-
-    .split{display:grid;grid-template-columns:1fr;gap:12px;}
-    @media(min-width:980px){.split{grid-template-columns:1fr 1fr;}}
+    .leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#0b1326;margin-bottom:10px;}
+    .leader-icon{font-size:28px;line-height:1;}
+    .leader-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+    .leader-name{font-size:18px;font-weight:700;}
+    .leader-meta{font-size:13px;color:#cfe0ff;}
+    .leader-empty{color:var(--muted);font-size:13px;}
 
     .matches{display:grid;gap:8px;position:relative;z-index:1;}
-
-    .match{
-      display:grid;
-      grid-template-columns:95px 110px 1fr auto 1fr auto auto;
-      gap:8px;
-      align-items:center;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:10px;
-      background:#0b1326;
-    }
-
-    .time-badge,.pitch-badge{
-      font-size:12px;
-      color:#cfe0ff;
-      background:#101b33;
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:6px 8px;
-      text-align:center;
-      white-space:nowrap;
-    }
-
+    .match{display:grid;grid-template-columns:95px 100px 1fr auto 1fr auto auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:#0b1326;}
+    .time-badge,.pitch-badge{font-size:12px;color:#cfe0ff;background:#101b33;border:1px solid var(--line);border-radius:999px;padding:6px 8px;text-align:center;white-space:nowrap;}
     .match .t1{text-align:right;}
     .match .t2{text-align:left;}
     .score{width:64px;text-align:center;}
     .sep{color:var(--muted);}
-    .small{font-size:12px;color:var(--muted);}
-    textarea{width:100%;min-height:90px;resize:vertical;}
-    .ok{color:#8cffb0;}
-    .warn{color:#ffd28c;}
-    .notice{padding:10px 12px;border-radius:12px;background:#0f1b35;border:1px solid var(--line);margin-top:10px;}
-    .pdf-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .match-tools{display:flex;justify-content:flex-end;}
+    .tiny-btn{padding:6px 9px;font-size:12px;border-radius:10px;}
+    .inline-editor{display:none;border-top:1px dashed var(--line);padding-top:10px;margin-top:10px;grid-column:1 / -1;}
+    .inline-editor.open{display:block;}
+    .inline-form{display:grid;grid-template-columns:1.4fr 1fr 110px auto auto;gap:8px;align-items:end;}
+    @media(max-width:900px){.inline-form{grid-template-columns:1fr;}}
+    .inline-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#101b33;border:1px solid var(--line);font-size:12px;}
+    .chip button{padding:2px 7px;font-size:11px;border-radius:999px;}
+
+    .scorer-form{display:grid;grid-template-columns:1.5fr 1fr 110px auto auto;gap:8px;margin-top:8px;align-items:end;}
+    @media(max-width:780px){.scorer-form{grid-template-columns:1fr;}}
+    .goals-inline{display:flex;gap:6px;justify-content:center;align-items:center;}
+    .goals-inline input{width:76px;text-align:center;padding:6px 8px;}
+    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#101b33;border:1px solid var(--line);font-size:12px;}
 
     .lockbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;position:relative;z-index:5000;pointer-events:auto;}
     .lockbar .row{position:relative;z-index:5001;pointer-events:auto;}
@@ -166,10 +103,10 @@
       body{background:#fff;color:#111;}
       .wrap{max-width:none;padding:0;}
       .card{box-shadow:none;border:1px solid #999;background:#fff;color:#111;}
-      .muted,.small,.badge,.lockbar,.controls-panel,.json-panel,.pdf-actions{display:none !important;}
+      .muted,.small,.badge,.lockbar,.controls-panel,.json-panel,.export-panel,.actions-wrap,.match-tools,.inline-editor{display:none!important;}
       .table th{background:#eee;color:#111;}
-      .match{background:#fff;border-color:#bbb;}
-      .time-badge,.pitch-badge{color:#111;background:#f5f5f5;border-color:#bbb;}
+      .match{background:#fff;border-color:#bbb;grid-template-columns:95px 100px 1fr auto 1fr 60px 60px;}
+      .time-badge,.pitch-badge,.tag,.chip{color:#111;background:#f5f5f5;border-color:#bbb;}
     }
   </style>
 </head>
@@ -196,47 +133,39 @@
         <label class="small-label" for="pitchCount">
           Počet hřišť
           <select id="pitchCount">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
           </select>
         </label>
-
         <label class="small-label" for="matchDuration">
           Délka zápasu (min)
           <input id="matchDuration" type="number" min="1" max="180" step="1" value="12" />
         </label>
-
         <label class="small-label" for="startTime">
           Začátek 1. bloku
           <input id="startTime" type="time" value="09:00" />
         </label>
-
         <label class="small-label" for="breakDuration">
           Pauza mezi zápasy (min)
           <input id="breakDuration" type="number" min="0" max="180" step="1" value="3" />
         </label>
       </div>
 
-      <div class="row" style="margin-top:10px;">
+      <div class="actions-wrap">
         <button id="generateBtn" type="button">Vygenerovat zápasy</button>
         <button id="resetBtn" type="button" class="danger">Resetovat vše</button>
       </div>
 
-      <div class="pdf-actions">
+      <div class="actions-wrap export-panel">
         <button id="exportPdfBtn" type="button" class="secondary">Export do PDF</button>
+        <button id="exportHtmlBtn" type="button" class="secondary">Nahrát / vytvořit HTML stránku</button>
       </div>
 
       <p class="muted" style="margin-top:10px;">
-        ✅ Bez duplicitních zápasů (single round). U lichého počtu týmů se použije volno.<br>
+        ✅ Zápasy se plánují férově: systém se snaží, aby tým ideálně odehrál 1 zápas a pak měl volno, přičemž nikdy nenaplánuje více než 2 zápasy za sebou.<br>
         ✅ Vyberete počet hřišť, délku zápasu, začátek turnaje a délku pauzy mezi zápasy.<br>
-        ✅ Zápasy se zobrazují v jednom souvislém seznamu za sebou, ne po kolech.<br>
-        ✅ Po zadání skóre se tabulka okamžitě přepočítá a 1.–3. místo se zvýrazní.<br>
+        ✅ U každého zápasu je tlačítko <strong>Střelci</strong>, kterým si okamžitě otevřete zadávání střelců pro daný zápas.<br>
+        ✅ K dispozici je zvýrazněný box nejlepšího střelce a filtr střelců podle týmu.<br>
         ✅ Po doplnění Firebase konfigurace budou data sdílená pro všechny návštěvníky a všechna zařízení, dokud nekliknete na „Resetovat vše“.
       </p>
 
@@ -248,17 +177,14 @@
           <span class="pill"><b>Zápasy:</b> <span id="matchCount">0</span></span>
           <span class="pill"><b>Hřiště:</b> <span id="pitchCountBadge">1</span></span>
         </div>
-
         <ul id="teamList"></ul>
       </div>
 
       <hr style="border:0;border-top:1px solid var(--line);margin:14px 0;">
 
       <div class="json-panel">
-        <h3 style="margin:0 0 8px;font-size:15px;">Záloha / sdílení</h3>
-        <p class="muted" style="margin:0 0 8px;">
-          Exportujte ligu do JSON a na jiném zařízení ji zase naimportujte (jen správce). Pokud budete používat Firebase, není to pro běžný provoz potřeba.
-        </p>
+        <h3>Záloha / sdílení</h3>
+        <p class="muted" style="margin:0 0 8px;">Exportujte ligu do JSON a na jiném zařízení ji zase naimportujte (jen správce). Pokud budete používat Firebase, není to pro běžný provoz potřeba.</p>
         <div class="row">
           <button id="exportBtn" type="button" class="secondary">Export JSON</button>
           <button id="importBtn" type="button" class="secondary">Import JSON</button>
@@ -273,33 +199,59 @@
     <div class="card" id="pdfArea">
       <div class="split">
         <div>
-          <h2 style="margin:0 0 8px;font-size:16px;">Tabulka</h2>
+          <h2>Tabulka</h2>
           <table class="table" id="standingsTable">
             <thead>
               <tr>
-                <th>Poř.</th>
-                <th style="text-align:left;">Tým</th>
-                <th>Z</th>
-                <th>V</th>
-                <th>R</th>
-                <th>P</th>
-                <th>VG</th>
-                <th>OG</th>
-                <th>RG</th>
-                <th>Body</th>
+                <th>Poř.</th><th style="text-align:left;">Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
-          <p class="small">
-            Řazení: body → vzájemné zápasy (body, rozdíl gólů, vstřelené góly) → celkový rozdíl gólů → celkové vstřelené góly → název týmu
-          </p>
+          <p class="small">Řazení: body → vzájemné zápasy (body, rozdíl gólů, vstřelené góly) → celkový rozdíl gólů → celkové vstřelené góly → název týmu.</p>
+
+          <div style="margin-top:12px;">
+            <h2>Střelci gólů</h2>
+            <div class="leader-box" id="topScorerBox"></div>
+            <div class="row export-panel" style="margin-bottom:8px;">
+              <label class="small-label" for="scorerFilterTeam" style="min-width:180px;">
+                Filtr podle týmu
+                <select id="scorerFilterTeam"></select>
+              </label>
+            </div>
+
+            <div class="scorer-form export-panel">
+              <label class="small-label" for="scorerName">
+                Jméno hráče
+                <input id="scorerName" placeholder="Např. Jan Novák" />
+              </label>
+              <label class="small-label" for="scorerTeam">
+                Tým
+                <select id="scorerTeam"></select>
+              </label>
+              <label class="small-label" for="scorerGoals">
+                Počet gólů
+                <input id="scorerGoals" type="number" min="1" max="99" step="1" value="1" />
+              </label>
+              <button id="addGoalsBtn" type="button" class="success">Přidat</button>
+              <button id="removeGoalsBtn" type="button" class="danger">Odebrat</button>
+            </div>
+
+            <table class="table" id="scorersTable" style="margin-top:10px;">
+              <thead>
+                <tr>
+                  <th>Poř.</th><th style="text-align:left;">Hráč</th><th style="text-align:left;">Tým</th><th>Góly</th><th class="export-panel">Úpravy</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
 
         <div>
-          <h2 style="margin:0 0 8px;font-size:16px;">Zápasy</h2>
+          <h2>Zápasy</h2>
           <div class="matches" id="matches"></div>
-          <p class="small">Zápasy jsou vypsané za sebou podle času. Čas každého zápasu se počítá z délky zápasu a nastavené pauzy mezi zápasy.</p>
+          <p class="small">Kliknutím na tlačítko <strong>Střelci</strong> u konkrétního zápasu otevřete rychlé zadávání střelců pouze pro oba týmy z daného zápasu.</p>
         </div>
       </div>
     </div>
@@ -311,23 +263,22 @@
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';
   import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';
 
-  const ADMIN_PIN = "2803"; // Změňte si PIN správce
-  const ADMIN_LS_KEY = "league_admin_unlocked_v1";
-  const LOCAL_LS_KEY = "league_manager_v5_local_backup";
+  const ADMIN_PIN = '2803';
+  const ADMIN_LS_KEY = 'league_admin_unlocked_v1';
+  const LOCAL_LS_KEY = 'league_manager_v7_local_backup';
 
-  // FIREBASE KONFIGURACE
   const firebaseConfig = {
-    apiKey: "DOPLNIT",
-    authDomain: "DOPLNIT",
-    databaseURL: "DOPLNIT",
-    projectId: "DOPLNIT",
-    storageBucket: "DOPLNIT",
-    messagingSenderId: "DOPLNIT",
-    appId: "DOPLNIT"
+    apiKey: 'DOPLNIT',
+    authDomain: 'DOPLNIT',
+    databaseURL: 'DOPLNIT',
+    projectId: 'DOPLNIT',
+    storageBucket: 'DOPLNIT',
+    messagingSenderId: 'DOPLNIT',
+    appId: 'DOPLNIT'
   };
 
-  const DB_PATH = "leagueManager/publicState";
-  const FIREBASE_ENABLED = firebaseConfig.apiKey !== "DOPLNIT" && firebaseConfig.databaseURL !== "DOPLNIT";
+  const DB_PATH = 'leagueManager/publicState';
+  const FIREBASE_ENABLED = firebaseConfig.apiKey !== 'DOPLNIT' && firebaseConfig.databaseURL !== 'DOPLNIT';
 
   let app = null;
   let db = null;
@@ -339,41 +290,63 @@
     db = getDatabase(app, firebaseConfig.databaseURL);
   }
 
-  const elTeamName = document.getElementById("teamName");
-  const elAddTeamBtn = document.getElementById("addTeamBtn");
-  const elGenerateBtn = document.getElementById("generateBtn");
-  const elResetBtn = document.getElementById("resetBtn");
-  const elTeamList = document.getElementById("teamList");
-  const elTeamCount = document.getElementById("teamCount");
-  const elMatchCount = document.getElementById("matchCount");
-  const elPitchCount = document.getElementById("pitchCount");
-  const elPitchCountBadge = document.getElementById("pitchCountBadge");
-  const elMatchDuration = document.getElementById("matchDuration");
-  const elStartTime = document.getElementById("startTime");
-  const elBreakDuration = document.getElementById("breakDuration");
-  const elStandingsBody = document.querySelector("#standingsTable tbody");
-  const elMatches = document.getElementById("matches");
-  const elExportBtn = document.getElementById("exportBtn");
-  const elImportBtn = document.getElementById("importBtn");
-  const elExportPdfBtn = document.getElementById("exportPdfBtn");
-  const elJsonBox = document.getElementById("jsonBox");
-  const elStatus = document.getElementById("status");
-  const elUnlockBtn = document.getElementById("unlockBtn");
-  const elLockBtn = document.getElementById("lockBtn");
-  const elLockState = document.getElementById("lockState");
-  const elStorageNotice = document.getElementById("storageNotice");
-  const elPdfArea = document.getElementById("pdfArea");
+  const elTeamName = document.getElementById('teamName');
+  const elAddTeamBtn = document.getElementById('addTeamBtn');
+  const elGenerateBtn = document.getElementById('generateBtn');
+  const elResetBtn = document.getElementById('resetBtn');
+  const elTeamList = document.getElementById('teamList');
+  const elTeamCount = document.getElementById('teamCount');
+  const elMatchCount = document.getElementById('matchCount');
+  const elPitchCount = document.getElementById('pitchCount');
+  const elPitchCountBadge = document.getElementById('pitchCountBadge');
+  const elMatchDuration = document.getElementById('matchDuration');
+  const elStartTime = document.getElementById('startTime');
+  const elBreakDuration = document.getElementById('breakDuration');
+  const elStandingsBody = document.querySelector('#standingsTable tbody');
+  const elMatches = document.getElementById('matches');
+  const elExportBtn = document.getElementById('exportBtn');
+  const elImportBtn = document.getElementById('importBtn');
+  const elExportPdfBtn = document.getElementById('exportPdfBtn');
+  const elExportHtmlBtn = document.getElementById('exportHtmlBtn');
+  const elJsonBox = document.getElementById('jsonBox');
+  const elStatus = document.getElementById('status');
+  const elUnlockBtn = document.getElementById('unlockBtn');
+  const elLockBtn = document.getElementById('lockBtn');
+  const elLockState = document.getElementById('lockState');
+  const elStorageNotice = document.getElementById('storageNotice');
+  const elPdfArea = document.getElementById('pdfArea');
+  const elScorerName = document.getElementById('scorerName');
+  const elScorerTeam = document.getElementById('scorerTeam');
+  const elScorerGoals = document.getElementById('scorerGoals');
+  const elAddGoalsBtn = document.getElementById('addGoalsBtn');
+  const elRemoveGoalsBtn = document.getElementById('removeGoalsBtn');
+  const elScorersBody = document.querySelector('#scorersTable tbody');
+  const elScorerFilterTeam = document.getElementById('scorerFilterTeam');
+  const elTopScorerBox = document.getElementById('topScorerBox');
 
   function defaultState(){
     return {
       teams: [],
       rounds: [],
+      scorers: [],
       pitchCount: 1,
       matchDuration: 12,
       breakDuration: 3,
-      startTime: "09:00",
+      startTime: '09:00',
+      scorerFilterTeam: 'ALL',
       updatedAt: null
     };
+  }
+
+  function normalizeScorers(list){
+    if(!Array.isArray(list)) return [];
+    return list.map(item => ({
+      id: item.id || cryptoRandomId(),
+      name: typeof item.name === 'string' ? item.name : '',
+      team: typeof item.team === 'string' ? item.team : '',
+      goals: clampInt(item.goals, 0, 999, 0),
+      byMatch: item.byMatch && typeof item.byMatch === 'object' ? item.byMatch : {}
+    })).filter(item => item.name && item.team && item.goals >= 0);
   }
 
   function normalizeState(obj){
@@ -381,45 +354,36 @@
     const merged = { ...base, ...(obj || {}) };
     merged.teams = Array.isArray(merged.teams) ? merged.teams : [];
     merged.rounds = Array.isArray(merged.rounds) ? merged.rounds : [];
+    merged.scorers = normalizeScorers(merged.scorers);
     merged.pitchCount = clampInt(merged.pitchCount, 1, 8, 1);
     merged.matchDuration = clampInt(merged.matchDuration, 1, 180, 12);
     merged.breakDuration = clampInt(merged.breakDuration, 0, 180, 3);
-    merged.startTime = isValidTime(merged.startTime) ? merged.startTime : "09:00";
+    merged.startTime = isValidTime(merged.startTime) ? merged.startTime : '09:00';
+    merged.scorerFilterTeam = typeof merged.scorerFilterTeam === 'string' ? merged.scorerFilterTeam : 'ALL';
     return merged;
   }
 
   function loadLocalBackup(){
-    try{
+    try {
       const raw = localStorage.getItem(LOCAL_LS_KEY);
       return raw ? JSON.parse(raw) : defaultState();
-    }catch(e){
+    } catch(e){
       return defaultState();
     }
   }
 
-  function saveLocalBackup(){
-    localStorage.setItem(LOCAL_LS_KEY, JSON.stringify(state));
-  }
-
-  function isAdminUnlocked(){
-    return localStorage.getItem(ADMIN_LS_KEY) === "1";
-  }
-
-  function setAdminUnlocked(v){
-    localStorage.setItem(ADMIN_LS_KEY, v ? "1" : "0");
-  }
-
-  function setStatus(msg, kind = "muted"){
-    elStatus.className = "small " + (kind === "ok" ? "ok" : kind === "warn" ? "warn" : "");
+  function saveLocalBackup(){ localStorage.setItem(LOCAL_LS_KEY, JSON.stringify(state)); }
+  function isAdminUnlocked(){ return localStorage.getItem(ADMIN_LS_KEY) === '1'; }
+  function setAdminUnlocked(v){ localStorage.setItem(ADMIN_LS_KEY, v ? '1' : '0'); }
+  function setStatus(msg, kind = 'muted'){
+    elStatus.className = 'small ' + (kind === 'ok' ? 'ok' : kind === 'warn' ? 'warn' : '');
     elStatus.textContent = msg;
   }
 
   function setStorageNotice(){
-    if(FIREBASE_ENABLED){
-      elStorageNotice.textContent = "Sdílený režim je aktivní: změny se ukládají do Firebase a uvidí je všichni návštěvníci na všech zařízeních.";
-    }else{
-      elStorageNotice.textContent = "Sdílený režim zatím není aktivní: dokud nedoplníte Firebase konfiguraci, data se ukládají jen do tohoto prohlížeče.";
-    }
+    elStorageNotice.textContent = FIREBASE_ENABLED
+      ? 'Sdílený režim je aktivní: změny se ukládají do Firebase a uvidí je všichni návštěvníci na všech zařízeních.'
+      : 'Sdílený režim zatím není aktivní: dokud nedoplníte Firebase konfiguraci, data se ukládají jen do tohoto prohlížeče.';
   }
 
   function clampInt(value, min, max, fallback){
@@ -427,47 +391,14 @@
     if(Number.isNaN(n)) return fallback;
     return Math.min(max, Math.max(min, n));
   }
-
-  function isValidTime(value){
-    return /^\d{2}:\d{2}$/.test(String(value || ""));
-  }
-
-  function timeToMinutes(timeStr){
-    const [hh, mm] = String(timeStr).split(":").map(Number);
-    return (hh * 60) + mm;
-  }
-
-  function minutesToTime(totalMinutes){
-    const safe = ((totalMinutes % 1440) + 1440) % 1440;
-    const hh = Math.floor(safe / 60).toString().padStart(2, "0");
-    const mm = Math.floor(safe % 60).toString().padStart(2, "0");
-    return `${hh}:${mm}`;
-  }
-
-  function cryptoRandomId(){
-    if (window.crypto && typeof window.crypto.randomUUID === "function") {
-      return window.crypto.randomUUID();
-    }
-    return "id_" + Math.random().toString(16).slice(2) + Date.now();
-  }
-
-  function escapeHtml(str){
-    return String(str).replace(/[&<>"']/g, s => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[s]));
-  }
-
-  function escapeAttr(str){
-    return escapeHtml(str).replace(/"/g,"&quot;");
-  }
-
-  function normalizeName(s){
-    return s.trim().replace(/\s+/g, " ");
-  }
+  function isValidTime(value){ return /^\d{2}:\d{2}$/.test(String(value || '')); }
+  function timeToMinutes(timeStr){ const [hh, mm] = String(timeStr).split(':').map(Number); return (hh * 60) + mm; }
+  function minutesToTime(totalMinutes){ const safe = ((totalMinutes % 1440) + 1440) % 1440; return `${String(Math.floor(safe/60)).padStart(2,'0')}:${String(safe%60).padStart(2,'0')}`; }
+  function cryptoRandomId(){ return (window.crypto && typeof window.crypto.randomUUID === 'function') ? window.crypto.randomUUID() : ('id_' + Math.random().toString(16).slice(2) + Date.now()); }
+  function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+  function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
+  function normalizeName(s){ return String(s || '').trim().replace(/\s+/g, ' '); }
+  function scorerKey(name, team){ return `${normalizeName(name).toLowerCase()}||${normalizeName(team).toLowerCase()}`; }
 
   function syncInputsFromState(){
     elPitchCount.value = String(state.pitchCount);
@@ -475,278 +406,384 @@
     elMatchDuration.value = String(state.matchDuration);
     elBreakDuration.value = String(state.breakDuration);
     elStartTime.value = state.startTime;
+    renderScorerTeamOptions();
+    renderScorerFilterOptions();
   }
 
-  function updateStateMeta(){
-    state.updatedAt = new Date().toISOString();
-  }
-
+  function updateStateMeta(){ state.updatedAt = new Date().toISOString(); }
   async function persistState(){
     if(suppressSave) return;
     updateStateMeta();
     saveLocalBackup();
     if(FIREBASE_ENABLED){
-      try{
-        await set(ref(db, DB_PATH), state);
-      }catch(err){
-        console.error(err);
-        setStatus("Nepodařilo se uložit data do Firebase. Zkontrolujte konfiguraci a pravidla databáze.", "warn");
-      }
+      try { await set(ref(db, DB_PATH), state); }
+      catch(err){ console.error(err); setStatus('Nepodařilo se uložit data do Firebase. Zkontrolujte konfiguraci a pravidla databáze.', 'warn'); }
     }
   }
 
-  function assignPitchSlotAndTime(matches, pitchCount, matchDuration, breakDuration, startTime){
-    const startMinutes = timeToMinutes(startTime);
-    return matches.map((match, idx) => {
-      const pitch = (idx % pitchCount) + 1;
-      const slot = Math.floor(idx / pitchCount) + 1;
-      const slotStart = startMinutes + ((slot - 1) * (matchDuration + breakDuration));
-      const slotEnd = slotStart + matchDuration;
-      return {
-        ...match,
-        pitch,
-        slot,
-        slotStart: minutesToTime(slotStart),
-        slotEnd: minutesToTime(slotEnd)
-      };
-    });
+  function generateAllPairs(teams){
+    const pairs = [];
+    for(let i = 0; i < teams.length; i++) for(let j = i + 1; j < teams.length; j++) pairs.push({ id: cryptoRandomId(), home: teams[i], away: teams[j], hs: '', as: '' });
+    return pairs;
   }
 
-  function generateRoundRobin(teams, pitchCount, matchDuration, breakDuration, startTime){
-    let list = teams.slice();
-    const BYE = "__BYE__";
+  function scheduleFair(matches, pitchCount, matchDuration, breakDuration, startTime){
+    const startMinutes = timeToMinutes(startTime);
+    const teamStats = {};
+    matches.forEach(m => {
+      if(!teamStats[m.home]) teamStats[m.home] = { lastSlot: -999, consecutive: 0 };
+      if(!teamStats[m.away]) teamStats[m.away] = { lastSlot: -999, consecutive: 0 };
+    });
 
-    if(list.length % 2 === 1) list.push(BYE);
+    const remaining = matches.slice();
+    const scheduled = [];
+    let slot = 1;
 
-    const n = list.length;
-    const rounds = n - 1;
-    const half = n / 2;
-    const fixed = list[0];
-    let rot = list.slice(1);
-    const out = [];
+    while(remaining.length > 0){
+      const selectedIdx = [];
+      const usedTeams = new Set();
 
-    for(let r = 0; r < rounds; r++){
-      const left = [fixed, ...rot.slice(0, half - 1)];
-      const right = rot.slice(half - 1).slice().reverse();
-      const matches = [];
+      function canUse(match, allowBackToBack){
+        const h = teamStats[match.home];
+        const a = teamStats[match.away];
+        if(usedTeams.has(match.home) || usedTeams.has(match.away)) return false;
+        if(h.consecutive >= 2 || a.consecutive >= 2) return false;
+        const hPlayedLast = h.lastSlot === slot - 1;
+        const aPlayedLast = a.lastSlot === slot - 1;
+        if(!allowBackToBack && (hPlayedLast || aPlayedLast)) return false;
+        return true;
+      }
 
-      for(let i = 0; i < half; i++){
-        const home = left[i];
-        const away = right[i];
-        if(home !== BYE && away !== BYE){
-          matches.push({ id: cryptoRandomId(), home, away, hs: "", as: "" });
+      for(let i = 0; i < remaining.length && selectedIdx.length < pitchCount; i++){
+        if(canUse(remaining[i], false)){
+          selectedIdx.push(i);
+          usedTeams.add(remaining[i].home); usedTeams.add(remaining[i].away);
         }
       }
 
-      out.push({
-        matches: assignPitchSlotAndTime(matches, pitchCount, matchDuration, breakDuration, startTime)
-      });
+      for(let i = 0; i < remaining.length && selectedIdx.length < pitchCount; i++){
+        if(selectedIdx.includes(i)) continue;
+        if(canUse(remaining[i], true)){
+          selectedIdx.push(i);
+          usedTeams.add(remaining[i].home); usedTeams.add(remaining[i].away);
+        }
+      }
 
-      rot = [rot[rot.length - 1], ...rot.slice(0, rot.length - 1)];
+      if(selectedIdx.length === 0){
+        for(let i = 0; i < remaining.length && selectedIdx.length < pitchCount; i++){
+          if(usedTeams.has(remaining[i].home) || usedTeams.has(remaining[i].away)) continue;
+          selectedIdx.push(i);
+          usedTeams.add(remaining[i].home); usedTeams.add(remaining[i].away);
+        }
+      }
+
+      selectedIdx.sort((a,b) => b - a);
+      const slotMatches = [];
+      selectedIdx.forEach(idx => slotMatches.unshift(remaining.splice(idx, 1)[0]));
+
+      slotMatches.forEach((match, idx) => {
+        const slotStart = startMinutes + ((slot - 1) * (matchDuration + breakDuration));
+        const slotEnd = slotStart + matchDuration;
+        scheduled.push({ ...match, pitch: idx + 1, slot, slotStart: minutesToTime(slotStart), slotEnd: minutesToTime(slotEnd) });
+        [match.home, match.away].forEach(team => {
+          const stats = teamStats[team];
+          stats.consecutive = stats.lastSlot === slot - 1 ? stats.consecutive + 1 : 1;
+          stats.lastSlot = slot;
+        });
+      });
+      slot++;
     }
 
-    return out;
+    return [{ matches: scheduled }];
   }
 
-  function emptyRow(team){
-    return { team, P:0, W:0, D:0, L:0, GF:0, GA:0, GD:0, Pts:0 };
-  }
-
+  function emptyRow(team){ return { team, P:0, W:0, D:0, L:0, GF:0, GA:0, GD:0, Pts:0 }; }
   function applyMatch(rowHome, rowAway, hs, as){
-    rowHome.P++; rowAway.P++;
-    rowHome.GF += hs; rowHome.GA += as;
-    rowAway.GF += as; rowAway.GA += hs;
+    rowHome.P++; rowAway.P++; rowHome.GF += hs; rowHome.GA += as; rowAway.GF += as; rowAway.GA += hs;
     if(hs > as){ rowHome.W++; rowHome.Pts += 3; rowAway.L++; }
     else if(hs < as){ rowAway.W++; rowAway.Pts += 3; rowHome.L++; }
     else { rowHome.D++; rowAway.D++; rowHome.Pts += 1; rowAway.Pts += 1; }
   }
 
   function computeOverallTable(teams, rounds){
-    const map = new Map();
-    teams.forEach(t => map.set(t, emptyRow(t)));
-    for(const rd of rounds){
-      for(const m of rd.matches){
-        const hs = parseInt(m.hs, 10);
-        const as = parseInt(m.as, 10);
-        if(Number.isNaN(hs) || Number.isNaN(as)) continue;
-        const home = map.get(m.home);
-        const away = map.get(m.away);
-        if(!home || !away) continue;
-        applyMatch(home, away, hs, as);
-      }
-    }
-    for(const row of map.values()) row.GD = row.GF - row.GA;
-    return map;
+    const map = new Map(); teams.forEach(t => map.set(t, emptyRow(t)));
+    rounds.forEach(rd => rd.matches.forEach(m => {
+      const hs = parseInt(m.hs, 10), as = parseInt(m.as, 10);
+      if(Number.isNaN(hs) || Number.isNaN(as)) return;
+      const home = map.get(m.home), away = map.get(m.away);
+      if(!home || !away) return; applyMatch(home, away, hs, as);
+    }));
+    map.forEach(row => row.GD = row.GF - row.GA); return map;
   }
 
   function computeMiniTable(teamSet, rounds){
-    const mini = new Map();
-    for(const t of teamSet) mini.set(t, emptyRow(t));
-    for(const rd of rounds){
-      for(const m of rd.matches){
-        const hs = parseInt(m.hs, 10);
-        const as = parseInt(m.as, 10);
-        if(Number.isNaN(hs) || Number.isNaN(as)) continue;
-        if(!teamSet.has(m.home) || !teamSet.has(m.away)) continue;
-        const home = mini.get(m.home);
-        const away = mini.get(m.away);
-        if(!home || !away) continue;
-        applyMatch(home, away, hs, as);
-      }
-    }
-    for(const row of mini.values()) row.GD = row.GF - row.GA;
-    return mini;
+    const mini = new Map(); teamSet.forEach(t => mini.set(t, emptyRow(t)));
+    rounds.forEach(rd => rd.matches.forEach(m => {
+      const hs = parseInt(m.hs, 10), as = parseInt(m.as, 10);
+      if(Number.isNaN(hs) || Number.isNaN(as)) return;
+      if(!teamSet.has(m.home) || !teamSet.has(m.away)) return;
+      const home = mini.get(m.home), away = mini.get(m.away);
+      if(!home || !away) return; applyMatch(home, away, hs, as);
+    }));
+    mini.forEach(row => row.GD = row.GF - row.GA); return mini;
   }
 
   function computeStandingsWithH2H(teams, rounds){
     const overall = computeOverallTable(teams, rounds);
     const allRows = Array.from(overall.values());
     const byPts = new Map();
-    for(const row of allRows){
-      if(!byPts.has(row.Pts)) byPts.set(row.Pts, []);
-      byPts.get(row.Pts).push(row);
-    }
-
+    allRows.forEach(row => { if(!byPts.has(row.Pts)) byPts.set(row.Pts, []); byPts.get(row.Pts).push(row); });
     const ptsKeys = Array.from(byPts.keys()).sort((a,b) => b - a);
     const final = [];
-
-    for(const pts of ptsKeys){
+    ptsKeys.forEach(pts => {
       const group = byPts.get(pts);
-      if(group.length <= 1){ final.push(...group); continue; }
+      if(group.length <= 1){ final.push(...group); return; }
       const set = new Set(group.map(r => r.team));
       const mini = computeMiniTable(set, rounds);
       group.sort((a,b) => {
-        const ma = mini.get(a.team);
-        const mb = mini.get(b.team);
-        const h2hPtsA = ma ? ma.Pts : 0;
-        const h2hPtsB = mb ? mb.Pts : 0;
-        const h2hGDA = ma ? ma.GD : 0;
-        const h2hGDB = mb ? mb.GD : 0;
-        const h2hGFA = ma ? ma.GF : 0;
-        const h2hGFB = mb ? mb.GF : 0;
-        return (h2hPtsB - h2hPtsA) ||
-               (h2hGDB - h2hGDA) ||
-               (h2hGFB - h2hGFA) ||
-               (b.GD - a.GD) ||
-               (b.GF - a.GF) ||
-               a.team.localeCompare(b.team, 'cs');
+        const ma = mini.get(a.team), mb = mini.get(b.team);
+        return (mb.Pts - ma.Pts) || (mb.GD - ma.GD) || (mb.GF - ma.GF) || (b.GD - a.GD) || (b.GF - a.GF) || a.team.localeCompare(b.team, 'cs');
       });
       final.push(...group);
-    }
-
+    });
     return final;
   }
 
   function getFlatMatches(){
     const flat = [];
-    state.rounds.forEach((rd, roundIndex) => {
-      rd.matches.forEach(match => {
-        flat.push({ ...match, roundIndex });
-      });
-    });
-    return flat.sort((a, b) => {
+    state.rounds.forEach((rd, roundIndex) => rd.matches.forEach(match => flat.push({ ...match, roundIndex })));
+    return flat.sort((a,b) => {
       const byTime = timeToMinutes(a.slotStart || '00:00') - timeToMinutes(b.slotStart || '00:00');
       if(byTime !== 0) return byTime;
-      if((a.pitch || 1) !== (b.pitch || 1)) return (a.pitch || 1) - (b.pitch || 1);
-      return (a.roundIndex || 0) - (b.roundIndex || 0);
+      return (a.pitch || 1) - (b.pitch || 1);
+    });
+  }
+
+  function renderScorerTeamOptions(matchTeams = null){
+    const selected = elScorerTeam.value;
+    const teams = Array.isArray(matchTeams) && matchTeams.length ? matchTeams : state.teams;
+    elScorerTeam.innerHTML = '';
+    if(teams.length === 0){
+      const opt = document.createElement('option'); opt.value = ''; opt.textContent = 'Nejdříve přidejte týmy'; elScorerTeam.appendChild(opt); return;
+    }
+    teams.forEach(team => {
+      const opt = document.createElement('option'); opt.value = team; opt.textContent = team; elScorerTeam.appendChild(opt);
+    });
+    if(teams.includes(selected)) elScorerTeam.value = selected;
+  }
+
+  function renderScorerFilterOptions(){
+    const selected = state.scorerFilterTeam || 'ALL';
+    elScorerFilterTeam.innerHTML = '';
+    const allOpt = document.createElement('option'); allOpt.value = 'ALL'; allOpt.textContent = 'Všechny týmy'; elScorerFilterTeam.appendChild(allOpt);
+    state.teams.forEach(team => {
+      const opt = document.createElement('option'); opt.value = team; opt.textContent = team; elScorerFilterTeam.appendChild(opt);
+    });
+    elScorerFilterTeam.value = state.teams.includes(selected) || selected === 'ALL' ? selected : 'ALL';
+  }
+
+  function getSortedScorers(){
+    const teamFilter = state.scorerFilterTeam || 'ALL';
+    return [...state.scorers]
+      .filter(s => teamFilter === 'ALL' ? true : s.team === teamFilter)
+      .sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
+  }
+
+  function renderTopScorer(){
+    const sorted = getSortedScorers();
+    if(sorted.length === 0){
+      elTopScorerBox.innerHTML = '<div class="leader-empty">Zatím nejsou zadaní žádní střelci.</div>';
+      return;
+    }
+    const top = sorted[0];
+    const ties = sorted.filter(s => s.goals === top.goals).length;
+    elTopScorerBox.innerHTML = `
+      <div class="leader-icon">⚽</div>
+      <div>
+        <div class="leader-title">Nejlepší střelec${(state.scorerFilterTeam && state.scorerFilterTeam !== 'ALL') ? ' (filtrovaný výběr)' : ''}</div>
+        <div class="leader-name">${escapeHtml(top.name)}</div>
+        <div class="leader-meta">${escapeHtml(top.team)} · ${top.goals} gólů${ties > 1 ? ` · dělené 1. místo (${ties} hráči)` : ''}</div>
+      </div>
+    `;
+  }
+
+  function renderScorers(){
+    elScorersBody.innerHTML = '';
+    const sorted = getSortedScorers();
+    sorted.forEach((scorer, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td class="left">${escapeHtml(scorer.name)}</td>
+        <td class="left"><span class="tag">${escapeHtml(scorer.team)}</span></td>
+        <td><strong>${scorer.goals}</strong></td>
+        <td class="export-panel">
+          <div class="goals-inline">
+            <button type="button" class="tiny-btn success" data-add-scorer="${scorer.id}">+1</button>
+            <button type="button" class="tiny-btn danger" data-sub-scorer="${scorer.id}">-1</button>
+            <input type="number" min="0" max="999" step="1" value="${scorer.goals}" data-edit-scorer="${scorer.id}" />
+          </div>
+        </td>
+      `;
+      elScorersBody.appendChild(tr);
+    });
+
+    document.querySelectorAll('[data-add-scorer]').forEach(btn => btn.addEventListener('click', async () => { await changeScorerTotal(btn.dataset.addScorer, 1); }));
+    document.querySelectorAll('[data-sub-scorer]').forEach(btn => btn.addEventListener('click', async () => { await changeScorerTotal(btn.dataset.subScorer, -1); }));
+    document.querySelectorAll('[data-edit-scorer]').forEach(inp => {
+      inp.addEventListener('change', async () => {
+        if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); renderScorers(); return; }
+        const scorer = state.scorers.find(s => s.id === inp.dataset.editScorer);
+        if(!scorer) return;
+        scorer.goals = clampInt(inp.value, 0, 999, scorer.goals);
+        state.scorers = state.scorers.filter(s => s.goals > 0);
+        await persistState();
+        renderScorers(); renderTopScorer();
+        setStatus('Počet gólů byl upraven.', 'ok');
+      });
+    });
+    renderTopScorer();
+  }
+
+  async function changeScorerTotal(id, delta){
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
+    const scorer = state.scorers.find(s => s.id === id);
+    if(!scorer) return;
+    scorer.goals = Math.max(0, scorer.goals + delta);
+    state.scorers = state.scorers.filter(s => s.goals > 0);
+    await persistState();
+    renderScorers();
+    setStatus(delta > 0 ? 'Gól byl přidán.' : 'Gól byl odebrán.', 'ok');
+  }
+
+  function getScorerByNameTeam(name, team){
+    const key = scorerKey(name, team);
+    return state.scorers.find(s => scorerKey(s.name, s.team) === key);
+  }
+
+  async function updateScorer(deltaDirection, matchId = null, teamsForMatch = null, nameOverride = null, teamOverride = null, goalsOverride = null){
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
+    const name = normalizeName(nameOverride ?? elScorerName.value);
+    const team = normalizeName(teamOverride ?? elScorerTeam.value);
+    const goals = clampInt(goalsOverride ?? elScorerGoals.value, 1, 999, 1);
+    if(!name || !team){ setStatus('Vyplňte jméno hráče a vyberte tým.', 'warn'); return; }
+    if(Array.isArray(teamsForMatch) && teamsForMatch.length && !teamsForMatch.includes(team)){
+      setStatus('Pro tento zápas lze vybrat pouze oba zúčastněné týmy.', 'warn'); return;
+    }
+
+    let scorer = getScorerByNameTeam(name, team);
+    if(!scorer && deltaDirection < 0){ setStatus('Tento hráč ještě v tabulce střelců není.', 'warn'); return; }
+    if(!scorer){ scorer = { id: cryptoRandomId(), name, team, goals: 0, byMatch: {} }; state.scorers.push(scorer); }
+
+    scorer.goals = Math.max(0, scorer.goals + (goals * deltaDirection));
+    if(matchId){
+      const current = clampInt(scorer.byMatch[matchId], 0, 999, 0);
+      const next = Math.max(0, current + (goals * deltaDirection));
+      if(next === 0) delete scorer.byMatch[matchId];
+      else scorer.byMatch[matchId] = next;
+    }
+    state.scorers = state.scorers.filter(s => s.goals > 0);
+    await persistState();
+    renderScorers();
+    renderMatches();
+    if(matchId){ setStatus(deltaDirection > 0 ? 'Střelec byl přidán k zápasu.' : 'Góly střelce byly ze zápasu odebrány.', 'ok'); }
+    else { setStatus(deltaDirection > 0 ? 'Střelec byl uložen / navýšen.' : 'Góly byly odebrány.', 'ok'); }
+    elScorerName.value = ''; elScorerGoals.value = '1';
+  }
+
+  function getMatchScorerEntries(matchId){
+    return state.scorers
+      .filter(s => clampInt(s.byMatch?.[matchId], 0, 999, 0) > 0)
+      .map(s => ({ id: s.id, name: s.name, team: s.team, goals: clampInt(s.byMatch[matchId], 0, 999, 0) }))
+      .sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
+  }
+
+  function renderInlineScorerChips(container, matchId){
+    const list = getMatchScorerEntries(matchId);
+    container.innerHTML = list.length ? '' : '<span class="small">Zatím nejsou zadaní žádní střelci pro tento zápas.</span>';
+    list.forEach(item => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.innerHTML = `${escapeHtml(item.name)} · ${escapeHtml(item.team)} · ${item.goals}<button type="button" class="danger tiny-btn" data-chip-minus="${item.id}" data-chip-match="${matchId}">-1</button>`;
+      container.appendChild(chip);
+    });
+    container.querySelectorAll('[data-chip-minus]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const scorer = state.scorers.find(s => s.id === btn.dataset.chipMinus);
+        if(!scorer) return;
+        await updateScorer(-1, btn.dataset.chipMatch, null, scorer.name, scorer.team, 1);
+      });
     });
   }
 
   function setEditingEnabled(enabled){
     if(enabled){
-      elLockState.textContent = "🔓 Režim správce (úpravy povoleny)";
-      elUnlockBtn.style.display = "none";
-      elLockBtn.style.display = "inline-block";
+      elLockState.textContent = '🔓 Režim správce (úpravy povoleny)';
+      elUnlockBtn.style.display = 'none';
+      elLockBtn.style.display = 'inline-block';
     }else{
-      elLockState.textContent = "🔒 Režim prohlížení (úpravy zamčeny)";
-      elUnlockBtn.style.display = "inline-block";
-      elLockBtn.style.display = "none";
+      elLockState.textContent = '🔒 Režim prohlížení (úpravy zamčeny)';
+      elUnlockBtn.style.display = 'inline-block';
+      elLockBtn.style.display = 'none';
     }
 
-    elTeamName.disabled = !enabled;
-    elAddTeamBtn.disabled = !enabled;
-    elGenerateBtn.disabled = !enabled;
-    elResetBtn.disabled = !enabled;
-    elExportBtn.disabled = !enabled;
-    elImportBtn.disabled = !enabled;
-    elJsonBox.disabled = !enabled;
-    elPitchCount.disabled = !enabled;
-    elMatchDuration.disabled = !enabled;
-    elBreakDuration.disabled = !enabled;
-    elStartTime.disabled = !enabled;
+    [elTeamName, elAddTeamBtn, elGenerateBtn, elResetBtn, elExportBtn, elImportBtn, elJsonBox,
+     elPitchCount, elMatchDuration, elBreakDuration, elStartTime, elScorerName, elScorerTeam,
+     elScorerGoals, elAddGoalsBtn, elRemoveGoalsBtn].forEach(el => { if(el) el.disabled = !enabled; });
 
-    document.querySelectorAll("[data-del]").forEach(btn => { btn.disabled = !enabled; });
-    elMatches.querySelectorAll("input.score").forEach(inp => { inp.disabled = !enabled; });
+    document.querySelectorAll('[data-del],[data-add-scorer],[data-sub-scorer],[data-match-scorers]').forEach(btn => { btn.disabled = !enabled; });
+    document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !enabled; });
 
-    elUnlockBtn.style.pointerEvents = "auto";
-    elUnlockBtn.style.zIndex = "6000";
-    elLockBtn.style.pointerEvents = "auto";
-    elLockBtn.style.zIndex = "6000";
+    elUnlockBtn.style.pointerEvents = 'auto'; elUnlockBtn.style.zIndex = '6000';
+    elLockBtn.style.pointerEvents = 'auto'; elLockBtn.style.zIndex = '6000';
   }
 
   function renderTeams(){
-    elTeamList.innerHTML = "";
+    elTeamList.innerHTML = '';
     state.teams.forEach((t, idx) => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span class="pill"><b>${escapeHtml(t)}</b></span>
-        <button type="button" class="secondary" data-del="${idx}" style="margin-left:8px;">Odebrat</button>
-      `;
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="pill"><b>${escapeHtml(t)}</b></span><button type="button" class="secondary" data-del="${idx}" style="margin-left:8px;">Odebrat</button>`;
       elTeamList.appendChild(li);
     });
     elTeamCount.textContent = state.teams.length;
 
-    document.querySelectorAll("[data-del]").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        if(!isAdminUnlocked()){
-          setStatus("Úpravy jsou zamčené.", "warn");
-          return;
-        }
-        const i = parseInt(btn.getAttribute("data-del"), 10);
-        state.teams.splice(i, 1);
-        state.rounds = [];
-        await persistState();
-        renderAll();
-        setStatus("Tým byl odebrán. Rozpis zápasů byl smazán — vygenerujte ho znovu.", "warn");
-      });
-    });
+    document.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', async () => {
+      if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
+      const i = parseInt(btn.dataset.del, 10);
+      const removedTeam = state.teams[i];
+      state.teams.splice(i, 1);
+      state.rounds = [];
+      state.scorers = state.scorers.filter(s => s.team !== removedTeam);
+      await persistState();
+      renderAll();
+      setStatus('Tým byl odebrán. Rozpis zápasů byl smazán — vygenerujte ho znovu.', 'warn');
+    }));
   }
 
   function renderStandings(){
     const standings = computeStandingsWithH2H(state.teams, state.rounds);
-    elStandingsBody.innerHTML = "";
+    elStandingsBody.innerHTML = '';
     standings.forEach((r, idx) => {
-      const tr = document.createElement("tr");
-      if(idx === 0) tr.classList.add("pos1");
-      if(idx === 1) tr.classList.add("pos2");
-      if(idx === 2) tr.classList.add("pos3");
-      tr.innerHTML = `
-        <td>${idx + 1}</td>
-        <td class="team">${escapeHtml(r.team)}</td>
-        <td>${r.P}</td>
-        <td>${r.W}</td>
-        <td>${r.D}</td>
-        <td>${r.L}</td>
-        <td>${r.GF}</td>
-        <td>${r.GA}</td>
-        <td>${r.GD}</td>
-        <td><strong>${r.Pts}</strong></td>
-      `;
+      const tr = document.createElement('tr');
+      if(idx === 0) tr.classList.add('pos1');
+      if(idx === 1) tr.classList.add('pos2');
+      if(idx === 2) tr.classList.add('pos3');
+      tr.innerHTML = `<td>${idx + 1}</td><td class="team">${escapeHtml(r.team)}</td><td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF}</td><td>${r.GA}</td><td>${r.GD}</td><td><strong>${r.Pts}</strong></td>`;
       elStandingsBody.appendChild(tr);
     });
   }
 
   function renderMatches(){
-    elMatches.innerHTML = "";
+    elMatches.innerHTML = '';
     const flatMatches = getFlatMatches();
     elMatchCount.textContent = flatMatches.length;
 
-    flatMatches.forEach(item => {
-      const row = document.createElement("div");
-      row.className = "match";
+    flatMatches.forEach((item) => {
+      const row = document.createElement('div');
+      row.className = 'match';
       const sourceRound = state.rounds[item.roundIndex];
       const matchIndex = sourceRound ? sourceRound.matches.findIndex(x => x.id === item.id) : -1;
-
+      const teamsForMatch = [item.home, item.away];
       row.innerHTML = `
         <div class="time-badge">${item.slotStart || '--:--'}–${item.slotEnd || '--:--'}</div>
         <div class="pitch-badge">Hřiště ${item.pitch || 1}</div>
@@ -755,31 +792,53 @@
         <div class="t2">${escapeHtml(item.away)}</div>
         <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="D" value="${escapeAttr(item.hs)}" data-r="${item.roundIndex}" data-m="${matchIndex}" data-side="hs" />
         <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="H" value="${escapeAttr(item.as)}" data-r="${item.roundIndex}" data-m="${matchIndex}" data-side="as" />
+        <div class="match-tools export-panel"><button type="button" class="secondary tiny-btn" data-match-scorers="${item.id}">Střelci</button></div>
+        <div class="inline-editor" id="editor-${item.id}">
+          <div class="inline-form">
+            <label class="small-label">Jméno hráče<input data-inline-name="${item.id}" placeholder="Jméno hráče" /></label>
+            <label class="small-label">Tým<select data-inline-team="${item.id}"><option value="${escapeAttr(item.home)}">${escapeHtml(item.home)}</option><option value="${escapeAttr(item.away)}">${escapeHtml(item.away)}</option></select></label>
+            <label class="small-label">Góly<input data-inline-goals="${item.id}" type="number" min="1" max="99" step="1" value="1" /></label>
+            <button type="button" class="success" data-inline-add="${item.id}">Přidat</button>
+            <button type="button" class="danger" data-inline-remove="${item.id}">Odebrat</button>
+          </div>
+          <div class="inline-list" id="chips-${item.id}"></div>
+        </div>
       `;
       elMatches.appendChild(row);
-    });
+      renderInlineScorerChips(row.querySelector(`#chips-${CSS.escape(item.id)}`), item.id);
 
-    elMatches.querySelectorAll("input.score").forEach(inp => {
-      inp.addEventListener("input", async () => {
+      const toggleBtn = row.querySelector(`[data-match-scorers="${item.id}"]`);
+      const editor = row.querySelector(`#editor-${CSS.escape(item.id)}`);
+      toggleBtn.addEventListener('click', () => editor.classList.toggle('open'));
+
+      row.querySelectorAll('input.score').forEach(inp => inp.addEventListener('input', async () => {
         if(!isAdminUnlocked()){
-          setStatus("Úpravy jsou zamčené.", "warn");
-          renderMatches();
-          setEditingEnabled(false);
-          return;
+          setStatus('Úpravy jsou zamčené.', 'warn');
+          renderMatches(); setEditingEnabled(false); return;
         }
-        const r = parseInt(inp.getAttribute("data-r"), 10);
-        const m = parseInt(inp.getAttribute("data-m"), 10);
-        const side = inp.getAttribute("data-side");
+        const r = parseInt(inp.dataset.r, 10);
+        const m = parseInt(inp.dataset.m, 10);
+        const side = inp.dataset.side;
         let val = inp.value.trim();
-        if(val !== "" && !/^\d+$/.test(val)){
-          val = val.replace(/[^\d]/g, "");
-          inp.value = val;
-        }
+        if(val !== '' && !/^\d+$/.test(val)){ val = val.replace(/[^\d]/g, ''); inp.value = val; }
         if(state.rounds[r] && state.rounds[r].matches[m]){
           state.rounds[r].matches[m][side] = val;
           await persistState();
           renderStandings();
         }
+      }));
+
+      row.querySelector(`[data-inline-add="${item.id}"]`).addEventListener('click', async () => {
+        const name = row.querySelector(`[data-inline-name="${item.id}"]`).value;
+        const team = row.querySelector(`[data-inline-team="${item.id}"]`).value;
+        const goals = row.querySelector(`[data-inline-goals="${item.id}"]`).value;
+        await updateScorer(1, item.id, teamsForMatch, name, team, goals);
+      });
+      row.querySelector(`[data-inline-remove="${item.id}"]`).addEventListener('click', async () => {
+        const name = row.querySelector(`[data-inline-name="${item.id}"]`).value;
+        const team = row.querySelector(`[data-inline-team="${item.id}"]`).value;
+        const goals = row.querySelector(`[data-inline-goals="${item.id}"]`).value;
+        await updateScorer(-1, item.id, teamsForMatch, name, team, goals);
       });
     });
   }
@@ -789,46 +848,51 @@
     renderTeams();
     renderMatches();
     renderStandings();
+    renderScorers();
     setEditingEnabled(isAdminUnlocked());
     setStorageNotice();
   }
 
   async function addTeam(name){
-    if(!isAdminUnlocked()){
-      setStatus("Úpravy jsou zamčené.", "warn");
-      return;
-    }
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
     const n = normalizeName(name);
     if(!n) return;
-    if(state.teams.some(t => t.toLowerCase() === n.toLowerCase())){
-      setStatus("Tým už existuje (duplicity nejsou povoleny).", "warn");
-      return;
-    }
+    if(state.teams.some(t => t.toLowerCase() === n.toLowerCase())){ setStatus('Tým už existuje (duplicity nejsou povoleny).', 'warn'); return; }
     state.teams.push(n);
     state.rounds = [];
     await persistState();
     renderAll();
-    setStatus("Tým byl přidán. Až budete hotovi, vygenerujte zápasy.", "ok");
+    setStatus('Tým byl přidán. Až budete hotovi, vygenerujte zápasy.', 'ok');
   }
 
   function exportPdf(){
-    const options = {
-      margin: 8,
-      filename: `liga-${new Date().toISOString().slice(0,10)}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
-    };
+    const options = { margin: 8, filename: `liga-${new Date().toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css', 'legacy'] } };
     html2pdf().set(options).from(elPdfArea).save();
   }
 
+  function createSnapshotHtml(){
+    const standingsRows = Array.from(elStandingsBody.querySelectorAll('tr')).map(tr => tr.outerHTML).join('');
+    const scorerRows = Array.from(elScorersBody.querySelectorAll('tr')).map(tr => tr.outerHTML.replace(/<td class="export-panel">[\s\S]*?<\/td>/g, '')).join('');
+    const flatMatches = getFlatMatches().map(item => `
+      <div class="match"><div class="badge">${item.slotStart || '--:--'}–${item.slotEnd || '--:--'}</div><div class="badge">Hřiště ${item.pitch || 1}</div><div style="text-align:right;">${escapeHtml(item.home)}</div><div>vs</div><div style="text-align:left;">${escapeHtml(item.away)}</div><div>${escapeHtml(item.hs || '')}</div><div>${escapeHtml(item.as || '')}</div></div>`).join('');
+    const topHtml = elTopScorerBox.innerHTML;
+    return `<!doctype html><html lang="cs"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Ligový report</title><style>body{font-family:Arial,sans-serif;margin:24px;color:#111;background:#fff;}h1,h2{margin:0 0 12px;}.section{margin-bottom:24px;}table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #999;padding:8px;text-align:center;font-size:13px;}th{background:#eee;}td.left{text-align:left;}.pos1 td{background:#f6e49d!important;}.pos2 td{background:#d9dde5!important;}.pos3 td{background:#e7c0ae!important;}.match{display:grid;grid-template-columns:95px 110px 1fr auto 1fr 60px 60px;gap:8px;align-items:center;border:1px solid #bbb;border-radius:10px;padding:8px;margin-bottom:8px;}.badge{display:inline-block;padding:4px 8px;border:1px solid #999;border-radius:999px;background:#f7f7f7;font-size:12px;}.leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid #bbb;background:#f9f9f9;margin-bottom:10px;}.leader-icon{font-size:28px;line-height:1;}.leader-title{font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.05em;}.leader-name{font-size:18px;font-weight:700;}.leader-meta{font-size:13px;color:#222;}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f7f7f7;border:1px solid #bbb;font-size:12px;}</style></head><body><h1>Ligový report</h1><div class="section"><h2>Tabulka</h2><table><thead><tr><th>Poř.</th><th style="text-align:left;">Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead><tbody>${standingsRows}</tbody></table></div><div class="section"><h2>Nejlepší střelec</h2><div class="leader-box">${topHtml}</div></div><div class="section"><h2>Zápasy</h2>${flatMatches}</div><div class="section"><h2>Střelci gólů</h2><table><thead><tr><th>Poř.</th><th style="text-align:left;">Hráč</th><th style="text-align:left;">Tým</th><th>Góly</th></tr></thead><tbody>${scorerRows}</tbody></table></div></body></html>`;
+  }
+
+  function exportHtmlSnapshot(){
+    const html = createSnapshotHtml();
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `liga-report-${new Date().toISOString().slice(0,10)}.html`;
+    document.body.appendChild(a);
+    a.click(); a.remove(); URL.revokeObjectURL(url);
+    setStatus('HTML stránka byla vytvořena a stažena.', 'ok');
+  }
+
   async function regenerateScheduleAfterSettingsChange(message){
-    if(!isAdminUnlocked()){
-      setStatus("Úpravy jsou zamčené.", "warn");
-      syncInputsFromState();
-      return;
-    }
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); syncInputsFromState(); return; }
     state.pitchCount = clampInt(elPitchCount.value, 1, 8, state.pitchCount);
     state.matchDuration = clampInt(elMatchDuration.value, 1, 180, state.matchDuration);
     state.breakDuration = clampInt(elBreakDuration.value, 0, 180, state.breakDuration);
@@ -836,155 +900,104 @@
     state.rounds = [];
     await persistState();
     renderAll();
-    setStatus(message, "ok");
+    setStatus(message, 'ok');
   }
 
   function loadSharedState(){
-    if(!FIREBASE_ENABLED){
-      renderAll();
-      return;
-    }
-
-    onValue(ref(db, DB_PATH), (snapshot) => {
+    if(!FIREBASE_ENABLED){ renderAll(); return; }
+    onValue(ref(db, DB_PATH), snapshot => {
       const data = snapshot.val();
       suppressSave = true;
       state = data ? normalizeState(data) : defaultState();
       saveLocalBackup();
       renderAll();
       suppressSave = false;
-    }, (error) => {
+    }, error => {
       console.error(error);
-      setStatus("Nepodařilo se načíst sdílená data z Firebase.", "warn");
+      setStatus('Nepodařilo se načíst sdílená data z Firebase.', 'warn');
       renderAll();
     });
   }
 
-  elAddTeamBtn.addEventListener("click", async () => {
-    await addTeam(elTeamName.value);
-    elTeamName.value = "";
-    elTeamName.focus();
+  elAddTeamBtn.addEventListener('click', async () => {
+    await addTeam(elTeamName.value); elTeamName.value = ''; elTeamName.focus();
+  });
+  elTeamName.addEventListener('keydown', async e => {
+    if(e.key === 'Enter'){ e.preventDefault(); await addTeam(elTeamName.value); elTeamName.value = ''; elTeamName.focus(); }
   });
 
-  elTeamName.addEventListener("keydown", async (e) => {
-    if(e.key === "Enter"){
-      e.preventDefault();
-      await addTeam(elTeamName.value);
-      elTeamName.value = "";
-      elTeamName.focus();
-    }
-  });
+  elPitchCount.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Počet hřišť byl uložen. Pro nový rozpis vygenerujte zápasy znovu.'));
+  elMatchDuration.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Délka zápasu byla uložena. Pro nový rozpis vygenerujte zápasy znovu.'));
+  elBreakDuration.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Pauza mezi zápasy byla uložena. Pro nový rozpis vygenerujte zápasy znovu.'));
+  elStartTime.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Začátek 1. bloku byl uložen. Pro nový rozpis vygenerujte zápasy znovu.'));
 
-  elPitchCount.addEventListener("change", async () => {
-    await regenerateScheduleAfterSettingsChange("Počet hřišť byl uložen. Pro nový rozpis vygenerujte zápasy znovu.");
-  });
-
-  elMatchDuration.addEventListener("change", async () => {
-    await regenerateScheduleAfterSettingsChange("Délka zápasu byla uložena. Pro nový rozpis vygenerujte zápasy znovu.");
-  });
-
-  elBreakDuration.addEventListener("change", async () => {
-    await regenerateScheduleAfterSettingsChange("Pauza mezi zápasy byla uložena. Pro nový rozpis vygenerujte zápasy znovu.");
-  });
-
-  elStartTime.addEventListener("change", async () => {
-    await regenerateScheduleAfterSettingsChange("Začátek 1. bloku byl uložen. Pro nový rozpis vygenerujte zápasy znovu.");
-  });
-
-  elGenerateBtn.addEventListener("click", async () => {
-    if(!isAdminUnlocked()){
-      setStatus("Úpravy jsou zamčené.", "warn");
-      return;
-    }
-    if(state.teams.length < 2){
-      setStatus("Nejdříve přidejte alespoň 2 týmy.", "warn");
-      return;
-    }
+  elGenerateBtn.addEventListener('click', async () => {
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
+    if(state.teams.length < 2){ setStatus('Nejdříve přidejte alespoň 2 týmy.', 'warn'); return; }
     state.pitchCount = clampInt(elPitchCount.value, 1, 8, state.pitchCount);
     state.matchDuration = clampInt(elMatchDuration.value, 1, 180, state.matchDuration);
     state.breakDuration = clampInt(elBreakDuration.value, 0, 180, state.breakDuration);
     state.startTime = isValidTime(elStartTime.value) ? elStartTime.value : state.startTime;
-    state.rounds = generateRoundRobin(state.teams, state.pitchCount, state.matchDuration, state.breakDuration, state.startTime);
+    state.rounds = scheduleFair(generateAllPairs(state.teams), state.pitchCount, state.matchDuration, state.breakDuration, state.startTime);
     await persistState();
     renderAll();
-    setStatus(`Rozpis zápasů byl vygenerován pro ${state.pitchCount} hřiště / hřišť.`, "ok");
+    setStatus(`Rozpis zápasů byl vygenerován pro ${state.pitchCount} hřiště / hřišť.`, 'ok');
   });
 
-  elResetBtn.addEventListener("click", async () => {
-    if(!isAdminUnlocked()){
-      setStatus("Úpravy jsou zamčené.", "warn");
-      return;
-    }
-    if(!confirm("Opravdu chcete vše resetovat? Týmy, zápasy i skóre budou smazány pro všechny návštěvníky.")) return;
+  elResetBtn.addEventListener('click', async () => {
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
+    if(!confirm('Opravdu chcete vše resetovat? Týmy, zápasy, střelci i skóre budou smazány pro všechny návštěvníky.')) return;
     state = defaultState();
     await persistState();
     renderAll();
-    elJsonBox.value = "";
-    setStatus("Vše bylo resetováno.", "ok");
+    elJsonBox.value = '';
+    setStatus('Vše bylo resetováno.', 'ok');
   });
 
-  elExportBtn.addEventListener("click", () => {
-    if(!isAdminUnlocked()){
-      setStatus("Úpravy jsou zamčené.", "warn");
-      return;
-    }
+  elExportBtn.addEventListener('click', () => {
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
     elJsonBox.value = JSON.stringify(state, null, 2);
-    setStatus("Export hotov. JSON si zkopírujte pro zálohu nebo přenos.", "ok");
+    setStatus('Export hotov. JSON si zkopírujte pro zálohu nebo přenos.', 'ok');
   });
 
-  elImportBtn.addEventListener("click", async () => {
-    if(!isAdminUnlocked()){
-      setStatus("Úpravy jsou zamčené.", "warn");
-      return;
-    }
+  elImportBtn.addEventListener('click', async () => {
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
     const raw = elJsonBox.value.trim();
-    if(!raw){
-      setStatus("Nejdříve vložte JSON do pole výše.", "warn");
-      return;
-    }
+    if(!raw){ setStatus('Nejdříve vložte JSON do pole výše.', 'warn'); return; }
     try{
-      const obj = JSON.parse(raw);
-      state = normalizeState(obj);
+      state = normalizeState(JSON.parse(raw));
       await persistState();
       renderAll();
-      setStatus("Import proběhl úspěšně.", "ok");
-    }catch(e){
-      setStatus("Neplatný JSON (chyba při čtení).", "warn");
-    }
+      setStatus('Import proběhl úspěšně.', 'ok');
+    }catch(e){ setStatus('Neplatný JSON (chyba při čtení).', 'warn'); }
   });
 
-  elExportPdfBtn.addEventListener("click", exportPdf);
+  elAddGoalsBtn.addEventListener('click', async () => { await updateScorer(1); });
+  elRemoveGoalsBtn.addEventListener('click', async () => { await updateScorer(-1); });
+  elScorerFilterTeam.addEventListener('change', () => { state.scorerFilterTeam = elScorerFilterTeam.value; renderScorers(); });
+
+  elExportPdfBtn.addEventListener('click', exportPdf);
+  elExportHtmlBtn.addEventListener('click', exportHtmlSnapshot);
 
   function doUnlock(){
-    const pin = prompt("Zadejte PIN správce:");
+    const pin = prompt('Zadejte PIN správce:');
     if(pin === null) return;
-    if(pin === ADMIN_PIN){
-      setAdminUnlocked(true);
-      renderAll();
-      setStatus("Režim správce byl aktivován.", "ok");
-    }else{
-      setStatus("Nesprávný PIN.", "warn");
-    }
+    if(pin === ADMIN_PIN){ setAdminUnlocked(true); renderAll(); setStatus('Režim správce byl aktivován.', 'ok'); }
+    else setStatus('Nesprávný PIN.', 'warn');
   }
+  function doLock(){ setAdminUnlocked(false); renderAll(); setStatus('Režim správce byl zamčen.', 'ok'); }
 
-  function doLock(){
-    setAdminUnlocked(false);
-    renderAll();
-    setStatus("Režim správce byl zamčen.", "ok");
-  }
+  elUnlockBtn.addEventListener('click', doUnlock);
+  elLockBtn.addEventListener('click', doLock);
 
-  elUnlockBtn.addEventListener("click", doUnlock);
-  elLockBtn.addEventListener("click", doLock);
-
-  document.addEventListener("DOMContentLoaded", function(){
-    elUnlockBtn.style.pointerEvents = "auto";
-    elUnlockBtn.style.zIndex = "6000";
-    elLockBtn.style.pointerEvents = "auto";
-    elLockBtn.style.zIndex = "6000";
+  document.addEventListener('DOMContentLoaded', () => {
+    elUnlockBtn.style.pointerEvents = 'auto'; elUnlockBtn.style.zIndex = '6000';
+    elLockBtn.style.pointerEvents = 'auto'; elLockBtn.style.zIndex = '6000';
     syncInputsFromState();
   });
 
   const params = new URLSearchParams(window.location.search);
-  if(params.get("view") === "1") setAdminUnlocked(false);
+  if(params.get('view') === '1') setAdminUnlocked(false);
 
   setStorageNotice();
   loadSharedState();
