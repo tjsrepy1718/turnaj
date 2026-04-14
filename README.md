@@ -21,20 +21,20 @@ Overall goals for
 Team name
 
 Postup
-Otevři admin.html a vyplň/změň data, která chceš v turnaji aktualizovat.
+Otevři https://tjsrepy1718.github.io/turnaj/admin.html a vyplň/změň data, která chceš v turnaji aktualizovat.
 
 Klikni na Vygenerovat zápasy, pokud jsi měnil týmy nebo plán turnaje.
 
+vyplň skóre/střelce
+
 Klikni na export pro GIT — stáhne se soubor public-data.json.
 
-V GitHubu otevři svůj repozitář a nahraj ten nový public-data.json do stejné složky, kde je index.html.
+V GitHubu (https://github.com/tjsrepy1718/turnaj) nahraj ten nový public-data.json do stejné složky, kde je index.html. vždycky se musí jmenovat "public-data.json"
 
 Jak to nahrát na GitHub
 Na GitHubu otevři repo a použij Add file → Upload files nebo přímo editaci souboru přes webové rozhraní.
 
 Vyber nový public-data.json.
-
-Do commit message napiš něco jako Update public-data.json.
 
 Potvrď commit změny.
 
@@ -44,6 +44,8 @@ Kdykoliv změníš týmy, výsledky nebo střelce v admin.html, musíš znovu kl
 Starý public-data.json pak v repu přepiš novým souborem.
 
 index.html pak při načtení vezme nová data z public-data.json.
+
+výsledky pro rodiče jsou tady https://tjsrepy1718.github.io/turnaj/
 
 
 
