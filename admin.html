@@ -38,6 +38,8 @@
     button{cursor:pointer;background:linear-gradient(180deg,var(--accent2),var(--accent));border-color:color-mix(in srgb, var(--accent) 70%, #000);width:auto;}
     button:hover{filter:brightness(1.05);}
     button.secondary{background:#f7faf8;}
+    button.git-export{background:linear-gradient(180deg,#ffe08a,#f0b400);border-color:#c08a00;color:#2d2000;font-weight:700;}
+    button.git-export:hover{filter:brightness(1.04);}
     button.success{background:linear-gradient(180deg,#18a957,#0f7a3c);border-color:#0f7a3c;}
     button.danger{background:linear-gradient(180deg,#d43a42,#b4232c);border-color:#b4232c;}
     button:disabled, input:disabled, textarea:disabled, select:disabled{opacity:.45;cursor:not-allowed;}
@@ -164,7 +166,7 @@
       <div class="actions-wrap export-panel">
         <button id="exportPdfBtn" type="button" class="secondary">Export do PDF</button>
         <button id="exportHtmlBtn" type="button" class="secondary">Export HTML</button>
-        <button id="exportGitBtn" type="button" class="secondary">export pro GIT</button>
+        <button id="exportGitBtn" type="button" class="secondary git-export">export pro GIT</button>
         <button id="exportImgStandingsBtn" type="button" class="secondary">Export tabulka (PNG)</button>
         <button id="exportImgMatchesBtn" type="button" class="secondary">Export zápasy (PNG)</button>
         <button id="exportImgScorersBtn" type="button" class="secondary">Export střelci (PNG)</button>
