@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Free League Manager</title>
+  <style>
+    :root{--bg:#0b1220;--card:#121a2b;--muted:#9fb0d0;--text:#e8efff;--accent:#6aa7ff;--line:#24314e;}
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#081022, #0b1220); color:var(--text);}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px;}
+    h1{font-size:22px;margin:0 0 12px;}
+    .grid{display:grid;grid-template-columns: 1fr; gap:12px;}
+    @media(min-width:980px){.grid{grid-template-columns: 360px 1fr;}}
+    .card{background:rgba(18,26,43,.92);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:14px;}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    input, button, textarea{
+      border-radius:12px;border:1px solid var(--line);
+      background:#0b1326;color:var(--text);padding:10px 12px;font-size:14px;
+    }
+    input:focus, textarea:focus{outline:2px solid rgba(106,167,255,.35);border-color:rgba(106,167,255,.6);}
+    button{cursor:pointer;background:linear-gradient(180deg,#1a2b52,#132441);border-color:#2a3f6f;}
+    button:hover{filter:brightness(1.05);}
+    button.secondary{background:#0b1326;}
+    button.danger{background:linear-gradient(180deg,#5a1f2b,#3c1420);border-color:#6d2a39;}
+    button:disabled, input:disabled{opacity:.45;cursor:not-allowed;}
+    .muted{color:var(--muted);font-size:13px;line-height:1.4;}
+    ul{margin:10px 0 0;padding-left:18px;}
+    li{margin:6px 0;}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#0b1326;}
+    .pill b{font-weight:600;}
+    .table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:16px;border:1px solid var(--line);}
+    .table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;font-size:13px;}
+    .table th{background:#0b1326;color:#cfe0ff;font-weight:600;}
+    .table td.team{text-align:left;}
+    .table tr:nth-child(even) td{background:rgba(11,19,38,.4);}
+    .split{display:grid;grid-template-columns: 1fr; gap:12px;}
+    @media(min-width:980px){.split{grid-template-columns: 1fr 1fr;}}
+    .matches{display:grid;gap:10px;}
+    details{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0b1326;}
+    summary{cursor:pointer;padding:10px 12px;font-weight:600;color:#cfe0ff;user-select:none;}
+    .round{padding:10px 12px;background:rgba(18,26,43,.55);display:grid;gap:8px;}
+    .match{display:grid;grid-template-columns: 1fr auto 1fr auto auto; gap:8px; align-items:center;}
+    .match .t1{text-align:right;}
+    .match .t2{text-align:left;}
+    .score{width:64px;text-align:center;}
+    .sep{color:var(--muted)}
+    .small{font-size:12px;color:var(--muted);}
+    .footer{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;}
+    textarea{width:100%;min-height:90px;resize:vertical;}
+    .ok{color:#8cffb0}
+    .warn{color:#ffd28c}
+    .lockbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;}
+    .badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#0b1326;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>League Manager — Single round-robin + Head-to-head tie-breaker</h1>
+
+  <div class="grid">
+    <div class="card">
+
+      <div class="lockbar">
+        <span class="badge" id="lockState">🔒 View mode (editing locked)</span>
+        <div class="row">
+          <button id="unlockBtn" class="secondary">Unlock</button>
+          <button id="lockBtn" class="secondary" style="display:none;">Lock</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <input id="teamName" placeholder="Add team name…" style="flex:1;" />
+        <button id="addTeamBtn">Add</button>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button id="generateBtn">Generate matches</button>
+        <button id="resetBtn" class="danger">Reset all</button>
+      </div>
+
+      <p class="muted" style="margin-top:10px;">
+        ✅ No duplicate matches (single round). Handles odd number of teams (BYE).<br>
+        ✅ Enter scores → standings update instantly.<br>
+        ✅ Head-to-head tie-breaker (mini-table inside tied teams).<br>
+        ✅ Data saved in your browser (localStorage).
+      </p>
+
+      <div style="margin-top:10px;">
+        <div class="row" style="justify-content:space-between;">
+          <span class="pill"><b>Teams:</b> <span id="teamCount">0</span></span>
+          <span class="pill"><b>Matches:</b> <span id="matchCount">0</span></span>
+        </div>
+
+        <ul id="teamList"></ul>
+      </div>
+
+      <hr style="border:0;border-top:1px solid var(--line);margin:14px 0;">
+
+      <h3 style="margin:0 0 8px;font-size:15px;">Backup / share</h3>
+      <p class="muted" style="margin:0 0 8px;">
+        Export your league to JSON and import it on another device (admin only).
+      </p>
+      <div class="row">
+        <button id="exportBtn" class="secondary">Export JSON</button>
+        <button id="importBtn" class="secondary">Import JSON</button>
+      </div>
+      <div style="margin-top:10px;">
+        <textarea id="jsonBox" placeholder="Exported JSON appears here… (or paste JSON to import)"></textarea>
+        <div class="small" id="status"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="split">
+        <div>
+          <h2 style="margin:0 0 8px;font-size:16px;">Standings</h2>
+          <table class="table" id="standingsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th style="text-align:left;">Team</th>
+                <th>P</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>GF</th>
+                <th>GA</th>
+                <th>GD</th>
+                <th>Pts</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p class="small">
+            Sorting: Points → Head-to-head (Pts, GD, GF) → Overall GD → Overall GF → Team name
+          </p>
+        </div>
+
+        <div>
+          <h2 style="margin:0 0 8px;font-size:16px;">Matches</h2>
+          <div class="matches" id="matches"></div>
+          <p class="small">Tip: click a “Round” to expand. Scores: integers (0,1,2…).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * =========================
+ * ADMIN LOCK (client-side)
+ * =========================
+ * Change the PIN below to your own.
+ */
+const ADMIN_PIN = "2803"; // <-- CHANGE THIS (4-8 digits recommended)
+const ADMIN_LS_KEY = "league_admin_unlocked_v1";
+
+/**
+ * =========================
+ * Storage
+ * =========================
+ */
+const LS_KEY = "league_manager_v2_h2h_single";
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return { teams: [], rounds: [] };
+    const obj = JSON.parse(raw);
+    if(!obj || !Array.isArray(obj.teams) || !Array.isArray(obj.rounds)) return { teams: [], rounds: [] };
+    return obj;
+  }catch(e){
+    return { teams: [], rounds: [] };
+  }
+}
+function saveState(){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function isAdminUnlocked(){
+  return localStorage.getItem(ADMIN_LS_KEY) === "1";
+}
+function setAdminUnlocked(v){
+  localStorage.setItem(ADMIN_LS_KEY, v ? "1" : "0");
+}
+
+/**
+ * =========================
+ * Round-robin generator (circle method)
+ * Single round, no duplicates, handles odd teams (BYE).
+ * =========================
+ */
+function generateRoundRobin(teams){
+  let list = teams.slice();
+  const BYE = "__BYE__";
+  if(list.length % 2 === 1) list.push(BYE);
+
+  const n = list.length;
+  const rounds = n - 1;
+  const half = n / 2;
+
+  const fixed = list[0];
+  let rot = list.slice(1);
+
+  const out = [];
+  for(let r=0; r<rounds; r++){
+    const left = [fixed, ...rot.slice(0, half-1)];
+    const right = rot.slice(half-1).slice().reverse();
+
+    const matches = [];
+    for(let i=0; i<half; i++){
+      const home = left[i];
+      const away = right[i];
+      if(home !== BYE && away !== BYE){
+        matches.push({
+          id: cryptoRandomId(),
+          home, away,
+          hs: "", as: ""
+        });
+      }
+    }
+    out.push({ name: `Round ${r+1}`, matches });
+
+    rot = [rot[rot.length-1], ...rot.slice(0, rot.length-1)];
+  }
+  return out;
+}
+
+function cryptoRandomId(){
+  return (crypto?.randomUUID?.() ?? ("id_" + Math.random().toString(16).slice(2) + Date.now()));
+}
+
+/**
+ * =========================
+ * Stats calculation
+ * =========================
+ */
+function emptyRow(team){
+  return { team, P:0, W:0, D:0, L:0, GF:0, GA:0, GD:0, Pts:0 };
+}
+
+function applyMatch(rowHome, rowAway, hs, as){
+  rowHome.P++; rowAway.P++;
+  rowHome.GF += hs; rowHome.GA += as;
+  rowAway.GF += as; rowAway.GA += hs;
+
+  if(hs > as){
+    rowHome.W++; rowHome.Pts += 3;
+    rowAway.L++;
+  }else if(hs < as){
+    rowAway.W++; rowAway.Pts += 3;
+    rowHome.L++;
+  }else{
+    rowHome.D++; rowAway.D++;
+    rowHome.Pts += 1; rowAway.Pts += 1;
+  }
+}
+
+function computeOverallTable(teams, rounds){
+  const map = new Map();
+  teams.forEach(t => map.set(t, emptyRow(t)));
+
+  for(const rd of rounds){
+    for(const m of rd.matches){
+      const hs = parseInt(m.hs,10);
+      const as = parseInt(m.as,10);
+      if(Number.isNaN(hs) || Number.isNaN(as)) continue;
+
+      const home = map.get(m.home);
+      const away = map.get(m.away);
+      if(!home || !away) continue;
+
+      applyMatch(home, away, hs, as);
+    }
+  }
+
+  for(const row of map.values()){
+    row.GD = row.GF - row.GA;
+  }
+  return map;
+}
+
+/**
+ * =========================
+ * Head-to-head tie-breaker
+ * For each points group, we compute a mini-table only among tied teams.
+ * Sort inside group by: H2H Pts, H2H GD, H2H GF, then overall GD, overall GF, name
+ * =========================
+ */
+function computeMiniTable(teamSet, rounds){
+  const mini = new Map();
+  for(const t of teamSet) mini.set(t, emptyRow(t));
+
+  for(const rd of rounds){
+    for(const m of rd.matches){
+      const hs = parseInt(m.hs,10);
+      const as = parseInt(m.as,10);
+      if(Number.isNaN(hs) || Number.isNaN(as)) continue;
+
+      if(!teamSet.has(m.home) || !teamSet.has(m.away)) continue;
+
+      const home = mini.get(m.home);
+      const away = mini.get(m.away);
+      if(!home || !away) continue;
+
+      applyMatch(home, away, hs, as);
+    }
+  }
+  for(const row of mini.values()){
+    row.GD = row.GF - row.GA;
+  }
+  return mini;
+}
+
+function computeStandingsWithH2H(teams, rounds){
+  const overall = computeOverallTable(teams, rounds);
+  const allRows = Array.from(overall.values());
+
+  // group by points (descending)
+  const byPts = new Map();
+  for(const row of allRows){
+    if(!byPts.has(row.Pts)) byPts.set(row.Pts, []);
+    byPts.get(row.Pts).push(row);
+  }
+
+  const ptsKeys = Array.from(byPts.keys()).sort((a,b)=>b-a);
+  const final = [];
+
+  for(const pts of ptsKeys){
+    const group = byPts.get(pts);
+
+    if(group.length <= 1){
+      final.push(...group);
+      continue;
+    }
+
+    // compute mini-table among tied teams
+    const set = new Set(group.map(r => r.team));
+    const mini = computeMiniTable(set, rounds);
+
+    group.sort((a,b)=>{
+      const ma = mini.get(a.team);
+      const mb = mini.get(b.team);
+
+      // head-to-head metrics
+      const h2hPtsA = ma ? ma.Pts : 0;
+      const h2hPtsB = mb ? mb.Pts : 0;
+      const h2hGDA   = ma ? ma.GD  : 0;
+      const h2hGDB   = mb ? mb.GD  : 0;
+      const h2hGFA   = ma ? ma.GF  : 0;
+      const h2hGFB   = mb ? mb.GF  : 0;
+
+      return (h2hPtsB - h2hPtsA) ||
+             (h2hGDB - h2hGDA)   ||
+             (h2hGFB - h2hGFA)   ||
+             (b.GD - a.GD)       ||
+             (b.GF - a.GF)       ||
+             a.team.localeCompare(b.team);
+    });
+
+    final.push(...group);
+  }
+
+  return final;
+}
+
+/**
+ * =========================
+ * UI
+ * =========================
+ */
+let state = loadState();
+
+const elTeamName = document.getElementById("teamName");
+const elAddTeamBtn = document.getElementById("addTeamBtn");
+const elGenerateBtn = document.getElementById("generateBtn");
+const elResetBtn = document.getElementById("resetBtn");
+const elTeamList = document.getElementById("teamList");
+const elTeamCount = document.getElementById("teamCount");
+const elMatchCount = document.getElementById("matchCount");
+const elStandingsBody = document.querySelector("#standingsTable tbody");
