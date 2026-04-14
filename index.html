@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="cs">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Free League Manager</title>
+  <title>Správce ligy zdarma</title>
   <style>
     :root{
       --bg:#0b1220;
@@ -12,19 +12,22 @@
       --text:#e8efff;
       --accent:#6aa7ff;
       --line:#24314e;
+      --gold:#6a5200;
+      --silver:#3d4654;
+      --bronze:#5c3b2f;
     }
 
     *{box-sizing:border-box}
 
     body{
       margin:0;
-      font-family:system-ui,Segoe UI,Roboto,Arial;
+      font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
       background:linear-gradient(180deg,#081022,#0b1220);
       color:var(--text);
     }
 
     .wrap{
-      max-width:1100px;
+      max-width:1200px;
       margin:0 auto;
       padding:18px;
     }
@@ -41,9 +44,7 @@
     }
 
     @media(min-width:980px){
-      .grid{
-        grid-template-columns:360px 1fr;
-      }
+      .grid{grid-template-columns:380px 1fr;}
     }
 
     .card{
@@ -54,7 +55,7 @@
       padding:14px;
       position:relative;
       overflow:visible;
-      isolation:isolate; /* důležité proti překryvům */
+      isolation:isolate;
       z-index:1;
     }
 
@@ -66,7 +67,23 @@
       position:relative;
     }
 
-    input, button, textarea{
+    .controls-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    label.small-label{
+      font-size:13px;
+      color:var(--muted);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:110px;
+    }
+
+    input, select, button, textarea{
       border-radius:12px;
       border:1px solid var(--line);
       background:#0b1326;
@@ -74,10 +91,10 @@
       padding:10px 12px;
       font-size:14px;
       position:relative;
+      width:100%;
     }
 
-    input:focus,
-    textarea:focus{
+    input:focus, textarea:focus, select:focus{
       outline:2px solid rgba(106,167,255,.35);
       border-color:rgba(106,167,255,.6);
     }
@@ -86,42 +103,21 @@
       cursor:pointer;
       background:linear-gradient(180deg,#1a2b52,#132441);
       border-color:#2a3f6f;
+      width:auto;
     }
 
-    button:hover{
-      filter:brightness(1.05);
-    }
+    button:hover{filter:brightness(1.05);}
+    button.secondary{background:#0b1326;}
+    button.danger{background:linear-gradient(180deg,#5a1f2b,#3c1420);border-color:#6d2a39;}
 
-    button.secondary{
-      background:#0b1326;
-    }
-
-    button.danger{
-      background:linear-gradient(180deg,#5a1f2b,#3c1420);
-      border-color:#6d2a39;
-    }
-
-    button:disabled,
-    input:disabled,
-    textarea:disabled{
+    button:disabled, input:disabled, textarea:disabled, select:disabled{
       opacity:.45;
       cursor:not-allowed;
     }
 
-    .muted{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.4;
-    }
-
-    ul{
-      margin:10px 0 0;
-      padding-left:18px;
-    }
-
-    li{
-      margin:6px 0;
-    }
+    .muted{color:var(--muted);font-size:13px;line-height:1.4;}
+    ul{margin:10px 0 0;padding-left:18px;}
+    li{margin:6px 0;}
 
     .pill{
       display:inline-flex;
@@ -131,11 +127,10 @@
       padding:6px 10px;
       border-radius:999px;
       background:#0b1326;
+      white-space:nowrap;
     }
 
-    .pill b{
-      font-weight:600;
-    }
+    .pill b{font-weight:600;}
 
     .table{
       width:100%;
@@ -147,80 +142,59 @@
       z-index:1;
     }
 
-    .table th,
-    .table td{
+    .table th,.table td{
       padding:10px 8px;
       border-bottom:1px solid var(--line);
       text-align:center;
       font-size:13px;
     }
 
-    .table th{
-      background:#0b1326;
+    .table th{background:#0b1326;color:#cfe0ff;font-weight:600;}
+    .table td.team{text-align:left;}
+    .table tr:nth-child(even) td{background:rgba(11,19,38,.4);}
+
+    .table tr.pos1 td{background:rgba(106,82,0,.35) !important;}
+    .table tr.pos2 td{background:rgba(61,70,84,.45) !important;}
+    .table tr.pos3 td{background:rgba(92,59,47,.45) !important;}
+    .table tr.pos1 td:first-child,
+    .table tr.pos2 td:first-child,
+    .table tr.pos3 td:first-child{font-weight:700;}
+
+    .split{display:grid;grid-template-columns:1fr;gap:12px;}
+    @media(min-width:980px){.split{grid-template-columns:1fr 1fr;}}
+
+    .matches{display:grid;gap:10px;position:relative;z-index:1;}
+    details{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0b1326;position:relative;z-index:1;}
+    summary{cursor:pointer;padding:10px 12px;font-weight:600;color:#cfe0ff;user-select:none;position:relative;z-index:1;}
+    .round{padding:10px 12px;background:rgba(18,26,43,.55);display:grid;gap:8px;position:relative;z-index:1;}
+
+    .slot-title{
+      font-size:12px;
       color:#cfe0ff;
+      border-top:1px solid var(--line);
+      padding-top:8px;
+      margin-top:4px;
       font-weight:600;
     }
 
-    .table td.team{
-      text-align:left;
-    }
-
-    .table tr:nth-child(even) td{
-      background:rgba(11,19,38,.4);
-    }
-
-    .split{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-    }
-
-    @media(min-width:980px){
-      .split{
-        grid-template-columns:1fr 1fr;
-      }
-    }
-
-    .matches{
-      display:grid;
-      gap:10px;
-      position:relative;
-      z-index:1;
-    }
-
-    details{
-      border:1px solid var(--line);
-      border-radius:16px;
-      overflow:hidden;
-      background:#0b1326;
-      position:relative;
-      z-index:1;
-    }
-
-    summary{
-      cursor:pointer;
-      padding:10px 12px;
-      font-weight:600;
-      color:#cfe0ff;
-      user-select:none;
-      position:relative;
-      z-index:1;
-    }
-
-    .round{
-      padding:10px 12px;
-      background:rgba(18,26,43,.55);
-      display:grid;
-      gap:8px;
-      position:relative;
-      z-index:1;
-    }
+    .slot-title:first-child{border-top:none;padding-top:0;margin-top:0;}
 
     .match{
       display:grid;
-      grid-template-columns:1fr auto 1fr auto auto;
+      grid-template-columns:95px 1fr auto 1fr auto auto;
       gap:8px;
       align-items:center;
+    }
+
+    .pitch-badge{
+      font-size:12px;
+      color:#cfe0ff;
+      background:#101b33;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 8px;
+      text-align:center;
+      white-space:nowrap;
     }
 
     .match .t1{text-align:right;}
@@ -228,85 +202,104 @@
     .score{width:64px;text-align:center;}
     .sep{color:var(--muted);}
     .small{font-size:12px;color:var(--muted);}
-    .footer{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;}
     textarea{width:100%;min-height:90px;resize:vertical;}
     .ok{color:#8cffb0;}
     .warn{color:#ffd28c;}
+    .notice{padding:10px 12px;border-radius:12px;background:#0f1b35;border:1px solid var(--line);margin-top:10px;}
+    .pdf-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
 
-    /* =========================
-       FIX PRO UNLOCK
-    ========================== */
-    .lockbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      margin-bottom:10px;
-      position:relative;
-      z-index:5000;
-      pointer-events:auto;
-    }
+    /* Fix pro odemykací tlačítko */
+    .lockbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;position:relative;z-index:5000;pointer-events:auto;}
+    .lockbar .row{position:relative;z-index:5001;pointer-events:auto;}
+    #unlockBtn,#lockBtn{position:relative;z-index:6000;pointer-events:auto;}
+    .badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#0b1326;position:relative;z-index:4999;pointer-events:none;}
 
-    .lockbar .row{
-      position:relative;
-      z-index:5001;
-      pointer-events:auto;
-    }
-
-    #unlockBtn,
-    #lockBtn{
-      position:relative;
-      z-index:6000;
-      pointer-events:auto;
-    }
-
-    .badge{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#0b1326;
-      position:relative;
-      z-index:4999;
-      pointer-events:none;
+    @media print {
+      body{background:#fff;color:#111;}
+      .wrap{max-width:none;padding:0;}
+      .card{box-shadow:none;border:1px solid #999;background:#fff;color:#111;}
+      .muted,.small,.badge,.lockbar,.controls-panel,.json-panel,.pdf-actions{display:none !important;}
+      .table th{background:#eee;color:#111;}
+      details{border:1px solid #999;background:#fff;}
+      summary{color:#111;}
+      .round{background:#fff;}
+      .pitch-badge{color:#111;background:#f5f5f5;border-color:#bbb;}
     }
   </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>League Manager — Single round-robin + Head-to-head tie-breaker</h1>
+  <h1>Správce ligy — každý s každým + vzájemné zápasy</h1>
 
   <div class="grid">
-    <div class="card">
+    <div class="card controls-panel">
       <div class="lockbar">
-        <span class="badge" id="lockState">🔒 View mode (editing locked)</span>
+        <span class="badge" id="lockState">🔒 Režim prohlížení (úpravy zamčeny)</span>
         <div class="row">
-          <button id="unlockBtn" type="button" class="secondary">Unlock</button>
-          <button id="lockBtn" type="button" class="secondary" style="display:none;">Lock</button>
+          <button id="unlockBtn" type="button" class="secondary">Odemknout</button>
+          <button id="lockBtn" type="button" class="secondary" style="display:none;">Zamknout</button>
         </div>
       </div>
 
       <div class="row">
-        <input id="teamName" placeholder="Add team name…" style="flex:1;" />
-        <button id="addTeamBtn" type="button">Add</button>
+        <input id="teamName" placeholder="Název týmu…" style="flex:1;" />
+        <button id="addTeamBtn" type="button">Přidat</button>
+      </div>
+
+      <div class="controls-grid">
+        <label class="small-label" for="pitchCount">
+          Počet hřišť
+          <select id="pitchCount">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </label>
+
+        <label class="small-label" for="matchDuration">
+          Délka zápasu (min)
+          <input id="matchDuration" type="number" min="1" max="180" step="1" value="12" />
+        </label>
+
+        <label class="small-label" for="startTime">
+          Začátek 1. bloku
+          <input id="startTime" type="time" value="09:00" />
+        </label>
+
+        <label class="small-label">
+          Přesun mezi bloky
+          <input type="text" value="3 min" disabled />
+        </label>
       </div>
 
       <div class="row" style="margin-top:10px;">
-        <button id="generateBtn" type="button">Generate matches</button>
-        <button id="resetBtn" type="button" class="danger">Reset all</button>
+        <button id="generateBtn" type="button">Vygenerovat zápasy</button>
+        <button id="resetBtn" type="button" class="danger">Resetovat vše</button>
+      </div>
+
+      <div class="pdf-actions">
+        <button id="exportPdfBtn" type="button" class="secondary">Export do PDF</button>
       </div>
 
       <p class="muted" style="margin-top:10px;">
-        ✅ No duplicate matches (single round). Handles odd number of teams (BYE).<br>
-        ✅ Enter scores → standings update instantly.<br>
-        ✅ Head-to-head tie-breaker (mini-table inside tied teams).<br>
-        ✅ Data saved in your browser (localStorage).
+        ✅ Bez duplicitních zápasů (single round). U lichého počtu týmů se použije volno.<br>
+        ✅ Vyberete počet hřišť, délku zápasu a začátek turnaje. Ke každému bloku se automaticky připočtou 3 minuty na přesuny.<br>
+        ✅ Po zadání skóre se tabulka okamžitě přepočítá a 1.–3. místo se zvýrazní.<br>
+        ✅ Po doplnění Firebase konfigurace budou data sdílená pro všechny návštěvníky a všechna zařízení, dokud nekliknete na „Resetovat vše“.
       </p>
 
+      <div class="notice small" id="storageNotice"></div>
+
       <div style="margin-top:10px;">
-        <div class="row" style="justify-content:space-between;">
-          <span class="pill"><b>Teams:</b> <span id="teamCount">0</span></span>
-          <span class="pill"><b>Matches:</b> <span id="matchCount">0</span></span>
+        <div class="row" style="justify-content:space-between;gap:6px;">
+          <span class="pill"><b>Týmy:</b> <span id="teamCount">0</span></span>
+          <span class="pill"><b>Zápasy:</b> <span id="matchCount">0</span></span>
+          <span class="pill"><b>Hřiště:</b> <span id="pitchCountBadge">1</span></span>
         </div>
 
         <ul id="teamList"></ul>
@@ -314,687 +307,787 @@
 
       <hr style="border:0;border-top:1px solid var(--line);margin:14px 0;">
 
-      <h3 style="margin:0 0 8px;font-size:15px;">Backup / share</h3>
-      <p class="muted" style="margin:0 0 8px;">
-        Export your league to JSON and import it on another device (admin only).
-      </p>
-      <div class="row">
-        <button id="exportBtn" type="button" class="secondary">Export JSON</button>
-        <button id="importBtn" type="button" class="secondary">Import JSON</button>
-      </div>
-      <div style="margin-top:10px;">
-        <textarea id="jsonBox" placeholder="Exported JSON appears here… (or paste JSON to import)"></textarea>
-        <div class="small" id="status"></div>
+      <div class="json-panel">
+        <h3 style="margin:0 0 8px;font-size:15px;">Záloha / sdílení</h3>
+        <p class="muted" style="margin:0 0 8px;">
+          Exportujte ligu do JSON a na jiném zařízení ji zase naimportujte (jen správce). Pokud budete používat Firebase, není to pro běžný provoz potřeba.
+        </p>
+        <div class="row">
+          <button id="exportBtn" type="button" class="secondary">Export JSON</button>
+          <button id="importBtn" type="button" class="secondary">Import JSON</button>
+        </div>
+        <div style="margin-top:10px;">
+          <textarea id="jsonBox" placeholder="Sem se zobrazí exportovaný JSON… nebo sem JSON vložte pro import"></textarea>
+          <div class="small" id="status"></div>
+        </div>
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="pdfArea">
       <div class="split">
         <div>
-          <h2 style="margin:0 0 8px;font-size:16px;">Standings</h2>
+          <h2 style="margin:0 0 8px;font-size:16px;">Tabulka</h2>
           <table class="table" id="standingsTable">
             <thead>
               <tr>
-                <th>#</th>
-                <th style="text-align:left;">Team</th>
+                <th>Poř.</th>
+                <th style="text-align:left;">Tým</th>
+                <th>Z</th>
+                <th>V</th>
+                <th>R</th>
                 <th>P</th>
-                <th>W</th>
-                <th>D</th>
-                <th>L</th>
-                <th>GF</th>
-                <th>GA</th>
-                <th>GD</th>
-                <th>Pts</th>
+                <th>VG</th>
+                <th>OG</th>
+                <th>RG</th>
+                <th>Body</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
           <p class="small">
-            Sorting: Points → Head-to-head (Pts, GD, GF) → Overall GD → Overall GF → Team name
+            Řazení: body → vzájemné zápasy (body, rozdíl gólů, vstřelené góly) → celkový rozdíl gólů → celkové vstřelené góly → název týmu
           </p>
         </div>
 
         <div>
-          <h2 style="margin:0 0 8px;font-size:16px;">Matches</h2>
+          <h2 style="margin:0 0 8px;font-size:16px;">Zápasy</h2>
           <div class="matches" id="matches"></div>
-          <p class="small">Tip: click a “Round” to expand. Scores: integers (0,1,2…).</p>
+          <p class="small">Tip: klikněte na „Kolo“ pro rozbalení. Při více hřištích se kolo rozdělí do bloků. K času bloku se automaticky přičítají 3 minuty na přesun.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-/**
- * =========================
- * ADMIN LOCK (client-side)
- * =========================
- * Change the PIN below to your own.
- */
-const ADMIN_PIN = "2803"; // <-- změň si PIN
-const ADMIN_LS_KEY = "league_admin_unlocked_v1";
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';
+  import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';
 
-/**
- * =========================
- * Storage
- * =========================
- */
-const LS_KEY = "league_manager_v2_h2h_single";
+  const ADMIN_PIN = "2803"; // Změňte si PIN správce
+  const ADMIN_LS_KEY = "league_admin_unlocked_v1";
+  const LOCAL_LS_KEY = "league_manager_v4_local_backup";
+  const TRANSITION_MINUTES = 3;
 
-function loadState(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if(!raw) return { teams: [], rounds: [] };
-    const obj = JSON.parse(raw);
-    if(!obj || !Array.isArray(obj.teams) || !Array.isArray(obj.rounds)){
-      return { teams: [], rounds: [] };
-    }
-    return obj;
-  }catch(e){
-    return { teams: [], rounds: [] };
-  }
-}
-
-function saveState(){
-  localStorage.setItem(LS_KEY, JSON.stringify(state));
-}
-
-function isAdminUnlocked(){
-  return localStorage.getItem(ADMIN_LS_KEY) === "1";
-}
-
-function setAdminUnlocked(v){
-  localStorage.setItem(ADMIN_LS_KEY, v ? "1" : "0");
-}
-
-/**
- * =========================
- * Helpers
- * =========================
- */
-function cryptoRandomId(){
-  if (window.crypto && typeof window.crypto.randomUUID === "function") {
-    return window.crypto.randomUUID();
-  }
-  return "id_" + Math.random().toString(16).slice(2) + Date.now();
-}
-
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, s => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    "\"":"&quot;",
-    "'":"&#39;"
-  }[s]));
-}
-
-function escapeAttr(str){
-  return escapeHtml(str).replace(/"/g,"&quot;");
-}
-
-function normalizeName(s){
-  return s.trim().replace(/\s+/g, " ");
-}
-
-/**
- * =========================
- * Round-robin generator
- * Single round, no duplicates
- * =========================
- */
-function generateRoundRobin(teams){
-  let list = teams.slice();
-  const BYE = "__BYE__";
-
-  if(list.length % 2 === 1){
-    list.push(BYE);
-  }
-
-  const n = list.length;
-  const rounds = n - 1;
-  const half = n / 2;
-
-  const fixed = list[0];
-  let rot = list.slice(1);
-  const out = [];
-
-  for(let r = 0; r < rounds; r++){
-    const left = [fixed, ...rot.slice(0, half - 1)];
-    const right = rot.slice(half - 1).slice().reverse();
-
-    const matches = [];
-    for(let i = 0; i < half; i++){
-      const home = left[i];
-      const away = right[i];
-
-      if(home !== BYE && away !== BYE){
-        matches.push({
-          id: cryptoRandomId(),
-          home,
-          away,
-          hs: "",
-          as: ""
-        });
-      }
-    }
-
-    out.push({
-      name: `Round ${r + 1}`,
-      matches
-    });
-
-    rot = [rot[rot.length - 1], ...rot.slice(0, rot.length - 1)];
-  }
-
-  return out;
-}
-
-/**
- * =========================
- * Stats calculation
- * =========================
- */
-function emptyRow(team){
-  return {
-    team,
-    P:0,
-    W:0,
-    D:0,
-    L:0,
-    GF:0,
-    GA:0,
-    GD:0,
-    Pts:0
+  // =========================
+  // FIREBASE KONFIGURACE
+  // Vyplňte údaje z Firebase Console, jinak aplikace poběží jen lokálně v localStorage.
+  // =========================
+  const firebaseConfig = {
+    apiKey: "DOPLNIT",
+    authDomain: "DOPLNIT",
+    databaseURL: "DOPLNIT",
+    projectId: "DOPLNIT",
+    storageBucket: "DOPLNIT",
+    messagingSenderId: "DOPLNIT",
+    appId: "DOPLNIT"
   };
-}
 
-function applyMatch(rowHome, rowAway, hs, as){
-  rowHome.P++;
-  rowAway.P++;
+  const DB_PATH = "leagueManager/publicState";
+  const FIREBASE_ENABLED = firebaseConfig.apiKey !== "DOPLNIT" && firebaseConfig.databaseURL !== "DOPLNIT";
 
-  rowHome.GF += hs;
-  rowHome.GA += as;
+  let app = null;
+  let db = null;
+  let state = normalizeState(loadLocalBackup());
+  let suppressSave = false;
 
-  rowAway.GF += as;
-  rowAway.GA += hs;
-
-  if(hs > as){
-    rowHome.W++;
-    rowHome.Pts += 3;
-    rowAway.L++;
-  }else if(hs < as){
-    rowAway.W++;
-    rowAway.Pts += 3;
-    rowHome.L++;
-  }else{
-    rowHome.D++;
-    rowAway.D++;
-    rowHome.Pts += 1;
-    rowAway.Pts += 1;
+  if (FIREBASE_ENABLED) {
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app, firebaseConfig.databaseURL);
   }
-}
 
-function computeOverallTable(teams, rounds){
-  const map = new Map();
-  teams.forEach(t => map.set(t, emptyRow(t)));
+  const elTeamName = document.getElementById("teamName");
+  const elAddTeamBtn = document.getElementById("addTeamBtn");
+  const elGenerateBtn = document.getElementById("generateBtn");
+  const elResetBtn = document.getElementById("resetBtn");
+  const elTeamList = document.getElementById("teamList");
+  const elTeamCount = document.getElementById("teamCount");
+  const elMatchCount = document.getElementById("matchCount");
+  const elPitchCount = document.getElementById("pitchCount");
+  const elPitchCountBadge = document.getElementById("pitchCountBadge");
+  const elMatchDuration = document.getElementById("matchDuration");
+  const elStartTime = document.getElementById("startTime");
+  const elStandingsBody = document.querySelector("#standingsTable tbody");
+  const elMatches = document.getElementById("matches");
+  const elExportBtn = document.getElementById("exportBtn");
+  const elImportBtn = document.getElementById("importBtn");
+  const elExportPdfBtn = document.getElementById("exportPdfBtn");
+  const elJsonBox = document.getElementById("jsonBox");
+  const elStatus = document.getElementById("status");
+  const elUnlockBtn = document.getElementById("unlockBtn");
+  const elLockBtn = document.getElementById("lockBtn");
+  const elLockState = document.getElementById("lockState");
+  const elStorageNotice = document.getElementById("storageNotice");
+  const elPdfArea = document.getElementById("pdfArea");
 
-  for(const rd of rounds){
-    for(const m of rd.matches){
-      const hs = parseInt(m.hs, 10);
-      const as = parseInt(m.as, 10);
+  function defaultState(){
+    return {
+      teams: [],
+      rounds: [],
+      pitchCount: 1,
+      matchDuration: 12,
+      startTime: "09:00",
+      updatedAt: null
+    };
+  }
 
-      if(Number.isNaN(hs) || Number.isNaN(as)) continue;
+  function normalizeState(obj){
+    const base = defaultState();
+    const merged = { ...base, ...(obj || {}) };
+    merged.teams = Array.isArray(merged.teams) ? merged.teams : [];
+    merged.rounds = Array.isArray(merged.rounds) ? merged.rounds : [];
+    merged.pitchCount = clampInt(merged.pitchCount, 1, 8, 1);
+    merged.matchDuration = clampInt(merged.matchDuration, 1, 180, 12);
+    merged.startTime = isValidTime(merged.startTime) ? merged.startTime : "09:00";
+    return merged;
+  }
 
-      const home = map.get(m.home);
-      const away = map.get(m.away);
-
-      if(!home || !away) continue;
-
-      applyMatch(home, away, hs, as);
+  function loadLocalBackup(){
+    try{
+      const raw = localStorage.getItem(LOCAL_LS_KEY);
+      return raw ? JSON.parse(raw) : defaultState();
+    }catch(e){
+      return defaultState();
     }
   }
 
-  for(const row of map.values()){
-    row.GD = row.GF - row.GA;
+  function saveLocalBackup(){
+    localStorage.setItem(LOCAL_LS_KEY, JSON.stringify(state));
   }
 
-  return map;
-}
-
-/**
- * =========================
- * Head-to-head tie-breaker
- * =========================
- */
-function computeMiniTable(teamSet, rounds){
-  const mini = new Map();
-
-  for(const t of teamSet){
-    mini.set(t, emptyRow(t));
+  function isAdminUnlocked(){
+    return localStorage.getItem(ADMIN_LS_KEY) === "1";
   }
 
-  for(const rd of rounds){
-    for(const m of rd.matches){
-      const hs = parseInt(m.hs, 10);
-      const as = parseInt(m.as, 10);
+  function setAdminUnlocked(v){
+    localStorage.setItem(ADMIN_LS_KEY, v ? "1" : "0");
+  }
 
-      if(Number.isNaN(hs) || Number.isNaN(as)) continue;
-      if(!teamSet.has(m.home) || !teamSet.has(m.away)) continue;
+  function setStatus(msg, kind = "muted"){
+    elStatus.className = "small " + (kind === "ok" ? "ok" : kind === "warn" ? "warn" : "");
+    elStatus.textContent = msg;
+  }
 
-      const home = mini.get(m.home);
-      const away = mini.get(m.away);
-
-      if(!home || !away) continue;
-
-      applyMatch(home, away, hs, as);
+  function setStorageNotice(){
+    if(FIREBASE_ENABLED){
+      elStorageNotice.textContent = "Sdílený režim je aktivní: změny se ukládají do Firebase a uvidí je všichni návštěvníci na všech zařízeních.";
+    }else{
+      elStorageNotice.textContent = "Sdílený režim zatím není aktivní: dokud nedoplníte Firebase konfiguraci, data se ukládají jen do tohoto prohlížeče.";
     }
   }
 
-  for(const row of mini.values()){
-    row.GD = row.GF - row.GA;
+  function clampInt(value, min, max, fallback){
+    const n = parseInt(value, 10);
+    if(Number.isNaN(n)) return fallback;
+    return Math.min(max, Math.max(min, n));
   }
 
-  return mini;
-}
+  function isValidTime(value){
+    return /^\d{2}:\d{2}$/.test(String(value || ""));
+  }
 
-function computeStandingsWithH2H(teams, rounds){
-  const overall = computeOverallTable(teams, rounds);
-  const allRows = Array.from(overall.values());
+  function timeToMinutes(timeStr){
+    const [hh, mm] = String(timeStr).split(":").map(Number);
+    return (hh * 60) + mm;
+  }
 
-  const byPts = new Map();
-  for(const row of allRows){
-    if(!byPts.has(row.Pts)){
-      byPts.set(row.Pts, []);
+  function minutesToTime(totalMinutes){
+    const safe = ((totalMinutes % 1440) + 1440) % 1440;
+    const hh = Math.floor(safe / 60).toString().padStart(2, "0");
+    const mm = Math.floor(safe % 60).toString().padStart(2, "0");
+    return `${hh}:${mm}`;
+  }
+
+  function cryptoRandomId(){
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
     }
-    byPts.get(row.Pts).push(row);
+    return "id_" + Math.random().toString(16).slice(2) + Date.now();
   }
 
-  const ptsKeys = Array.from(byPts.keys()).sort((a,b) => b - a);
-  const final = [];
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, s => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[s]));
+  }
 
-  for(const pts of ptsKeys){
-    const group = byPts.get(pts);
+  function escapeAttr(str){
+    return escapeHtml(str).replace(/"/g,"&quot;");
+  }
 
-    if(group.length <= 1){
+  function normalizeName(s){
+    return s.trim().replace(/\s+/g, " ");
+  }
+
+  function syncInputsFromState(){
+    elPitchCount.value = String(state.pitchCount);
+    elPitchCountBadge.textContent = String(state.pitchCount);
+    elMatchDuration.value = String(state.matchDuration);
+    elStartTime.value = state.startTime;
+  }
+
+  function updateStateMeta(){
+    state.updatedAt = new Date().toISOString();
+  }
+
+  async function persistState(reason = ""){
+    if(suppressSave) return;
+    updateStateMeta();
+    saveLocalBackup();
+    if(FIREBASE_ENABLED){
+      try{
+        await set(ref(db, DB_PATH), state);
+      }catch(err){
+        console.error(err);
+        setStatus("Nepodařilo se uložit data do Firebase. Zkontrolujte konfiguraci a pravidla databáze.", "warn");
+      }
+    }
+  }
+
+  function assignPitchSlotAndTime(matches, pitchCount, matchDuration, startTime){
+    const startMinutes = timeToMinutes(startTime);
+    return matches.map((match, idx) => {
+      const pitch = (idx % pitchCount) + 1;
+      const slot = Math.floor(idx / pitchCount) + 1;
+      const slotStart = startMinutes + ((slot - 1) * (matchDuration + TRANSITION_MINUTES));
+      const slotEnd = slotStart + matchDuration;
+      return {
+        ...match,
+        pitch,
+        slot,
+        slotStart: minutesToTime(slotStart),
+        slotEnd: minutesToTime(slotEnd)
+      };
+    });
+  }
+
+  function generateRoundRobin(teams, pitchCount, matchDuration, startTime){
+    let list = teams.slice();
+    const BYE = "__BYE__";
+
+    if(list.length % 2 === 1){
+      list.push(BYE);
+    }
+
+    const n = list.length;
+    const rounds = n - 1;
+    const half = n / 2;
+    const fixed = list[0];
+    let rot = list.slice(1);
+    const out = [];
+
+    for(let r = 0; r < rounds; r++){
+      const left = [fixed, ...rot.slice(0, half - 1)];
+      const right = rot.slice(half - 1).slice().reverse();
+      const matches = [];
+
+      for(let i = 0; i < half; i++){
+        const home = left[i];
+        const away = right[i];
+        if(home !== BYE && away !== BYE){
+          matches.push({
+            id: cryptoRandomId(),
+            home,
+            away,
+            hs: "",
+            as: ""
+          });
+        }
+      }
+
+      out.push({
+        name: `Kolo ${r + 1}`,
+        matches: assignPitchSlotAndTime(matches, pitchCount, matchDuration, startTime)
+      });
+
+      rot = [rot[rot.length - 1], ...rot.slice(0, rot.length - 1)];
+    }
+
+    return out;
+  }
+
+  function emptyRow(team){
+    return { team, P:0, W:0, D:0, L:0, GF:0, GA:0, GD:0, Pts:0 };
+  }
+
+  function applyMatch(rowHome, rowAway, hs, as){
+    rowHome.P++; rowAway.P++;
+    rowHome.GF += hs; rowHome.GA += as;
+    rowAway.GF += as; rowAway.GA += hs;
+
+    if(hs > as){
+      rowHome.W++; rowHome.Pts += 3; rowAway.L++;
+    }else if(hs < as){
+      rowAway.W++; rowAway.Pts += 3; rowHome.L++;
+    }else{
+      rowHome.D++; rowAway.D++; rowHome.Pts += 1; rowAway.Pts += 1;
+    }
+  }
+
+  function computeOverallTable(teams, rounds){
+    const map = new Map();
+    teams.forEach(t => map.set(t, emptyRow(t)));
+
+    for(const rd of rounds){
+      for(const m of rd.matches){
+        const hs = parseInt(m.hs, 10);
+        const as = parseInt(m.as, 10);
+        if(Number.isNaN(hs) || Number.isNaN(as)) continue;
+        const home = map.get(m.home);
+        const away = map.get(m.away);
+        if(!home || !away) continue;
+        applyMatch(home, away, hs, as);
+      }
+    }
+
+    for(const row of map.values()) row.GD = row.GF - row.GA;
+    return map;
+  }
+
+  function computeMiniTable(teamSet, rounds){
+    const mini = new Map();
+    for(const t of teamSet) mini.set(t, emptyRow(t));
+
+    for(const rd of rounds){
+      for(const m of rd.matches){
+        const hs = parseInt(m.hs, 10);
+        const as = parseInt(m.as, 10);
+        if(Number.isNaN(hs) || Number.isNaN(as)) continue;
+        if(!teamSet.has(m.home) || !teamSet.has(m.away)) continue;
+        const home = mini.get(m.home);
+        const away = mini.get(m.away);
+        if(!home || !away) continue;
+        applyMatch(home, away, hs, as);
+      }
+    }
+
+    for(const row of mini.values()) row.GD = row.GF - row.GA;
+    return mini;
+  }
+
+  function computeStandingsWithH2H(teams, rounds){
+    const overall = computeOverallTable(teams, rounds);
+    const allRows = Array.from(overall.values());
+    const byPts = new Map();
+
+    for(const row of allRows){
+      if(!byPts.has(row.Pts)) byPts.set(row.Pts, []);
+      byPts.get(row.Pts).push(row);
+    }
+
+    const ptsKeys = Array.from(byPts.keys()).sort((a,b) => b - a);
+    const final = [];
+
+    for(const pts of ptsKeys){
+      const group = byPts.get(pts);
+      if(group.length <= 1){
+        final.push(...group);
+        continue;
+      }
+
+      const set = new Set(group.map(r => r.team));
+      const mini = computeMiniTable(set, rounds);
+
+      group.sort((a,b) => {
+        const ma = mini.get(a.team);
+        const mb = mini.get(b.team);
+        const h2hPtsA = ma ? ma.Pts : 0;
+        const h2hPtsB = mb ? mb.Pts : 0;
+        const h2hGDA = ma ? ma.GD : 0;
+        const h2hGDB = mb ? mb.GD : 0;
+        const h2hGFA = ma ? ma.GF : 0;
+        const h2hGFB = mb ? mb.GF : 0;
+
+        return (h2hPtsB - h2hPtsA) ||
+               (h2hGDB - h2hGDA) ||
+               (h2hGFB - h2hGFA) ||
+               (b.GD - a.GD) ||
+               (b.GF - a.GF) ||
+               a.team.localeCompare(b.team, 'cs');
+      });
+
       final.push(...group);
-      continue;
     }
 
-    const set = new Set(group.map(r => r.team));
-    const mini = computeMiniTable(set, rounds);
-
-    group.sort((a,b) => {
-      const ma = mini.get(a.team);
-      const mb = mini.get(b.team);
-
-      const h2hPtsA = ma ? ma.Pts : 0;
-      const h2hPtsB = mb ? mb.Pts : 0;
-      const h2hGDA  = ma ? ma.GD  : 0;
-      const h2hGDB  = mb ? mb.GD  : 0;
-      const h2hGFA  = ma ? ma.GF  : 0;
-      const h2hGFB  = mb ? mb.GF  : 0;
-
-      return (h2hPtsB - h2hPtsA) ||
-             (h2hGDB - h2hGDA)   ||
-             (h2hGFB - h2hGFA)   ||
-             (b.GD - a.GD)       ||
-             (b.GF - a.GF)       ||
-             a.team.localeCompare(b.team);
-    });
-
-    final.push(...group);
+    return final;
   }
 
-  return final;
-}
+  function setEditingEnabled(enabled){
+    if(enabled){
+      elLockState.textContent = "🔓 Režim správce (úpravy povoleny)";
+      elUnlockBtn.style.display = "none";
+      elLockBtn.style.display = "inline-block";
+    }else{
+      elLockState.textContent = "🔒 Režim prohlížení (úpravy zamčeny)";
+      elUnlockBtn.style.display = "inline-block";
+      elLockBtn.style.display = "none";
+    }
 
-/**
- * =========================
- * UI refs
- * =========================
- */
-let state = loadState();
+    elTeamName.disabled = !enabled;
+    elAddTeamBtn.disabled = !enabled;
+    elGenerateBtn.disabled = !enabled;
+    elResetBtn.disabled = !enabled;
+    elExportBtn.disabled = !enabled;
+    elImportBtn.disabled = !enabled;
+    elJsonBox.disabled = !enabled;
+    elPitchCount.disabled = !enabled;
+    elMatchDuration.disabled = !enabled;
+    elStartTime.disabled = !enabled;
 
-const elTeamName = document.getElementById("teamName");
-const elAddTeamBtn = document.getElementById("addTeamBtn");
-const elGenerateBtn = document.getElementById("generateBtn");
-const elResetBtn = document.getElementById("resetBtn");
-const elTeamList = document.getElementById("teamList");
-const elTeamCount = document.getElementById("teamCount");
-const elMatchCount = document.getElementById("matchCount");
-const elStandingsBody = document.querySelector("#standingsTable tbody");
-const elMatches = document.getElementById("matches");
-const elExportBtn = document.getElementById("exportBtn");
-const elImportBtn = document.getElementById("importBtn");
-const elJsonBox = document.getElementById("jsonBox");
-const elStatus = document.getElementById("status");
-const elUnlockBtn = document.getElementById("unlockBtn");
-const elLockBtn = document.getElementById("lockBtn");
-const elLockState = document.getElementById("lockState");
+    document.querySelectorAll("[data-del]").forEach(btn => { btn.disabled = !enabled; });
+    elMatches.querySelectorAll("input.score").forEach(inp => { inp.disabled = !enabled; });
 
-/**
- * =========================
- * UI helpers
- * =========================
- */
-function setStatus(msg, kind = "muted"){
-  elStatus.className = "small " + (kind === "ok" ? "ok" : kind === "warn" ? "warn" : "");
-  elStatus.textContent = msg;
-}
-
-function setEditingEnabled(enabled){
-  if(enabled){
-    elLockState.textContent = "🔓 Admin mode (editing enabled)";
-    elUnlockBtn.style.display = "inline-block";
-    elLockBtn.style.display = "inline-block";
-    elUnlockBtn.textContent = "Unlock";
-    elLockBtn.textContent = "Lock";
-  }else{
-    elLockState.textContent = "🔒 View mode (editing locked)";
-    elUnlockBtn.style.display = "inline-block";
-    elLockBtn.style.display = "none";
-    elUnlockBtn.textContent = "Unlock";
+    elUnlockBtn.style.pointerEvents = "auto";
+    elUnlockBtn.style.zIndex = "6000";
+    elLockBtn.style.pointerEvents = "auto";
+    elLockBtn.style.zIndex = "6000";
   }
 
-  elTeamName.disabled = !enabled;
-  elAddTeamBtn.disabled = !enabled;
-  elGenerateBtn.disabled = !enabled;
-  elResetBtn.disabled = !enabled;
-  elExportBtn.disabled = !enabled;
-  elImportBtn.disabled = !enabled;
-  elJsonBox.disabled = !enabled;
-
-  document.querySelectorAll("[data-del]").forEach(btn => {
-    btn.disabled = !enabled;
-  });
-
-  elMatches.querySelectorAll("input.score").forEach(inp => {
-    inp.disabled = !enabled;
-  });
-
-  /* fix na jistotu */
-  elUnlockBtn.style.pointerEvents = "auto";
-  elUnlockBtn.style.zIndex = "6000";
-  elLockBtn.style.pointerEvents = "auto";
-  elLockBtn.style.zIndex = "6000";
-}
-
-function renderTeams(){
-  elTeamList.innerHTML = "";
-
-  state.teams.forEach((t, idx) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <span class="pill"><b>${escapeHtml(t)}</b></span>
-      <button type="button" class="secondary" data-del="${idx}" style="margin-left:8px;">Remove</button>
-    `;
-    elTeamList.appendChild(li);
-  });
-
-  elTeamCount.textContent = state.teams.length;
-
-  document.querySelectorAll("[data-del]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      if(!isAdminUnlocked()){
-        setStatus("Editing is locked.", "warn");
-        return;
-      }
-
-      const i = parseInt(btn.getAttribute("data-del"), 10);
-      state.teams.splice(i, 1);
-      state.rounds = [];
-      saveState();
-      renderAll();
-      setStatus("Team removed. Schedule cleared (generate again).", "warn");
-    });
-  });
-}
-
-function renderStandings(){
-  const standings = computeStandingsWithH2H(state.teams, state.rounds);
-  elStandingsBody.innerHTML = "";
-
-  standings.forEach((r, idx) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${idx + 1}</td>
-      <td class="team">${escapeHtml(r.team)}</td>
-      <td>${r.P}</td>
-      <td>${r.W}</td>
-      <td>${r.D}</td>
-      <td>${r.L}</td>
-      <td>${r.GF}</td>
-      <td>${r.GA}</td>
-      <td>${r.GD}</td>
-      <td><strong>${r.Pts}</strong></td>
-    `;
-    elStandingsBody.appendChild(tr);
-  });
-}
-
-function renderMatches(){
-  elMatches.innerHTML = "";
-  let count = 0;
-
-  state.rounds.forEach((rd, rIdx) => {
-    const det = document.createElement("details");
-    det.open = (rIdx === 0);
-
-    const sum = document.createElement("summary");
-    sum.textContent = rd.name;
-    det.appendChild(sum);
-
-    const box = document.createElement("div");
-    box.className = "round";
-
-    rd.matches.forEach((m, mIdx) => {
-      count++;
-      const row = document.createElement("div");
-      row.className = "match";
-
-      row.innerHTML = `
-        <div class="t1">${escapeHtml(m.home)}</div>
-        <div class="sep">vs</div>
-        <div class="t2">${escapeHtml(m.away)}</div>
-        <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="H" value="${escapeAttr(m.hs)}" data-r="${rIdx}" data-m="${mIdx}" data-side="hs" />
-        <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="A" value="${escapeAttr(m.as)}" data-r="${rIdx}" data-m="${mIdx}" data-side="as" />
+  function renderTeams(){
+    elTeamList.innerHTML = "";
+    state.teams.forEach((t, idx) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span class="pill"><b>${escapeHtml(t)}</b></span>
+        <button type="button" class="secondary" data-del="${idx}" style="margin-left:8px;">Odebrat</button>
       `;
-
-      box.appendChild(row);
+      elTeamList.appendChild(li);
     });
 
-    det.appendChild(box);
-    elMatches.appendChild(det);
-  });
+    elTeamCount.textContent = state.teams.length;
 
-  elMatchCount.textContent = count;
-
-  elMatches.querySelectorAll("input.score").forEach(inp => {
-    inp.addEventListener("input", () => {
-      if(!isAdminUnlocked()){
-        setStatus("Editing is locked.", "warn");
-        renderMatches();
-        setEditingEnabled(false);
-        return;
-      }
-
-      const r = parseInt(inp.getAttribute("data-r"), 10);
-      const m = parseInt(inp.getAttribute("data-m"), 10);
-      const side = inp.getAttribute("data-side");
-
-      let val = inp.value.trim();
-      if(val !== "" && !/^\d+$/.test(val)){
-        val = val.replace(/[^\d]/g, "");
-        inp.value = val;
-      }
-
-      state.rounds[r].matches[m][side] = val;
-      saveState();
-      renderStandings();
+    document.querySelectorAll("[data-del]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if(!isAdminUnlocked()){
+          setStatus("Úpravy jsou zamčené.", "warn");
+          return;
+        }
+        const i = parseInt(btn.getAttribute("data-del"), 10);
+        state.teams.splice(i, 1);
+        state.rounds = [];
+        await persistState("remove team");
+        renderAll();
+        setStatus("Tým byl odebrán. Rozpis zápasů byl smazán — vygenerujte ho znovu.", "warn");
+      });
     });
-  });
-}
-
-function renderAll(){
-  renderTeams();
-  renderMatches();
-  renderStandings();
-  setEditingEnabled(isAdminUnlocked());
-}
-
-function addTeam(name){
-  if(!isAdminUnlocked()){
-    setStatus("Editing is locked.", "warn");
-    return;
   }
 
-  const n = normalizeName(name);
-  if(!n) return;
+  function renderStandings(){
+    const standings = computeStandingsWithH2H(state.teams, state.rounds);
+    elStandingsBody.innerHTML = "";
 
-  if(state.teams.some(t => t.toLowerCase() === n.toLowerCase())){
-    setStatus("Team already exists (no duplicates).", "warn");
-    return;
+    standings.forEach((r, idx) => {
+      const tr = document.createElement("tr");
+      if(idx === 0) tr.classList.add("pos1");
+      if(idx === 1) tr.classList.add("pos2");
+      if(idx === 2) tr.classList.add("pos3");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td class="team">${escapeHtml(r.team)}</td>
+        <td>${r.P}</td>
+        <td>${r.W}</td>
+        <td>${r.D}</td>
+        <td>${r.L}</td>
+        <td>${r.GF}</td>
+        <td>${r.GA}</td>
+        <td>${r.GD}</td>
+        <td><strong>${r.Pts}</strong></td>
+      `;
+      elStandingsBody.appendChild(tr);
+    });
   }
 
-  state.teams.push(n);
-  state.rounds = [];
-  saveState();
-  renderAll();
-  setStatus("Team added. Generate matches when ready.", "ok");
-}
+  function renderMatches(){
+    elMatches.innerHTML = "";
+    let count = 0;
 
-/**
- * =========================
- * Events
- * =========================
- */
-elAddTeamBtn.addEventListener("click", () => {
-  addTeam(elTeamName.value);
-  elTeamName.value = "";
-  elTeamName.focus();
-});
+    state.rounds.forEach((rd, rIdx) => {
+      const det = document.createElement("details");
+      det.open = (rIdx === 0);
+      const sum = document.createElement("summary");
+      sum.textContent = rd.name;
+      det.appendChild(sum);
 
-elTeamName.addEventListener("keydown", (e) => {
-  if(e.key === "Enter"){
-    e.preventDefault();
-    elAddTeamBtn.click();
-  }
-});
+      const box = document.createElement("div");
+      box.className = "round";
+      const slotMap = new Map();
 
-elGenerateBtn.addEventListener("click", () => {
-  if(!isAdminUnlocked()){
-    setStatus("Editing is locked.", "warn");
-    return;
-  }
+      rd.matches.forEach(match => {
+        const slot = match.slot || 1;
+        if(!slotMap.has(slot)) slotMap.set(slot, []);
+        slotMap.get(slot).push(match);
+      });
 
-  if(state.teams.length < 2){
-    setStatus("Add at least 2 teams.", "warn");
-    return;
-  }
+      Array.from(slotMap.keys()).sort((a,b) => a - b).forEach(slot => {
+        const slotMatches = slotMap.get(slot);
+        const slotTime = slotMatches[0] ? `${slotMatches[0].slotStart}–${slotMatches[0].slotEnd}` : "";
+        const slotTitle = document.createElement("div");
+        slotTitle.className = "slot-title";
+        slotTitle.textContent = `Blok ${slot} · ${slotTime}`;
+        box.appendChild(slotTitle);
 
-  state.rounds = generateRoundRobin(state.teams);
-  saveState();
-  renderAll();
-  setStatus("Schedule generated (single round-robin).", "ok");
-});
+        slotMatches.forEach(m => {
+          count++;
+          const globalIndex = rd.matches.findIndex(x => x.id === m.id);
+          const row = document.createElement("div");
+          row.className = "match";
+          row.innerHTML = `
+            <div class="pitch-badge">Hřiště ${m.pitch || 1}</div>
+            <div class="t1">${escapeHtml(m.home)}</div>
+            <div class="sep">vs</div>
+            <div class="t2">${escapeHtml(m.away)}</div>
+            <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="D" value="${escapeAttr(m.hs)}" data-r="${rIdx}" data-m="${globalIndex}" data-side="hs" />
+            <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="H" value="${escapeAttr(m.as)}" data-r="${rIdx}" data-m="${globalIndex}" data-side="as" />
+          `;
+          box.appendChild(row);
+        });
+      });
 
-elResetBtn.addEventListener("click", () => {
-  if(!isAdminUnlocked()){
-    setStatus("Editing is locked.", "warn");
-    return;
-  }
+      det.appendChild(box);
+      elMatches.appendChild(det);
+    });
 
-  if(!confirm("Reset everything? Teams + matches + scores will be deleted.")) return;
+    elMatchCount.textContent = count;
 
-  state = { teams: [], rounds: [] };
-  saveState();
-  renderAll();
-  elJsonBox.value = "";
-  setStatus("Reset complete.", "ok");
-});
+    elMatches.querySelectorAll("input.score").forEach(inp => {
+      inp.addEventListener("input", async () => {
+        if(!isAdminUnlocked()){
+          setStatus("Úpravy jsou zamčené.", "warn");
+          renderMatches();
+          setEditingEnabled(false);
+          return;
+        }
 
-elExportBtn.addEventListener("click", () => {
-  if(!isAdminUnlocked()){
-    setStatus("Editing is locked.", "warn");
-    return;
-  }
-
-  elJsonBox.value = JSON.stringify(state, null, 2);
-  setStatus("Exported. Copy JSON to save/share.", "ok");
-});
-
-elImportBtn.addEventListener("click", () => {
-  if(!isAdminUnlocked()){
-    setStatus("Editing is locked.", "warn");
-    return;
-  }
-
-  const raw = elJsonBox.value.trim();
-  if(!raw){
-    setStatus("Paste JSON first.", "warn");
-    return;
+        const r = parseInt(inp.getAttribute("data-r"), 10);
+        const m = parseInt(inp.getAttribute("data-m"), 10);
+        const side = inp.getAttribute("data-side");
+        let val = inp.value.trim();
+        if(val !== "" && !/^\d+$/.test(val)){
+          val = val.replace(/[^\d]/g, "");
+          inp.value = val;
+        }
+        state.rounds[r].matches[m][side] = val;
+        await persistState("score change");
+        renderStandings();
+      });
+    });
   }
 
-  try{
-    const obj = JSON.parse(raw);
+  function renderAll(){
+    syncInputsFromState();
+    renderTeams();
+    renderMatches();
+    renderStandings();
+    setEditingEnabled(isAdminUnlocked());
+    setStorageNotice();
+  }
 
-    if(!obj || !Array.isArray(obj.teams) || !Array.isArray(obj.rounds)){
-      setStatus("Invalid JSON structure.", "warn");
+  async function addTeam(name){
+    if(!isAdminUnlocked()){
+      setStatus("Úpravy jsou zamčené.", "warn");
       return;
     }
 
-    state = obj;
-    saveState();
+    const n = normalizeName(name);
+    if(!n) return;
+    if(state.teams.some(t => t.toLowerCase() === n.toLowerCase())){
+      setStatus("Tým už existuje (duplicity nejsou povoleny).", "warn");
+      return;
+    }
+
+    state.teams.push(n);
+    state.rounds = [];
+    await persistState("add team");
     renderAll();
-    setStatus("Imported successfully.", "ok");
-  }catch(e){
-    setStatus("Invalid JSON (parse error).", "warn");
+    setStatus("Tým byl přidán. Až budete hotovi, vygenerujte zápasy.", "ok");
   }
-});
 
-/**
- * =========================
- * Admin lock buttons
- * =========================
- */
-function doUnlock(){
-  const pin = prompt("Enter Admin PIN:");
-  if(pin === null) return;
+  function exportPdf(){
+    const options = {
+      margin: 8,
+      filename: `liga-${new Date().toISOString().slice(0,10)}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
+    };
 
-  if(pin === ADMIN_PIN){
-    setAdminUnlocked(true);
+    html2pdf().set(options).from(elPdfArea).save();
+  }
+
+  async function regenerateScheduleAfterSettingsChange(message){
+    if(!isAdminUnlocked()){
+      setStatus("Úpravy jsou zamčené.", "warn");
+      syncInputsFromState();
+      return;
+    }
+    state.pitchCount = clampInt(elPitchCount.value, 1, 8, state.pitchCount);
+    state.matchDuration = clampInt(elMatchDuration.value, 1, 180, state.matchDuration);
+    state.startTime = isValidTime(elStartTime.value) ? elStartTime.value : state.startTime;
+    state.rounds = [];
+    await persistState("settings change");
     renderAll();
-    setStatus("Admin mode enabled.", "ok");
-  }else{
-    setStatus("Wrong PIN.", "warn");
+    setStatus(message, "ok");
   }
-}
 
-function doLock(){
-  setAdminUnlocked(false);
+  function loadSharedState(){
+    if(!FIREBASE_ENABLED){
+      renderAll();
+      return;
+    }
+
+    onValue(ref(db, DB_PATH), (snapshot) => {
+      const data = snapshot.val();
+      suppressSave = true;
+      if(data){
+        state = normalizeState(data);
+      }else{
+        state = defaultState();
+      }
+      saveLocalBackup();
+      renderAll();
+      suppressSave = false;
+    }, (error) => {
+      console.error(error);
+      setStatus("Nepodařilo se načíst sdílená data z Firebase.", "warn");
+      renderAll();
+    });
+  }
+
+  elAddTeamBtn.addEventListener("click", async () => {
+    await addTeam(elTeamName.value);
+    elTeamName.value = "";
+    elTeamName.focus();
+  });
+
+  elTeamName.addEventListener("keydown", async (e) => {
+    if(e.key === "Enter"){
+      e.preventDefault();
+      await addTeam(elTeamName.value);
+      elTeamName.value = "";
+      elTeamName.focus();
+    }
+  });
+
+  elPitchCount.addEventListener("change", async () => {
+    await regenerateScheduleAfterSettingsChange("Počet hřišť byl uložen. Pro nový rozpis vygenerujte zápasy znovu.");
+  });
+
+  elMatchDuration.addEventListener("change", async () => {
+    await regenerateScheduleAfterSettingsChange("Délka zápasu byla uložena. Pro nový rozpis vygenerujte zápasy znovu.");
+  });
+
+  elStartTime.addEventListener("change", async () => {
+    await regenerateScheduleAfterSettingsChange("Začátek 1. bloku byl uložen. Pro nový rozpis vygenerujte zápasy znovu.");
+  });
+
+  elGenerateBtn.addEventListener("click", async () => {
+    if(!isAdminUnlocked()){
+      setStatus("Úpravy jsou zamčené.", "warn");
+      return;
+    }
+    if(state.teams.length < 2){
+      setStatus("Nejdříve přidejte alespoň 2 týmy.", "warn");
+      return;
+    }
+
+    state.pitchCount = clampInt(elPitchCount.value, 1, 8, state.pitchCount);
+    state.matchDuration = clampInt(elMatchDuration.value, 1, 180, state.matchDuration);
+    state.startTime = isValidTime(elStartTime.value) ? elStartTime.value : state.startTime;
+    state.rounds = generateRoundRobin(state.teams, state.pitchCount, state.matchDuration, state.startTime);
+    await persistState("generate schedule");
+    renderAll();
+    setStatus(`Rozpis zápasů byl vygenerován pro ${state.pitchCount} hřiště / hřišť.`, "ok");
+  });
+
+  elResetBtn.addEventListener("click", async () => {
+    if(!isAdminUnlocked()){
+      setStatus("Úpravy jsou zamčené.", "warn");
+      return;
+    }
+    if(!confirm("Opravdu chcete vše resetovat? Týmy, zápasy i skóre budou smazány pro všechny návštěvníky.")) return;
+
+    state = defaultState();
+    await persistState("reset all");
+    renderAll();
+    elJsonBox.value = "";
+    setStatus("Vše bylo resetováno.", "ok");
+  });
+
+  elExportBtn.addEventListener("click", () => {
+    if(!isAdminUnlocked()){
+      setStatus("Úpravy jsou zamčené.", "warn");
+      return;
+    }
+    elJsonBox.value = JSON.stringify(state, null, 2);
+    setStatus("Export hotov. JSON si zkopírujte pro zálohu nebo přenos.", "ok");
+  });
+
+  elImportBtn.addEventListener("click", async () => {
+    if(!isAdminUnlocked()){
+      setStatus("Úpravy jsou zamčené.", "warn");
+      return;
+    }
+    const raw = elJsonBox.value.trim();
+    if(!raw){
+      setStatus("Nejdříve vložte JSON do pole výše.", "warn");
+      return;
+    }
+
+    try{
+      const obj = JSON.parse(raw);
+      state = normalizeState(obj);
+      await persistState("import json");
+      renderAll();
+      setStatus("Import proběhl úspěšně.", "ok");
+    }catch(e){
+      setStatus("Neplatný JSON (chyba při čtení).", "warn");
+    }
+  });
+
+  elExportPdfBtn.addEventListener("click", exportPdf);
+
+  function doUnlock(){
+    const pin = prompt("Zadejte PIN správce:");
+    if(pin === null) return;
+    if(pin === ADMIN_PIN){
+      setAdminUnlocked(true);
+      renderAll();
+      setStatus("Režim správce byl aktivován.", "ok");
+    }else{
+      setStatus("Nesprávný PIN.", "warn");
+    }
+  }
+
+  function doLock(){
+    setAdminUnlocked(false);
+    renderAll();
+    setStatus("Režim správce byl zamčen.", "ok");
+  }
+
+  elUnlockBtn.addEventListener("click", doUnlock);
+  elLockBtn.addEventListener("click", doLock);
+
+  document.addEventListener("DOMContentLoaded", function(){
+    elUnlockBtn.style.pointerEvents = "auto";
+    elUnlockBtn.style.zIndex = "6000";
+    elLockBtn.style.pointerEvents = "auto";
+    elLockBtn.style.zIndex = "6000";
+    syncInputsFromState();
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  if(params.get("view") === "1"){
+    setAdminUnlocked(false);
+  }
+
+  setStorageNotice();
+  loadSharedState();
   renderAll();
-  setStatus("Locked (view mode).", "ok");
-}
-
-elUnlockBtn.addEventListener("click", doUnlock);
-elLockBtn.addEventListener("click", doLock);
-
-/* fix na jistotu po načtení */
-document.addEventListener("DOMContentLoaded", function(){
-  elUnlockBtn.style.pointerEvents = "auto";
-  elUnlockBtn.style.zIndex = "6000";
-  elLockBtn.style.pointerEvents = "auto";
-  elLockBtn.style.zIndex = "6000";
-});
-
-/* pokud by někdo otevřel ?view=1, zůstane zamčeno */
-const params = new URLSearchParams(window.location.search);
-if(params.get("view") === "1"){
-  setAdminUnlocked(false);
-}
-
-renderAll();
 </script>
 </body>
 </html>
