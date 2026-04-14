@@ -2,7 +2,7 @@
   "meta": {
     "title": "TJ SŘepy – turnaj",
     "subtitle": "Veřejný přehled pro rodiče",
-    "updatedAt": "2026-04-14T20:46:17.628Z",
+    "updatedAt": "2026-04-14T22:07:21.833Z",
     "teamCount": 5,
     "matchCount": 10,
     "completedMatches": 10,
@@ -192,6 +192,24 @@
       "awayScore": 7
     }
   ],
-  "scorers": [],
-  "topScorer": null
+  "scorers": [
+    {
+      "position": 1,
+      "name": "já",
+      "team": "A",
+      "goals": 2
+    },
+    {
+      "position": 2,
+      "name": "ty",
+      "team": "B",
+      "goals": 1
+    }
+  ],
+  "topScorer": {
+    "position": 1,
+    "name": "já",
+    "team": "A",
+    "goals": 2
+  }
 }
