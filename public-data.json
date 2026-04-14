@@ -1,8 +1,8 @@
 {
   "meta": {
-    "title": "TJ SŘepy – turnaj",
+    "title": "TJ Sokol Řepy – turnaj",
     "subtitle": "Veřejný přehled pro rodiče",
-    "updatedAt": "2026-04-14T22:07:21.833Z",
+    "updatedAt": "2026-04-14T22:17:06.272Z",
     "teamCount": 5,
     "matchCount": 10,
     "completedMatches": 10,
@@ -195,12 +195,18 @@
   "scorers": [
     {
       "position": 1,
+      "name": "on",
+      "team": "D",
+      "goals": 3
+    },
+    {
+      "position": 2,
       "name": "já",
       "team": "A",
       "goals": 2
     },
     {
-      "position": 2,
+      "position": 3,
       "name": "ty",
       "team": "B",
       "goals": 1
@@ -208,8 +214,8 @@
   ],
   "topScorer": {
     "position": 1,
-    "name": "já",
-    "team": "A",
-    "goals": 2
+    "name": "on",
+    "team": "D",
+    "goals": 3
   }
 }
