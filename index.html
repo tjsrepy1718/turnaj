@@ -6,74 +6,74 @@
   <title>Správce ligy zdarma</title>
   <style>
     :root{
-      --bg:#0b1220;
-      --card:#121a2b;
-      --muted:#9fb0d0;
-      --text:#e8efff;
-      --accent:#6aa7ff;
-      --line:#24314e;
-      --gold:#6a5200;
-      --silver:#3d4654;
-      --bronze:#5c3b2f;
-      --success:#1d6b46;
-      --danger:#7a2030;
+      --bg:#f3f6f4;            /* pozadí stránky */
+      --card:#ffffff;          /* karty */
+      --muted:#4a5a52;         /* sekundární text */
+      --text:#0f1a14;          /* hlavní text */
+      --accent:#0b7a3b;        /* klubová zelená */
+      --accent2:#0f9a4a;       /* světlejší zelená */
+      --line:#d8e2db;          /* linky / border */
+      --gold:#c9a227;
+      --silver:#9aa7a0;
+      --bronze:#a06a4b;
+      --success:#0f7a3c;
+      --danger:#b4232c;
     }
-
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#081022,#0b1220);color:var(--text);}
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#ffffff,var(--bg));color:var(--text);}
     .wrap{max-width:1380px;margin:0 auto;padding:18px;}
     h1{font-size:22px;margin:0 0 12px;}
     h2{margin:0 0 8px;font-size:16px;}
     h3{margin:0 0 8px;font-size:15px;}
     .grid{display:grid;grid-template-columns:1fr;gap:12px;}
     @media(min-width:980px){.grid{grid-template-columns:420px 1fr;}}
-    .card{background:rgba(18,26,43,.92);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:14px;position:relative;overflow:visible;isolation:isolate;z-index:1;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.10);padding:14px;position:relative;overflow:visible;isolation:isolate;z-index:1;}
     .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:relative;}
     .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
     .actions-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
     label.small-label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:110px;}
 
-    input, select, button, textarea{border-radius:12px;border:1px solid var(--line);background:#0b1326;color:var(--text);padding:10px 12px;font-size:14px;position:relative;width:100%;}
-    input:focus, textarea:focus, select:focus{outline:2px solid rgba(106,167,255,.35);border-color:rgba(106,167,255,.6);}
-    button{cursor:pointer;background:linear-gradient(180deg,#1a2b52,#132441);border-color:#2a3f6f;width:auto;}
+    input, select, button, textarea{border-radius:12px;border:1px solid var(--line);background:#f7faf8;color:var(--text);padding:10px 12px;font-size:14px;position:relative;width:100%;}
+    input:focus, textarea:focus, select:focus{outline:2px solid color-mix(in srgb, var(--accent) 30%, transparent);border-color:color-mix(in srgb, var(--accent) 55%, var(--line));}
+    button{cursor:pointer;background:linear-gradient(180deg,var(--accent2),var(--accent));border-color:color-mix(in srgb, var(--accent) 70%, #000);width:auto;}
     button:hover{filter:brightness(1.05);}
-    button.secondary{background:#0b1326;}
-    button.success{background:linear-gradient(180deg,#1f6b46,#14472f);border-color:#2d8b5d;}
-    button.danger{background:linear-gradient(180deg,#5a1f2b,#3c1420);border-color:#6d2a39;}
+    button.secondary{background:#f7faf8;}
+    button.success{background:linear-gradient(180deg,#18a957,#0f7a3c);border-color:#0f7a3c;}
+    button.danger{background:linear-gradient(180deg,#d43a42,#b4232c);border-color:#b4232c;}
     button:disabled, input:disabled, textarea:disabled, select:disabled{opacity:.45;cursor:not-allowed;}
 
     .muted{color:var(--muted);font-size:13px;line-height:1.4;}
     .small{font-size:12px;color:var(--muted);}
-    .ok{color:#8cffb0;}
-    .warn{color:#ffd28c;}
-    .notice{padding:10px 12px;border-radius:12px;background:#0f1b35;border:1px solid var(--line);margin-top:10px;}
+    .ok{color:var(--success);}
+    .warn{color:#b45309;}
+    .notice{padding:10px 12px;border-radius:12px;background:#f7faf8;border:1px solid var(--line);margin-top:10px;}
     ul{margin:10px 0 0;padding-left:18px;}
     li{margin:6px 0;}
-    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#0b1326;white-space:nowrap;}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#f7faf8;white-space:nowrap;}
     .pill b{font-weight:600;}
     .split{display:grid;grid-template-columns:1fr;gap:12px;}
     @media(min-width:1180px){.split{grid-template-columns:1.05fr 1.15fr;}}
 
     .table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:16px;border:1px solid var(--line);position:relative;z-index:1;}
     .table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;font-size:13px;}
-    .table th{background:#0b1326;color:#cfe0ff;font-weight:600;}
+    .table th{background:#f7faf8;color:#cfe0ff;font-weight:600;}
     .table td.team,.table td.left{text-align:left;}
-    .table tr:nth-child(even) td{background:rgba(11,19,38,.4);}
-    .table tr.pos1 td{background:rgba(106,82,0,.35)!important;}
-    .table tr.pos2 td{background:rgba(61,70,84,.45)!important;}
-    .table tr.pos3 td{background:rgba(92,59,47,.45)!important;}
+    .table tr:nth-child(even) td{background:#f7faf8;}
+    .table tr.pos1 td{background:color-mix(in srgb, var(--gold) 25%, #ffffff)!important;}
+    .table tr.pos2 td{background:color-mix(in srgb, var(--silver) 25%, #ffffff)!important;}
+    .table tr.pos3 td{background:color-mix(in srgb, var(--bronze) 25%, #ffffff)!important;}
     .table tr.pos1 td:first-child,.table tr.pos2 td:first-child,.table tr.pos3 td:first-child{font-weight:700;}
 
-    .leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#0b1326;margin-bottom:10px;}
+    .leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#f7faf8;margin-bottom:10px;}
     .leader-icon{font-size:28px;line-height:1;}
     .leader-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
     .leader-name{font-size:18px;font-weight:700;}
-    .leader-meta{font-size:13px;color:#cfe0ff;}
+    .leader-meta{font-size:13px;color:color-mix(in srgb, var(--accent) 65%, #000);}
     .leader-empty{color:var(--muted);font-size:13px;}
 
     .matches{display:grid;gap:8px;position:relative;z-index:1;}
-    .match{display:grid;grid-template-columns:95px 100px 1fr auto 1fr auto auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:#0b1326;}
-    .time-badge,.pitch-badge{font-size:12px;color:#cfe0ff;background:#101b33;border:1px solid var(--line);border-radius:999px;padding:6px 8px;text-align:center;white-space:nowrap;}
+    .match{display:grid;grid-template-columns:95px 100px 1fr auto 1fr auto auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:#f7faf8;}
+    .time-badge,.pitch-badge{font-size:12px;color:var(--text);background:color-mix(in srgb, var(--accent) 12%, #ffffff);border:1px solid var(--line);border-radius:999px;padding:6px 8px;text-align:center;white-space:nowrap;}
     .match .t1{text-align:right;}
     .match .t2{text-align:left;}
     .score{width:64px;text-align:center;}
@@ -85,19 +85,19 @@
     .inline-form{display:grid;grid-template-columns:1.4fr 1fr 110px auto auto;gap:8px;align-items:end;}
     @media(max-width:900px){.inline-form{grid-template-columns:1fr;}}
     .inline-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#101b33;border:1px solid var(--line);font-size:12px;}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px;}
     .chip button{padding:2px 7px;font-size:11px;border-radius:999px;}
 
     .scorer-form{display:grid;grid-template-columns:1.5fr 1fr 110px auto auto;gap:8px;margin-top:8px;align-items:end;}
     @media(max-width:780px){.scorer-form{grid-template-columns:1fr;}}
     .goals-inline{display:flex;gap:6px;justify-content:center;align-items:center;}
     .goals-inline input{width:76px;text-align:center;padding:6px 8px;}
-    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#101b33;border:1px solid var(--line);font-size:12px;}
+    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px;}
 
     .lockbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;position:relative;z-index:5000;pointer-events:auto;}
     .lockbar .row{position:relative;z-index:5001;pointer-events:auto;}
     #unlockBtn,#lockBtn{position:relative;z-index:6000;pointer-events:auto;}
-    .badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#0b1326;position:relative;z-index:4999;pointer-events:none;}
+    .badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#f7faf8;position:relative;z-index:4999;pointer-events:none;}
 
     @media print {
       body{background:#fff;color:#111;}
@@ -178,10 +178,6 @@
         <button id="exportImgStandingsBtn" type="button" class="secondary">Export tabulka (PNG)</button>
         <button id="exportImgMatchesBtn" type="button" class="secondary">Export zápasy (PNG)</button>
         <button id="exportImgScorersBtn" type="button" class="secondary">Export střelci (PNG)</button>
-        <button id="exportCsvStandingsBtn" type="button" class="secondary">CSV – tabulka</button>
-        <button id="exportCsvMatchesBtn" type="button" class="secondary">CSV – zápasy</button>
-        <button id="exportCsvScorersBtn" type="button" class="secondary">CSV – střelci</button>
-        <button id="exportCsvAllBtn" type="button" class="secondary">CSV – vše</button>
       </div>
 
       <p class="muted" style="margin-top:10px;">
@@ -335,10 +331,6 @@
   const elExportImgStandingsBtn = document.getElementById('exportImgStandingsBtn');
   const elExportImgMatchesBtn = document.getElementById('exportImgMatchesBtn');
   const elExportImgScorersBtn = document.getElementById('exportImgScorersBtn');
-  const elExportCsvStandingsBtn = document.getElementById('exportCsvStandingsBtn');
-  const elExportCsvMatchesBtn = document.getElementById('exportCsvMatchesBtn');
-  const elExportCsvScorersBtn = document.getElementById('exportCsvScorersBtn');
-  const elExportCsvAllBtn = document.getElementById('exportCsvAllBtn');
   const elJsonBox = document.getElementById('jsonBox');
   const elStatus = document.getElementById('status');
   const elUnlockBtn = document.getElementById('unlockBtn');
@@ -876,7 +868,6 @@
 
   function renderAll(){
     syncInputsFromState();
-    initCsvExportButtons();
     initImageExportButtons();
     renderTeams();
     renderMatches();
@@ -1044,138 +1035,10 @@
     temp.remove();
   }
 
-  let imageButtonsInited = false;
-
   function initImageExportButtons(){
-    if(imageButtonsInited) return;
-    imageButtonsInited = true;
     if(elExportImgStandingsBtn) elExportImgStandingsBtn.addEventListener('click', exportStandingsImage);
     if(elExportImgMatchesBtn) elExportImgMatchesBtn.addEventListener('click', exportMatchesImage);
     if(elExportImgScorersBtn) elExportImgScorersBtn.addEventListener('click', exportScorersImage);
-  }
-
-
-  /*********************** EXPORT DO CSV ************************
-   * - oddělovač: ';' (lepší pro CZ Excel)
-   * - UTF-8 BOM: aby se správně zobrazila čeština v Excelu
-   * - Střelci: VŽDY VŠICHNI (ignoruje filtr týmu)
-   *************************************************************/
-
-  function csvEscape(value, sep = ';'){
-    const s = String(value ?? '');
-    const mustQuote = s.includes(sep) || s.includes('"') || s.includes('\n') || s.includes('\r');
-    const escaped = s.replace(/"/g, '""');
-    return mustQuote ? `"${escaped}"` : escaped;
-  }
-
-  function buildCsv(rows, sep = ';'){
-    return rows.map(r => r.map(v => csvEscape(v, sep)).join(sep)).join('\r\n');
-  }
-
-  function downloadCsv(filename, csvText){
-    const bom = '\uFEFF';
-    const blob = new Blob([bom + csvText], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function makeCsvFilename(prefix){
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2,'0');
-    const dd = String(d.getDate()).padStart(2,'0');
-    const hh = String(d.getHours()).padStart(2,'0');
-    const mi = String(d.getMinutes()).padStart(2,'0');
-    return `${prefix}_${yyyy}-${mm}-${dd}_${hh}${mi}.csv`;
-  }
-
-  function buildStandingsCsvRows(){
-    const standings = computeStandingsWithH2H(state.teams, state.rounds);
-    const rows = [];
-    rows.push(['Pořadí','Tým','Z','V','R','P','VG','OG','RG','Body']);
-    standings.forEach((r, idx) => {
-      rows.push([idx + 1, r.team, r.P, r.W, r.D, r.L, r.GF, r.GA, r.GD, r.Pts]);
-    });
-    return rows;
-  }
-
-  function buildMatchesCsvRows(){
-    const matches = getFlatMatches();
-    const rows = [];
-    rows.push(['Čas od','Čas do','Hřiště','Domácí','Hosté','Skóre dom','Skóre host']);
-    matches.forEach(m => {
-      rows.push([
-        m.slotStart || '',
-        m.slotEnd || '',
-        m.pitch ? `H${m.pitch}` : '',
-        m.home || '',
-        m.away || '',
-        (m.hs ?? ''),
-        (m.as ?? '')
-      ]);
-    });
-    return rows;
-  }
-
-  function buildScorersCsvRowsAll(){
-    // VŽDY všichni střelci (ignoruje filter)
-    const scorers = [...state.scorers].sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
-    const rows = [];
-    rows.push(['Pořadí','Hráč','Tým','Góly']);
-    scorers.forEach((s, idx) => {
-      rows.push([idx + 1, s.name || '', s.team || '', (s.goals ?? 0)]);
-    });
-    return rows;
-  }
-
-  function exportStandingsToCSV(){
-    const csv = buildCsv(buildStandingsCsvRows(), ';');
-    downloadCsv(makeCsvFilename('tabulka'), csv);
-    setStatus('CSV – tabulka stažena.', 'ok');
-  }
-
-  function exportMatchesToCSV(){
-    const csv = buildCsv(buildMatchesCsvRows(), ';');
-    downloadCsv(makeCsvFilename('zapasy'), csv);
-    setStatus('CSV – zápasy staženy.', 'ok');
-  }
-
-  function exportScorersToCSV(){
-    const csv = buildCsv(buildScorersCsvRowsAll(), ';');
-    downloadCsv(makeCsvFilename('strelci'), csv);
-    setStatus('CSV – střelci staženi (vždy všichni).', 'ok');
-  }
-
-  function exportAllToCSV(){
-    const sep = ';';
-    const parts = [];
-    parts.push('TABULKA');
-    parts.push(buildCsv(buildStandingsCsvRows(), sep));
-    parts.push(''); parts.push('');
-    parts.push('ZÁPASY');
-    parts.push(buildCsv(buildMatchesCsvRows(), sep));
-    parts.push(''); parts.push('');
-    parts.push('STŘELCI');
-    parts.push(buildCsv(buildScorersCsvRowsAll(), sep));
-    const csv = parts.join('\r\n');
-    downloadCsv(makeCsvFilename('turnaj_export'), csv);
-    setStatus('CSV – vše staženo.', 'ok');
-  }
-
-  let csvButtonsInited = false;
-  function initCsvExportButtons(){
-    if(csvButtonsInited) return;
-    csvButtonsInited = true;
-    if(elExportCsvStandingsBtn) elExportCsvStandingsBtn.addEventListener('click', exportStandingsToCSV);
-    if(elExportCsvMatchesBtn) elExportCsvMatchesBtn.addEventListener('click', exportMatchesToCSV);
-    if(elExportCsvScorersBtn) elExportCsvScorersBtn.addEventListener('click', exportScorersToCSV);
-    if(elExportCsvAllBtn) elExportCsvAllBtn.addEventListener('click', exportAllToCSV);
   }
   function createSnapshotHtml(){
     const standingsRows = Array.from(elStandingsBody.querySelectorAll('tr')).map(tr => tr.outerHTML).join('');
