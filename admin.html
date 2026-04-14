@@ -163,7 +163,8 @@
 
       <div class="actions-wrap export-panel">
         <button id="exportPdfBtn" type="button" class="secondary">Export do PDF</button>
-        <button id="exportHtmlBtn" type="button" class="secondary">Stáhnout public-data.json</button>
+        <button id="exportHtmlBtn" type="button" class="secondary">Export HTML</button>
+        <button id="exportGitBtn" type="button" class="secondary">export pro GIT</button>
         <button id="exportImgStandingsBtn" type="button" class="secondary">Export tabulka (PNG)</button>
         <button id="exportImgMatchesBtn" type="button" class="secondary">Export zápasy (PNG)</button>
         <button id="exportImgScorersBtn" type="button" class="secondary">Export střelci (PNG)</button>
@@ -198,7 +199,7 @@
         <h3>Záloha / sdílení</h3>
         <p class="muted" style="margin:0 0 8px;">Udělejte si lokální zálohu do souboru (JSON) a kdykoliv ji zase načtěte zpět. Hodí se pro přenos na jiné zařízení nebo jako pojistka před resetem.</p>
         <div class="row">
-          <button id="exportBtn" type="button" class="secondary">Export JSON jako public-data.json</button>
+          <button id="exportBtn" type="button" class="secondary">Export JSON</button>
           <button id="importBtn" type="button" class="secondary">Import JSON</button>
           <button id="downloadBackupBtn" type="button" class="secondary">Stáhnout zálohu (.json)</button>
           <button id="loadBackupBtn" type="button" class="secondary">Načíst zálohu ze souboru</button>
@@ -326,6 +327,8 @@
   const elBackupHistory = document.getElementById('backupHistory');
   const elExportPdfBtn = document.getElementById('exportPdfBtn');
   const elExportHtmlBtn = document.getElementById('exportHtmlBtn');
+  const elExportGitBtn = document.getElementById('exportGitBtn');
+  const elExportGitBtn = document.getElementById('exportGitBtn');
   const elExportImgStandingsBtn = document.getElementById('exportImgStandingsBtn');
   const elExportImgMatchesBtn = document.getElementById('exportImgMatchesBtn');
   const elExportImgScorersBtn = document.getElementById('exportImgScorersBtn');
@@ -1264,6 +1267,15 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
   }
 
 
+
+  function exportJsonToBox(){
+    try{
+      const data = JSON.stringify(state, null, 2);
+      elJsonBox.value = data;
+      setStatus('JSON byl zkopírován do pole pro zálohu.', 'ok');
+    }catch(e){ console.error(e); setStatus('Nepodařilo se vytvořit JSON export.', 'warn'); }
+  }
+
   function buildPublicData(){
     const standings = computeStandingsWithH2H(state.teams, state.rounds).map((r, idx) => ({
       position: idx + 1,
@@ -1504,7 +1516,8 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
   elScorerFilterTeam.addEventListener('change', () => { state.scorerFilterTeam = elScorerFilterTeam.value; renderScorers(); });
 
   elExportPdfBtn.addEventListener('click', exportPdf);
-  elExportHtmlBtn.addEventListener('click', downloadPublicDataFile);
+  elExportHtmlBtn.addEventListener('click', exportHtmlSnapshot);
+  elExportGitBtn.addEventListener('click', downloadPublicDataFile);
   document.addEventListener('DOMContentLoaded', () => {
     syncInputsFromState();
     initCsvExportButtons();
