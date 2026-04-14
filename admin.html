@@ -307,6 +307,12 @@
     db = getDatabase(app, firebaseConfig.databaseURL);
   }
 
+  window.addEventListener('error', (e) => {
+    const s = document.getElementById('status');
+    if(s) s.textContent = 'Chyba skriptu: ' + (e.message || 'neznámá chyba');
+    console.error(e.error || e.message);
+  });
+
   const elTeamName = document.getElementById('teamName');
   const elAddTeamBtn = document.getElementById('addTeamBtn');
   const elGenerateBtn = document.getElementById('generateBtn');
