@@ -93,10 +93,6 @@
     .goals-inline{display:flex;gap:6px;justify-content:center;align-items:center;}
     .goals-inline input{width:76px;text-align:center;padding:6px 8px;}
     .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px;}
-
-    .lockbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;position:relative;z-index:5000;pointer-events:auto;}
-    .lockbar .row{position:relative;z-index:5001;pointer-events:auto;}
-    #unlockBtn,#lockBtn{position:relative;z-index:6000;pointer-events:auto;}
     .badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#f7faf8;position:relative;z-index:4999;pointer-events:none;}
 
     @media print {
@@ -132,13 +128,6 @@
 
   <div class="grid">
     <div class="card controls-panel">
-      <div class="lockbar">
-        <span class="badge" id="lockState">🔒 Režim prohlížení (úpravy zamčeny)</span>
-        <div class="row">
-          <button id="unlockBtn" type="button" class="secondary">Odemknout</button>
-          <button id="lockBtn" type="button" class="secondary" style="display:none;">Zamknout</button>
-        </div>
-      </div>
 
       <div class="row">
         <input id="teamName" placeholder="Název týmu…" style="flex:1;" />
@@ -189,7 +178,7 @@
         ✅ Vyberete počet hřišť, délku zápasu, začátek turnaje a délku pauzy mezi zápasy.<br>
         ✅ U každého zápasu je tlačítko <strong>Střelci</strong>, kterým si okamžitě otevřete zadávání střelců pro daný zápas.<br>
         ✅ K dispozici je zvýrazněný box nejlepšího střelce a filtr střelců podle týmu.<br>
-        ✅ Po doplnění Firebase konfigurace budou data sdílená pro všechny návštěvníky a všechna zařízení, dokud nekliknete na „Resetovat vše“.
+        ✅ Data se ukládají lokálně do tohoto prohlížeče. Pro přenos na jiné zařízení použijte „Lokální záloha“ (soubor JSON).
       </p>
 
       <div class="notice small" id="storageNotice"></div>
@@ -207,10 +196,13 @@
 
       <div class="json-panel">
         <h3>Záloha / sdílení</h3>
-        <p class="muted" style="margin:0 0 8px;">Exportujte ligu do JSON a na jiném zařízení ji zase naimportujte (jen správce). Pokud budete používat Firebase, není to pro běžný provoz potřeba.</p>
+        <p class="muted" style="margin:0 0 8px;">Udělejte si lokální zálohu do souboru (JSON) a kdykoliv ji zase načtěte zpět. Hodí se pro přenos na jiné zařízení nebo jako pojistka před resetem.</p>
         <div class="row">
           <button id="exportBtn" type="button" class="secondary">Export JSON</button>
           <button id="importBtn" type="button" class="secondary">Import JSON</button>
+          <button id="downloadBackupBtn" type="button" class="secondary">Stáhnout zálohu (.json)</button>
+          <button id="loadBackupBtn" type="button" class="secondary">Načíst zálohu ze souboru</button>
+          <input id="backupFileInput" type="file" accept="application/json,.json" style="display:none" />
         </div>
         <div style="margin-top:10px;">
           <textarea id="jsonBox" placeholder="Sem se zobrazí exportovaný JSON… nebo sem JSON vložte pro import"></textarea>
@@ -283,13 +275,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';
-  import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';
-
-  const ADMIN_PIN = '2803';
-  const ADMIN_LS_KEY = 'league_admin_unlocked_v1';
-  const LOCAL_LS_KEY = 'league_manager_v7_local_backup';
+<script type="module">  const LOCAL_LS_KEY = 'league_manager_v7_local_backup';
 
   const firebaseConfig = {
     apiKey: 'DOPLNIT',
@@ -302,7 +288,7 @@
   };
 
   const DB_PATH = 'leagueManager/publicState';
-  const FIREBASE_ENABLED = firebaseConfig.apiKey !== 'DOPLNIT' && firebaseConfig.databaseURL !== 'DOPLNIT';
+  const FIREBASE_ENABLED = false;
 
   let app = null;
   let db = null;
@@ -330,6 +316,9 @@
   const elMatches = document.getElementById('matches');
   const elExportBtn = document.getElementById('exportBtn');
   const elImportBtn = document.getElementById('importBtn');
+  const elDownloadBackupBtn = document.getElementById('downloadBackupBtn');
+  const elLoadBackupBtn = document.getElementById('loadBackupBtn');
+  const elBackupFileInput = document.getElementById('backupFileInput');
   const elExportPdfBtn = document.getElementById('exportPdfBtn');
   const elExportHtmlBtn = document.getElementById('exportHtmlBtn');
   const elExportImgStandingsBtn = document.getElementById('exportImgStandingsBtn');
@@ -341,9 +330,6 @@
   const elExportCsvAllBtn = document.getElementById('exportCsvAllBtn');
   const elJsonBox = document.getElementById('jsonBox');
   const elStatus = document.getElementById('status');
-  const elUnlockBtn = document.getElementById('unlockBtn');
-  const elLockBtn = document.getElementById('lockBtn');
-  const elLockState = document.getElementById('lockState');
   const elStorageNotice = document.getElementById('storageNotice');
   const elPdfArea = document.getElementById('pdfArea');
   const elScorerName = document.getElementById('scorerName');
@@ -404,17 +390,15 @@
   }
 
   function saveLocalBackup(){ localStorage.setItem(LOCAL_LS_KEY, JSON.stringify(state)); }
-  function isAdminUnlocked(){ return localStorage.getItem(ADMIN_LS_KEY) === '1'; }
-  function setAdminUnlocked(v){ localStorage.setItem(ADMIN_LS_KEY, v ? '1' : '0'); }
+  function isAdminUnlocked(){ return true; }
+  function setAdminUnlocked(v){ /* ochrana vypnuta */ }
   function setStatus(msg, kind = 'muted'){
     elStatus.className = 'small ' + (kind === 'ok' ? 'ok' : kind === 'warn' ? 'warn' : '');
     elStatus.textContent = msg;
   }
 
   function setStorageNotice(){
-    elStorageNotice.textContent = FIREBASE_ENABLED
-      ? 'Sdílený režim je aktivní: změny se ukládají do Firebase a uvidí je všichni návštěvníci na všech zařízeních.'
-      : 'Sdílený režim zatím není aktivní: dokud nedoplníte Firebase konfiguraci, data se ukládají jen do tohoto prohlížeče.';
+    elStorageNotice.textContent = 'Ukládání: pouze do tohoto prohlížeče (localStorage). Pro přenos na jiné zařízení použijte lokální zálohu (soubor .json).';
   }
 
   function clampInt(value, min, max, fallback){
@@ -748,25 +732,22 @@
   }
 
   function setEditingEnabled(enabled){
-    if(enabled){
-      elLockState.textContent = '🔓 Režim správce (úpravy povoleny)';
-      elUnlockBtn.style.display = 'none';
-      elLockBtn.style.display = 'inline-block';
-    }else{
-      elLockState.textContent = '🔒 Režim prohlížení (úpravy zamčeny)';
-      elUnlockBtn.style.display = 'inline-block';
-      elLockBtn.style.display = 'none';
-    }
+    // Ochrana vypnuta – vše je vždy editovatelné (lokální režim).
+    const on = true;
+    [elTeamName, elAddTeamBtn, elGenerateBtn, elResetBtn, elExportBtn, elImportBtn, elJsonBox,
+     elPitchCount, elMatchDuration, elBreakDuration, elStartTime, elScorerName, elScorerTeam,
+     elScorerGoals, elAddGoalsBtn, elRemoveGoalsBtn].forEach(el => { if(el) el.disabled = !on; });
+
+    document.querySelectorAll('[data-del],[data-add-scorer],[data-sub-scorer],[data-match-scorers]').forEach(btn => { btn.disabled = !on; });
+    document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !on; });
+  }
 
     [elTeamName, elAddTeamBtn, elGenerateBtn, elResetBtn, elExportBtn, elImportBtn, elJsonBox,
      elPitchCount, elMatchDuration, elBreakDuration, elStartTime, elScorerName, elScorerTeam,
      elScorerGoals, elAddGoalsBtn, elRemoveGoalsBtn].forEach(el => { if(el) el.disabled = !enabled; });
 
     document.querySelectorAll('[data-del],[data-add-scorer],[data-sub-scorer],[data-match-scorers]').forEach(btn => { btn.disabled = !enabled; });
-    document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !enabled; });
-
-    elUnlockBtn.style.pointerEvents = 'auto'; elUnlockBtn.style.zIndex = '6000';
-    elLockBtn.style.pointerEvents = 'auto'; elLockBtn.style.zIndex = '6000';
+    document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !enabled; }); elUnlockBtn.style.zIndex = '6000'; elLockBtn.style.zIndex = '6000';
   }
 
   function renderTeams(){
@@ -882,7 +863,7 @@
     renderMatches();
     renderStandings();
     renderScorers();
-    setEditingEnabled(isAdminUnlocked());
+    setEditingEnabled(true);
     setStorageNotice();
   }
 
@@ -1260,22 +1241,65 @@
     setStatus('Vše bylo resetováno.', 'ok');
   });
 
+
+
+  // --- Lokální záloha do souboru (JSON) ---
+  function downloadBackupFile(){
+    try{
+      const data = JSON.stringify(state, null, 2);
+      const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `liga-zaloha-${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setStatus('Záloha byla stažena jako soubor .json.', 'ok');
+    }catch(e){
+      console.error(e);
+      setStatus('Nepodařilo se vytvořit zálohu do souboru.', 'warn');
+    }
+  }
+
+  async function importBackupFromText(raw){
+    if(!raw){ setStatus('Nejdříve vyberte soubor nebo vložte JSON.', 'warn'); return; }
+    try{
+      state = normalizeState(JSON.parse(raw));
+      await persistState();
+      renderAll();
+      setStatus('Záloha byla úspěšně načtena.', 'ok');
+    }catch(e){
+      console.error(e);
+      setStatus('Neplatný JSON soubor (chyba při čtení).', 'warn');
+    }
+  }
+
+  function pickBackupFile(){
+    if(elBackupFileInput) elBackupFileInput.click();
+  }
+
+
   elExportBtn.addEventListener('click', () => {
     if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
     elJsonBox.value = JSON.stringify(state, null, 2);
     setStatus('Export hotov. JSON si zkopírujte pro zálohu nebo přenos.', 'ok');
   });
 
+  if(elDownloadBackupBtn) elDownloadBackupBtn.addEventListener('click', downloadBackupFile);
+  if(elLoadBackupBtn) elLoadBackupBtn.addEventListener('click', pickBackupFile);
+  if(elBackupFileInput) elBackupFileInput.addEventListener('change', async () => {
+    const file = elBackupFileInput.files && elBackupFileInput.files[0];
+    if(!file) return;
+    const text = await file.text();
+    await importBackupFromText(text);
+    elBackupFileInput.value = '';
+  });
+
   elImportBtn.addEventListener('click', async () => {
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
     const raw = elJsonBox.value.trim();
-    if(!raw){ setStatus('Nejdříve vložte JSON do pole výše.', 'warn'); return; }
-    try{
-      state = normalizeState(JSON.parse(raw));
-      await persistState();
-      renderAll();
-      setStatus('Import proběhl úspěšně.', 'ok');
-    }catch(e){ setStatus('Neplatný JSON (chyba při čtení).', 'warn'); }
+    await importBackupFromText(raw);
   });
 
   elAddGoalsBtn.addEventListener('click', async () => { await updateScorer(1); });
@@ -1284,26 +1308,11 @@
 
   elExportPdfBtn.addEventListener('click', exportPdf);
   elExportHtmlBtn.addEventListener('click', exportHtmlSnapshot);
-
-  function doUnlock(){
-    const pin = prompt('Zadejte PIN správce:');
-    if(pin === null) return;
-    if(pin === ADMIN_PIN){ setAdminUnlocked(true); renderAll(); setStatus('Režim správce byl aktivován.', 'ok'); }
-    else setStatus('Nesprávný PIN.', 'warn');
-  }
-  function doLock(){ setAdminUnlocked(false); renderAll(); setStatus('Režim správce byl zamčen.', 'ok'); }
-
-  elUnlockBtn.addEventListener('click', doUnlock);
-  elLockBtn.addEventListener('click', doLock);
-
   document.addEventListener('DOMContentLoaded', () => {
-    elUnlockBtn.style.pointerEvents = 'auto'; elUnlockBtn.style.zIndex = '6000';
-    elLockBtn.style.pointerEvents = 'auto'; elLockBtn.style.zIndex = '6000';
     syncInputsFromState();
+    initCsvExportButtons();
+    initImageExportButtons();
   });
-
-  const params = new URLSearchParams(window.location.search);
-  if(params.get('view') === '1') setAdminUnlocked(false);
 
   setStorageNotice();
   loadSharedState();
