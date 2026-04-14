@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TJ SŘepy – turnaj</title>
+  <title>TJ Sokol Řepy – turnaj</title>
   <style>
     :root{
       --bg:#f3f6f4; --card:#ffffff; --muted:#4a5a52; --text:#0f1a14; --accent:#0b7a3b; --line:#d8e2db;
@@ -45,7 +45,7 @@
 <body>
   <div class="wrap">
     <div class="hero">
-      <h1 id="title">TJ SŘepy – turnaj</h1>
+      <h1 id="title">TJ Sokol Řepy – turnaj</h1>
       <div class="muted" id="subtitle">Veřejný přehled pro rodiče</div>
       <div class="stats" id="stats"></div>
       <div class="small" id="updated" style="margin-top:10px;"></div>
@@ -174,7 +174,7 @@ async function init(){
     const data = await res.json();
     console.log('Načtená veřejná data:', data);
 
-    document.getElementById('title').textContent = data?.meta?.title || 'TJ SŘepy – turnaj';
+    document.getElementById('title').textContent = data?.meta?.title || 'TJ Sokol Řepy – turnaj';
     document.getElementById('subtitle').textContent = data?.meta?.subtitle || 'Veřejný přehled pro rodiče';
 
     renderStats(data.meta || {});
