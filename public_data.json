@@ -1,0 +1,197 @@
+{
+  "meta": {
+    "title": "TJ SŘepy – turnaj",
+    "subtitle": "Veřejný přehled pro rodiče",
+    "updatedAt": "2026-04-23T22:07:14.923Z",
+    "teamCount": 5,
+    "matchCount": 10,
+    "completedMatches": 0,
+    "pitchCount": 1,
+    "matchDuration": 12,
+    "breakDuration": 3,
+    "startTime": "09:00"
+  },
+  "teams": [
+    "aaaaaaaaa",
+    "ssssssssssss",
+    "ddddddddd",
+    "ZZZZZZZZZZZZZZZZZZZZ",
+    "YYYYYYYYYYYYYYYYYYYYYY"
+  ],
+  "standings": [
+    {
+      "position": 1,
+      "team": "aaaaaaaaa",
+      "played": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0,
+      "goalsFor": 0,
+      "goalsAgainst": 0,
+      "goalDifference": 0,
+      "points": 0
+    },
+    {
+      "position": 2,
+      "team": "ddddddddd",
+      "played": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0,
+      "goalsFor": 0,
+      "goalsAgainst": 0,
+      "goalDifference": 0,
+      "points": 0
+    },
+    {
+      "position": 3,
+      "team": "ssssssssssss",
+      "played": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0,
+      "goalsFor": 0,
+      "goalsAgainst": 0,
+      "goalDifference": 0,
+      "points": 0
+    },
+    {
+      "position": 4,
+      "team": "YYYYYYYYYYYYYYYYYYYYYY",
+      "played": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0,
+      "goalsFor": 0,
+      "goalsAgainst": 0,
+      "goalDifference": 0,
+      "points": 0
+    },
+    {
+      "position": 5,
+      "team": "ZZZZZZZZZZZZZZZZZZZZ",
+      "played": 0,
+      "wins": 0,
+      "draws": 0,
+      "losses": 0,
+      "goalsFor": 0,
+      "goalsAgainst": 0,
+      "goalDifference": 0,
+      "points": 0
+    }
+  ],
+  "matches": [
+    {
+      "id": "72c78fd3-9848-44b2-93c6-f9b12ef45fe8",
+      "slot": 1,
+      "pitch": 1,
+      "start": "09:00",
+      "end": "09:12",
+      "home": "aaaaaaaaa",
+      "away": "ssssssssssss",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "291c013a-7146-405e-8f96-6298437b2643",
+      "slot": 2,
+      "pitch": 1,
+      "start": "09:15",
+      "end": "09:27",
+      "home": "ddddddddd",
+      "away": "ZZZZZZZZZZZZZZZZZZZZ",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "62ea2b0d-871f-4f3d-9a13-75b4330a2577",
+      "slot": 3,
+      "pitch": 1,
+      "start": "09:30",
+      "end": "09:42",
+      "home": "aaaaaaaaa",
+      "away": "YYYYYYYYYYYYYYYYYYYYYY",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "a69488ae-af77-403f-a52f-13032f225f2c",
+      "slot": 4,
+      "pitch": 1,
+      "start": "09:45",
+      "end": "09:57",
+      "home": "ssssssssssss",
+      "away": "ddddddddd",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "77f1aeaa-4911-4f8e-81f3-20ea5b89679b",
+      "slot": 5,
+      "pitch": 1,
+      "start": "10:00",
+      "end": "10:12",
+      "home": "aaaaaaaaa",
+      "away": "ZZZZZZZZZZZZZZZZZZZZ",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "a240bd8b-1ad4-4a3f-91d8-43630e4fecf1",
+      "slot": 6,
+      "pitch": 1,
+      "start": "10:15",
+      "end": "10:27",
+      "home": "ssssssssssss",
+      "away": "YYYYYYYYYYYYYYYYYYYYYY",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "c34ebf30-4fd5-40c6-b4d6-96ebb43f1b38",
+      "slot": 7,
+      "pitch": 1,
+      "start": "10:30",
+      "end": "10:42",
+      "home": "aaaaaaaaa",
+      "away": "ddddddddd",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "aac4b12f-b577-4a98-9768-01c24ec0b00b",
+      "slot": 8,
+      "pitch": 1,
+      "start": "10:45",
+      "end": "10:57",
+      "home": "ssssssssssss",
+      "away": "ZZZZZZZZZZZZZZZZZZZZ",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "d89870bf-4606-4ad0-a2b0-1109ec967d11",
+      "slot": 9,
+      "pitch": 1,
+      "start": "11:00",
+      "end": "11:12",
+      "home": "ddddddddd",
+      "away": "YYYYYYYYYYYYYYYYYYYYYY",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": "b9eb5763-2990-4779-9d5c-eb38f67a523b",
+      "slot": 10,
+      "pitch": 1,
+      "start": "11:15",
+      "end": "11:27",
+      "home": "ZZZZZZZZZZZZZZZZZZZZ",
+      "away": "YYYYYYYYYYYYYYYYYYYYYY",
+      "homeScore": null,
+      "awayScore": null
+    }
+  ],
+  "scorers": [],
+  "topScorer": null
+}
