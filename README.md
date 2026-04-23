@@ -27,7 +27,7 @@ Klikni na Vygenerovat zápasy, pokud jsi měnil týmy nebo plán turnaje.
 
 vyplň skóre/střelce
 
-Klikni na export pro GIT — stáhne se soubor public-data.json.
+Klikni na export pro GIT — stáhne se soubor public_data.json.
 
 V GitHubu (https://github.com/tjsrepy1718/turnaj) nahraj ten nový public-data.json do stejné složky, kde je index.html. vždycky se musí jmenovat "public-data.json"
 
