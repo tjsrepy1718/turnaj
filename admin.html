@@ -1370,15 +1370,15 @@ function renderAll(){
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'public_data.json';
+      a.download = 'public-data.json';
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      setStatus('Soubor public_data.json byl vytvořen a stažen.', 'ok');
+      setStatus('Soubor public-data.json byl vytvořen a stažen.', 'ok');
     }catch(e){
       console.error(e);
-      setStatus('Nepodařilo se vytvořit public_data.json.', 'warn');
+      setStatus('Nepodařilo se vytvořit public-data.json.', 'warn');
     }
   }
 
@@ -1401,7 +1401,7 @@ function renderAll(){
     a.download = `liga-report-${new Date().toISOString().slice(0,10)}.html`;
     document.body.appendChild(a);
     a.click(); a.remove(); URL.revokeObjectURL(url);
-    setStatus('Soubor public_data.json byl vytvořen a stažen.', 'ok');
+    setStatus('Soubor public-data.json byl vytvořen a stažen.', 'ok');
   }
 
   async function regenerateScheduleAfterSettingsChange(message){
