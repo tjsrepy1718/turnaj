@@ -696,6 +696,7 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
       if(byTime !== 0) return byTime;
       return (a.pitch || 1) - (b.pitch || 1);
     });
+    enableMatchDragAndDrop();
   }
 
   function renderScorerTeamOptions(matchTeams = null){
@@ -900,6 +901,56 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
     });
   }
 
+  function enableMatchDragAndDrop(){
+    const container = document.getElementById('matches');
+    if(!container) return;
+    let dragEl = null;
+    container.querySelectorAll('.match').forEach((el, index) => {
+      el.setAttribute('draggable', 'true');
+      el.dataset.order = index;
+      el.addEventListener('dragstart', (e) => {
+        dragEl = el;
+        el.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      el.addEventListener('dragend', () => {
+        if(dragEl) dragEl.classList.remove('dragging');
+        dragEl = null;
+      });
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const bounding = el.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        const half = bounding.height / 2;
+        if(offset > half) {
+          el.parentNode.insertBefore(dragEl, el.nextSibling);
+        } else {
+          el.parentNode.insertBefore(dragEl, el);
+        }
+      });
+    });
+
+    container.addEventListener('drop', async () => {
+      // po puštění přepočítáme pořadí v state.rounds podle nového pořadí DOMu
+      const newOrder = Array.from(container.querySelectorAll('.match')).map(el => el.dataset.matchId).filter(Boolean);
+      if(!window.state || !Array.isArray(window.state.rounds)) return;
+      const all = [];
+      window.state.rounds.forEach((rd, roundIndex) => rd.matches.forEach(m => all.push({m, roundIndex}));
+      const byId = new Map(all.map(x => [x.m.id, x]));
+      const ordered = newOrder.map(id => byId.get(id)).filter(Boolean);
+      const matchesPerRound = window.state.rounds.map(rd => rd.matches.length);
+      let idx = 0;
+      window.state.rounds.forEach((rd, r) => {
+        const count = matchesPerRound[r];
+        const slice = ordered.slice(idx, idx+count).map(x => x.m);
+        if(slice.length === count) rd.matches = slice;
+        idx += count;
+      });
+      if(typeof window.persistState === 'function') await window.persistState();
+    });
+  }
+
   function renderMatches(){
     elMatches.innerHTML = '';
     const flatMatches = getFlatMatches();
@@ -908,6 +959,7 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
     flatMatches.forEach((item) => {
       const row = document.createElement('div');
       row.className = 'match';
+      row.dataset.matchId = item.id;
       const sourceRound = state.rounds[item.roundIndex];
       const matchIndex = sourceRound ? sourceRound.matches.findIndex(x => x.id === item.id) : -1;
       const teamsForMatch = [item.home, item.away];
