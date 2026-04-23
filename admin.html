@@ -696,76 +696,6 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
       if(byTime !== 0) return byTime;
       return (a.pitch || 1) - (b.pitch || 1);
     });
-    enableMatchDragDrop();
-  }
-
-  function enableMatchDragDrop(){
-    const container = document.getElementById('matches');
-    if(!container) return;
-    let dragEl = null;
-
-    container.querySelectorAll('.match').forEach(row => {
-      row.setAttribute('draggable','true');
-      row.addEventListener('dragstart', (e) => {
-        dragEl = row;
-        row.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-      });
-      row.addEventListener('dragend', async () => {
-        if(dragEl) dragEl.classList.remove('dragging');
-        dragEl = null;
-        // po skončení přetažení přemapujeme pořadí do state.rounds a přepočítáme časy
-        const items = Array.from(container.querySelectorAll('.match'));
-        const ids = items.map(el => el.dataset.matchId).filter(Boolean);
-        const flat = [];
-        state.rounds.forEach((rd, roundIndex) => rd.matches.forEach(m => flat.push({ match: m, roundIndex })));
-        const byId = new Map(flat.map(x => [x.match.id, x]));
-        const ordered = ids.map(id => byId.get(id)).filter(Boolean);
-        if(!ordered.length) return;
-
-        const pitchCount = state.pitchCount || 1;
-        const matchDuration = state.matchDuration || 12;
-        const breakDuration = state.breakDuration || 0;
-        const startMinutes = timeToMinutes(state.startTime || '09:00');
-
-        // přepočet slot/pitch/slotStart/slotEnd podle nové pozice v seznamu
-        ordered.forEach((item, index) => {
-          const slot = Math.floor(index / pitchCount) + 1;
-          const pitch = (index % pitchCount) + 1;
-          const slotStartMin = startMinutes + (slot - 1) * (matchDuration + breakDuration);
-          const slotEndMin = slotStartMin + matchDuration;
-          item.match.slot = slot;
-          item.match.pitch = pitch;
-          item.match.slotStart = minutesToTime(slotStartMin);
-          item.match.slotEnd = minutesToTime(slotEndMin);
-        });
-
-        // z ordered vrátíme zpět strukturu rounds (podle původního počtu zápasů v kolech)
-        const counts = state.rounds.map(rd => rd.matches.length);
-        let idx = 0;
-        state.rounds.forEach((rd, r) => {
-          const c = counts[r];
-          const slice = ordered.slice(idx, idx + c).map(x => x.match);
-          if(slice.length === c) rd.matches = slice;
-          idx += c;
-        });
-
-        await persistState();
-        renderMatches();
-      });
-      row.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if(!dragEl || dragEl === row) return;
-        const rect = row.getBoundingClientRect();
-        const offset = e.clientY - rect.top;
-        const half = rect.height / 2;
-        if(offset > half){
-          row.parentNode.insertBefore(dragEl, row.nextSibling);
-        } else {
-          row.parentNode.insertBefore(dragEl, row);
-        }
-      });
-    });
   }
 
   function renderScorerTeamOptions(matchTeams = null){
@@ -978,7 +908,6 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
     flatMatches.forEach((item) => {
       const row = document.createElement('div');
       row.className = 'match';
-      row.dataset.matchId = item.id;
       const sourceRound = state.rounds[item.roundIndex];
       const matchIndex = sourceRound ? sourceRound.matches.findIndex(x => x.id === item.id) : -1;
       const teamsForMatch = [item.home, item.away];
@@ -1569,7 +1498,8 @@ function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
 
 
   elExportBtn.addEventListener('click', () => {
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
+    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return;     enableMatchDragDrop();
+}
     elJsonBox.value = JSON.stringify(state, null, 2);
     setStatus('Export hotov. JSON si zkopírujte pro zálohu nebo přenos.', 'ok');
   });
