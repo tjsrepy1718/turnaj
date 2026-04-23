@@ -34,7 +34,7 @@ V GitHubu (https://github.com/tjsrepy1718/turnaj) nahraj ten nový public-data.j
 Jak to nahrát na GitHub
 Na GitHubu otevři repo a použij Add file → Upload files nebo přímo editaci souboru přes webové rozhraní.
 
-Vyber nový public-data.json.
+Vyber nový public_data.json.
 
 Potvrď commit změny.
 
