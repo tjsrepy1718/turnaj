@@ -125,7 +125,6 @@
 }
   #pdfArea{display:block !important;}#pdfArea .split{display:block !important;}#pdfArea .card{width:100% !important;}
 
-
 /* export-safe barvy (bez color-mix) */
 .capture-mode .tag,
 .capture-mode .chip,
@@ -140,6 +139,14 @@
 .capture-mode .table tr.pos1 td{background:#f6e49d !important;}
 .capture-mode .table tr.pos2 td{background:#d9dde5 !important;}
 .capture-mode .table tr.pos3 td{background:#e7c0ae !important;}
+
+/* Ruční tabulka (sekce na stránce, bez popupů) */
+@media print {
+  html.manual-print body *{visibility:hidden !important;}
+  html.manual-print #manualSection, html.manual-print #manualSection *{visibility:visible !important;}
+  html.manual-print #manualSection{display:block !important; position:static !important; box-shadow:none !important;}
+  html.manual-print #manualCloseBtn{display:none !important;}
+}
 
 </style>
 </head>
@@ -183,14 +190,11 @@
       </div>
 
       <div class="actions-wrap export-panel">
-        <button id="exportPdfBtn" type="button" class="secondary">Export do PDF</button>
+        <button id="exportPdfBtn" type="button" class="secondary">Tisk / PDF</button>
         <button id="exportHtmlBtn" type="button" class="secondary">Export HTML</button>
         <button id="exportGitBtn" type="button" class="secondary git-export">export pro GIT</button>
  <button id=\"exportManualTableBtn\" type=\"button\" class=\"secondary\">Export ruční tabulky</button>
-        <button id="exportImgStandingsBtn" type="button" class="secondary">Export tabulka (PNG)</button>
-        <button id="exportImgMatchesBtn" type="button" class="secondary">Export zápasy (PNG)</button>
-        <button id="exportImgScorersBtn" type="button" class="secondary">Export střelci (PNG)</button>
-        <button id="exportCsvStandingsBtn" type="button" class="secondary">CSV – tabulka</button>
+<button id="exportCsvStandingsBtn" type="button" class="secondary">CSV – tabulka</button>
         <button id="exportCsvMatchesBtn" type="button" class="secondary">CSV – zápasy</button>
         <button id="exportCsvScorersBtn" type="button" class="secondary">CSV – střelci</button>
         <button id="exportCsvAllBtn" type="button" class="secondary">CSV – vše</button>
@@ -298,7 +302,20 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.5/dist/html2canvas.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/html2canvas-pro@1.5.5/dist/html2canvas.min.js';"></script>
+<div class="card" id="manualSection" style="display:none; margin-top:14px;">
+  <div class="row" style="justify-content:space-between; align-items:flex-start; gap:10px;">
+    <div>
+      <h2>Ruční tabulka</h2>
+      <div class="small">První řádek i sloupec obsahuje týmy. Diagonála je vyšrafovaná. Buňky jsou čtvercové.</div>
+    </div>
+    <div class="row" style="gap:8px;">
+      <button type="button" class="secondary" id="manualPrintBtn">Tisk / PDF</button>
+      <button type="button" class="danger" id="manualCloseBtn">Zavřít</button>
+    </div>
+  </div>
+  <div id="manualBody" style="margin-top:10px; overflow:auto;"></div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>  const LOCAL_LS_KEY = 'league_manager_v7_local_backup';
   const BACKUP_HISTORY_KEY = 'league_manager_backup_history_v1';
@@ -538,24 +555,7 @@
     elStorageNotice.textContent = 'Ukládání: pouze do tohoto prohlížeče (localStorage). Pro přenos na jiné zařízení použijte lokální zálohu (soubor .json).';
   }
 
-  
-
-  function requireHtml2canvas(){
-    if(typeof window.html2canvas === 'function') return window.html2canvas;
-    const msg = 'Knihovna html2canvas se nenačetla (blokovaná CDN / offline). ' +
-                'Pro exporty PNG/PDF přidejte html2canvas-pro lokálně do projektu nebo povolte CDN.';
-    setStatus(msg, 'warn');
-    throw new Error(msg);
-  }
-  function requireJsPDF(){
-    const jsPDF = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : null;
-    if(jsPDF) return jsPDF;
-    const msg = 'Knihovna jsPDF se nenačetla. Zkontrolujte načtení html2pdf.bundle.';
-    setStatus(msg, 'warn');
-    throw new Error(msg);
-  }
-
-function clampInt(value, min, max, fallback){
+  function clampInt(value, min, max, fallback){
     const n = parseInt(value, 10);
     if(Number.isNaN(n)) return fallback;
     return Math.min(max, Math.max(min, n));
@@ -912,7 +912,7 @@ function renderScorerTeamOptions(matchTeams = null){
 
 function getMatchScorerEntries(matchId){
     return state.scorers
-      .filter(s => clampInt(s.byMatch?.[matchId], 0, 999, 0) > 0)
+      .filter(s => clampInt((s.byMatch && s.byMatch[matchId]), 0, 999, 0) > 0)
       .map(s => ({ id: s.id, name: s.name, team: s.team, goals: clampInt(s.byMatch[matchId], 0, 999, 0) }))
       .sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
   }
@@ -1090,43 +1090,9 @@ function renderAll(){
   }
 
   function exportPdf(){
-  document.documentElement.classList.add('capture-mode');
-  requestAnimationFrame(async () => {
-    try{
-      const canvas = await requireHtml2canvas()(elPdfArea, {
-        backgroundColor:'#ffffff',
-        scale: 2,
-        useCORS: true,
-        scrollX: 0,
-        scrollY: -window.scrollY
-      });
-      const imgData = canvas.toDataURL('image/jpeg', 0.98);
-      const jsPDF = requireJsPDF();
-      // A4 landscape: 297x210mm
-      const pdf = new jsPDF('l','mm','a4');
-      const pageW = 297;
-      const pageH = 210;
-      const imgW = pageW;
-      const imgH = canvas.height * imgW / canvas.width;
-      let y = 0;
-      pdf.addImage(imgData, 'JPEG', 0, y, imgW, imgH);
-      while(imgH + y > pageH){
-        y -= pageH;
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 0, y, imgW, imgH);
-      }
-      pdf.save(`liga-${new Date().toISOString().slice(0,10)}.pdf`);
-      setStatus('PDF bylo vygenerováno a staženo.', 'ok');
-    }catch(e){
-      console.error(e);
-      setStatus('Export do PDF selhal.', 'warn');
-    }finally{
-      document.documentElement.classList.remove('capture-mode');
-    }
-  });
+  // Bez html2canvas: použijte tisk do PDF (Ctrl+P / Uložit jako PDF)
+  window.print();
 }
-
-
 
   /*********************** EXPORT DO OBRÁZKU (PNG/JPG) ************************
    * Cíl: místo RTF exportu exportovat vybrané sekce jako obrázek.
@@ -1157,7 +1123,7 @@ function renderAll(){
     await new Promise(r => requestAnimationFrame(() => r()));
 
     try{
-      const canvas = await requireHtml2canvas()(domNode, {
+      const canvas = await html2canvas(domNode, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
@@ -1276,7 +1242,6 @@ function renderAll(){
     if(elExportImgMatchesBtn) elExportImgMatchesBtn.addEventListener('click', exportMatchesImage);
     if(elExportImgScorersBtn) elExportImgScorersBtn.addEventListener('click', exportScorersImage);
   }
-
 
   /*********************** EXPORT DO CSV ************************
    * - oddělovač: ';' (lepší pro CZ Excel)
@@ -1400,8 +1365,6 @@ function renderAll(){
     if(elExportCsvAllBtn) elExportCsvAllBtn.addEventListener('click', exportAllToCSV);
   }
 
-
-
   function exportJsonToBox(){
     try{
       const data = JSON.stringify(state, null, 2);
@@ -1481,7 +1444,7 @@ function renderAll(){
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      setStatus('Soubor public_data.json byl vytvořen a stažen.', 'ok');
+      setStatus('HTML report byl vytvořen a stažen.', 'ok');
     }catch(e){
       console.error(e);
       setStatus('Nepodařilo se vytvořit public-data.json.', 'warn');
@@ -1495,7 +1458,6 @@ function renderAll(){
       <div class="match"><div class="badge">${item.slotStart || '--:--'}–${item.slotEnd || '--:--'}</div><div class="badge">Hřiště ${item.pitch || 1}</div><div style="text-align:right;">${escapeHtml(item.home)}</div><div>vs</div><div style="text-align:left;">${escapeHtml(item.away)}</div><div>${escapeHtml(item.hs || '')}</div><div>${escapeHtml(item.as || '')}</div></div>`).join('');
     const topHtml = elTopScorerBox.innerHTML;
     return `<!doctype html><html lang="cs"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Ligový report</title><style>body{font-family:Arial,sans-serif;margin:24px;color:#111;background:#fff;}h1,h2{margin:0 0 12px;}.section{margin-bottom:24px;}table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #999;padding:8px;text-align:center;font-size:13px;}th{background:#eee;}td.left{text-align:left;}.pos1 td{background:#f6e49d!important;}.pos2 td{background:#d9dde5!important;}.pos3 td{background:#e7c0ae!important;}.match{display:grid;grid-template-columns:95px 110px 1fr auto 1fr 60px 60px;gap:8px;align-items:center;border:1px solid #bbb;border-radius:10px;padding:8px;margin-bottom:8px;}.badge{display:inline-block;padding:4px 8px;border:1px solid #999;border-radius:999px;background:#f7f7f7;font-size:12px;}.leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid #bbb;background:#f9f9f9;margin-bottom:10px;}.leader-icon{font-size:28px;line-height:1;}.leader-title{font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.05em;}.leader-name{font-size:18px;font-weight:700;}.leader-meta{font-size:13px;color:#222;}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f7f7f7;border:1px solid #bbb;font-size:12px;}#pdfArea{display:block !important;}#pdfArea .split{display:block !important;}#pdfArea .card{width:100% !important;}
-
 
 /* export-safe barvy (bez color-mix) */
 .capture-mode .tag,
@@ -1524,7 +1486,7 @@ function renderAll(){
     a.download = `liga-report-${new Date().toISOString().slice(0,10)}.html`;
     document.body.appendChild(a);
     a.click(); a.remove(); URL.revokeObjectURL(url);
-    setStatus('HTML report byl vytvořen a stažen.', 'ok');
+    setStatus('Soubor public_data.json byl vytvořen a stažen.', 'ok');
   }
 
   async function regenerateScheduleAfterSettingsChange(message){
@@ -1593,8 +1555,6 @@ function renderAll(){
     elJsonBox.value = '';
     setStatus('Vše bylo resetováno.', 'ok');
   });
-
-
 
   // --- Lokální záloha do souboru (JSON) ---
   function downloadBackupFile(){
@@ -1758,12 +1718,41 @@ function openManualTableExport(){
   w.focus();
   setTimeout(function(){ try{ w.print(); }catch(e){ console.error(e); } }, 350);
 }
+
+// --- Ruční tabulka bez popupů (sekce na stránce) ---
+function openManualTableExport(){
+  var teams = [].concat(state.teams || []);
+  if(teams.length < 2){ setStatus('Nejdříve přidejte alespoň 2 týmy.', 'warn'); return; }
+  var sec = document.getElementById('manualSection');
+  var body = document.getElementById('manualBody');
+  if(!sec || !body){ setStatus('Chybí sekce pro ruční tabulku.', 'warn'); return; }
+  body.innerHTML = '';
+  body.appendChild(buildManualMatrixTable(teams));
+  sec.style.display = 'block';
+  try{ sec.scrollIntoView(true); }catch(e){}
+  setStatus('Ruční tabulka připravena. Pro uložení klikněte na Tisk / PDF.', 'ok');
+}
+function closeManualSection(){
+  var sec = document.getElementById('manualSection');
+  if(sec) sec.style.display = 'none';
+}
+function printManualSection(){
+  document.documentElement.classList.add('manual-print');
+  window.print();
+  setTimeout(function(){ document.documentElement.classList.remove('manual-print'); }, 300);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     syncInputsFromState();
     initCsvExportButtons();
     initImageExportButtons();
     renderBackupHistory();
-  });
+  
+    const mp=document.getElementById('manualPrintBtn');
+    const mc=document.getElementById('manualCloseBtn');
+    if(mp) mp.addEventListener('click', printManualSection);
+    if(mc) mc.addEventListener('click', closeManualSection);
+});
 
   setStorageNotice();
   loadSharedState();
