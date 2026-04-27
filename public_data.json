@@ -2,7 +2,7 @@
   "meta": {
     "title": "TJ SŘepy – turnaj",
     "subtitle": "Veřejný přehled pro rodiče",
-    "updatedAt": "2026-04-27T20:59:43.745Z",
+    "updatedAt": "2026-04-27T21:07:07.389Z",
     "teamCount": 5,
     "matchCount": 10,
     "completedMatches": 10,
@@ -33,51 +33,51 @@
     },
     {
       "position": 2,
-      "team": "ZZZZZZZZZZZZZZZZZZZZ",
+      "team": "ddddddddd",
       "played": 4,
       "wins": 2,
       "draws": 1,
       "losses": 1,
-      "goalsFor": 20,
-      "goalsAgainst": 34,
-      "goalDifference": -14,
+      "goalsFor": 69,
+      "goalsAgainst": 18,
+      "goalDifference": 51,
       "points": 7
     },
     {
       "position": 3,
-      "team": "ddddddddd",
+      "team": "ZZZZZZZZZZZZZZZZZZZZ",
       "played": 4,
-      "wins": 1,
-      "draws": 2,
-      "losses": 1,
-      "goalsFor": 67,
-      "goalsAgainst": 18,
-      "goalDifference": 49,
-      "points": 5
+      "wins": 2,
+      "draws": 0,
+      "losses": 2,
+      "goalsFor": 20,
+      "goalsAgainst": 36,
+      "goalDifference": -16,
+      "points": 6
     },
     {
       "position": 4,
       "team": "aaaaaaaaa",
       "played": 4,
-      "wins": 1,
-      "draws": 1,
+      "wins": 2,
+      "draws": 0,
       "losses": 2,
-      "goalsFor": 18,
+      "goalsFor": 19,
       "goalsAgainst": 20,
-      "goalDifference": -2,
-      "points": 4
+      "goalDifference": -1,
+      "points": 6
     },
     {
       "position": 5,
       "team": "ssssssssssss",
       "played": 4,
       "wins": 0,
-      "draws": 2,
-      "losses": 2,
+      "draws": 1,
+      "losses": 3,
       "goalsFor": 18,
-      "goalsAgainst": 21,
-      "goalDifference": -3,
-      "points": 2
+      "goalsAgainst": 22,
+      "goalDifference": -4,
+      "points": 1
     }
   ],
   "matches": [
@@ -89,7 +89,7 @@
       "end": "09:12",
       "home": "aaaaaaaaa",
       "away": "ssssssssssss",
-      "homeScore": 1,
+      "homeScore": 2,
       "awayScore": 1
     },
     {
@@ -100,7 +100,7 @@
       "end": "09:27",
       "home": "ddddddddd",
       "away": "ZZZZZZZZZZZZZZZZZZZZ",
-      "homeScore": 1,
+      "homeScore": 3,
       "awayScore": 1
     },
     {
@@ -192,6 +192,24 @@
       "awayScore": 21
     }
   ],
-  "scorers": [],
-  "topScorer": null
+  "scorers": [
+    {
+      "position": 1,
+      "name": "sss",
+      "team": "ddddddddd",
+      "goals": 2
+    },
+    {
+      "position": 2,
+      "name": "sad",
+      "team": "aaaaaaaaa",
+      "goals": 1
+    }
+  ],
+  "topScorer": {
+    "position": 1,
+    "name": "sss",
+    "team": "ddddddddd",
+    "goals": 2
+  }
 }
