@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ligový výpis</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--text:#0f1a14;--muted:#4a5a52;--line:#d8e2db;--accent:#0b7a3b}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#fff,var(--bg));color:var(--text)}
+.wrap{max-width:1180px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);margin-bottom:12px}
+h1,h2{margin:0 0 10px} h1{font-size:22px} h2{font-size:16px}
+.small{color:var(--muted);font-size:13px}
+.table{width:100%;border-collapse:collapse} .table th,.table td{padding:8px;border-bottom:1px solid var(--line);font-size:13px;text-align:center} .table th{background:#f7faf8}
+.table td.left,.table th.left{text-align:left}
+.matches{display:grid;gap:8px}.match{display:grid;grid-template-columns:38px 82px 1fr auto 1fr 60px;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px;background:#f7faf8}
+.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:#f7faf8}
+.leader{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:#f7faf8}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ligový výpis</h1>
+  <div class="card"><div class="small" id="meta">Načítám data…</div></div>
+  <div class="card">
+    <h2>Tabulka</h2>
+    <table class="table" id="standingsTable"><thead><tr><th>Poř.</th><th class="left">Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Zápasy</h2>
+    <div class="matches" id="matches"></div>
+  </div>
+  <div class="card" id="scorersCard">
+    <h2>Střelci gólů</h2>
+    <div id="topScorerBox" class="leader"></div>
+    <table class="table" id="scorersTable"><thead><tr><th>Poř.</th><th class="left">Hráč</th><th class="left">Tým</th><th>Góly</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+<script>
+const DATA_URL = 'public_data.json';
+const elMeta = document.getElementById('meta');
+const elStandings = document.querySelector('#standingsTable tbody');
+const elMatches = document.getElementById('matches');
+const elScorersCard = document.getElementById('scorersCard');
+const elScorers = document.querySelector('#scorersTable tbody');
+const elTop = document.getElementById('topScorerBox');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s ?? '').trim();
+const n = v => Number.parseInt(v ?? 0, 10) || 0;
+async function loadData(){ const r = await fetch(DATA_URL, {cache:'no-store'}); if(!r.ok) throw new Error('Nelze načíst public_data.json'); return await r.json(); }
+function emptyRow(team){ return {team, P:0, W:0, D:0, L:0, GF:0, GA:0, GD:0, Pts:0}; }
+function applyMatch(home, away, hs, as){ home.P++; away.P++; home.GF += hs; home.GA += as; away.GF += as; away.GA += hs; if(hs>as){ home.W++; home.Pts += 3; away.L++; } else if(hs<as){ away.W++; away.Pts += 3; home.L++; } else { home.D++; away.D++; home.Pts++; away.Pts++; } }
+function getFlatMatches(state){ return (state.rounds||[]).flatMap((r,ri)=>(r.matches||[]).map(m=>({...m,roundIndex:ri}))); }
+function standingsFrom(state){ const map = new Map((state.teams||[]).map(t => [t, emptyRow(t)])); getFlatMatches(state).forEach(m => { const hs = n(m.hs), as = n(m.as); if(!map.has(m.home)) map.set(m.home, emptyRow(m.home)); if(!map.has(m.away)) map.set(m.away, emptyRow(m.away)); applyMatch(map.get(m.home), map.get(m.away), hs, as); }); const arr=[...map.values()]; arr.forEach(x => x.GD = x.GF - x.GA); return arr.sort((a,b)=> b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || a.team.localeCompare(b.team)); }
+function getScorers(state){ return (state.scorers||[]).filter(s => n(s.goals) > 0).sort((a,b)=> n(b.goals)-n(a.goals) || norm(a.team).localeCompare(norm(b.team)) || norm(a.name).localeCompare(norm(b.name))); }
+function render(state){ elMeta.textContent = `Týmy: ${state.teams?.length||0} · Zápasy: ${getFlatMatches(state).length} · Střelci: ${getScorers(state).length}`; elStandings.innerHTML = standingsFrom(state).map((r,i)=>`<tr><td>${i+1}</td><td class="left">${esc(r.team)}</td><td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF}</td><td>${r.GA}</td><td>${r.GD}</td><td><strong>${r.Pts}</strong></td></tr>`).join(''); elMatches.innerHTML = getFlatMatches(state).sort((a,b)=> n(a.order)-n(b.order)).map((m,i)=>`<div class="match"><div class="pill">${String(m.order ?? i+1).padStart(2,'0')}</div><div class="pill">${esc(m.slotStart||'--:--')}–${esc(m.slotEnd||'--:--')}</div><div>${esc(m.home)}</div><div>vs</div><div>${esc(m.away)}</div><div><strong>${esc(m.hs ?? '0')}:${esc(m.as ?? '0')}</strong></div></div>`).join(''); const scorers = getScorers(state); if(!scorers.length){ elScorersCard.classList.add('hidden'); } else { elScorersCard.classList.remove('hidden'); elTop.innerHTML = `<div>🏆</div><div><div><strong>${esc(scorers[0].name)}</strong></div><div class="small">${esc(scorers[0].team)} · ${n(scorers[0].goals)} gólů</div></div>`; elScorers.innerHTML = scorers.map((s,i)=>`<tr><td>${i+1}</td><td class="left">${esc(s.name)}</td><td class="left">${esc(s.team)}</td><td><strong>${n(s.goals)}</strong></td></tr>`).join(''); } }
+loadData().then(render).catch(err => { elMeta.textContent = err.message; });
+</script>
+</body>
+</html>
