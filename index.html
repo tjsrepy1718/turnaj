@@ -57,7 +57,7 @@ const n = v => Number.parseInt(v ?? 0, 10) || 0;
 async function loadData(){ const r = await fetch(DATAURL, {cache:'no-store'}); if(!r.ok) throw new Error('Prozatím nejsou zveřejněna žádná data.'); return await r.json(); }
 function render(data){
   const meta = data.meta || {};
-  elMeta.innerHTML = `<div><strong>Turnajový výpis</strong></div><div>· Týmy: ${meta.teamCount ?? (data.teams?.length || 0)} · Zápasy: ${meta.matchCount ?? (data.matches?.length || 0)} · Střelci: ${data.scorers?.length || 0} · Aktualizace: ${meta.updatedAt || '-'}</div>`;
+  elMeta.innerHTML = `<div><strong>Turnajový výpis</strong></div><div>Týmy: ${meta.teamCount ?? (data.teams?.length || 0)} · Zápasy: ${meta.matchCount ?? (data.matches?.length || 0)} · Střelci: ${data.scorers?.length || 0} · Aktualizace: ${meta.updatedAt || '-'}</div>`;
 
   const standings = Array.isArray(data.standings) ? data.standings : [];
   elStandingsCard.classList.toggle('hidden', !standings.length);
