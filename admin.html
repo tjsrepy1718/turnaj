@@ -46,7 +46,7 @@
     button:disabled, input:disabled, textarea:disabled, select:disabled{opacity:.45;cursor:not-allowed;}
 
     .muted{color:var(--muted);font-size:13px;line-height:1.4;}
-    .small{font-size:12px !important;color:var(--muted);}
+    .small{font-size:12px;color:var(--muted);}
     .ok{color:var(--success);}
     .warn{color:#b45309;}
     .notice{padding:10px 12px;border-radius:12px;background:#f7faf8;border:1px solid var(--line);margin-top:10px;}
@@ -69,59 +69,36 @@
 
     .leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#f7faf8;margin-bottom:10px;}
     .leader-icon{font-size:28px;line-height:1;}
-    .leader-title{font-size:12px !important;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+    .leader-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
     .leader-name{font-size:18px;font-weight:700;}
     .leader-meta{font-size:13px;color:color-mix(in srgb, var(--accent) 65%, #000);}
     .leader-empty{color:var(--muted);font-size:13px;}
 
     .matches{display:grid;gap:8px;position:relative;z-index:1;width:100%;}
-    .match{display:grid;grid-template-columns:42px 42px 95px 100px 1fr auto 1fr auto auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:#f7faf8;}.match-order{font-size:12px !important;font-weight:700;color:#0b7a3b;background:#edf8f1;border:1px solid #cfe9d6;border-radius:999px;padding:4px 0;text-align:center}.match-move{display:flex;flex-direction:column;gap:3px;align-items:center}.match-move button{width:18px;height:18px;padding:0;border-radius:999px;line-height:16px;font-size:11px;font-weight:700}
-    .time-badge,.pitch-badge{font-size:12px !important;color:var(--text);background:color-mix(in srgb, var(--accent) 12%, #ffffff);border:1px solid var(--line);border-radius:999px;padding:6px 8px;text-align:center;white-space:nowrap;}
+    .match{display:grid;grid-template-columns:42px 42px 95px 100px 1fr auto 1fr auto auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:#f7faf8;}.match-order{font-size:12px;font-weight:700;color:#0b7a3b;background:#edf8f1;border:1px solid #cfe9d6;border-radius:999px;padding:4px 0;text-align:center}.match-move{display:flex;flex-direction:column;gap:3px;align-items:center}.match-move button{width:18px;height:18px;padding:0;border-radius:999px;line-height:16px;font-size:11px;font-weight:700}
+    .time-badge,.pitch-badge{font-size:12px;color:var(--text);background:color-mix(in srgb, var(--accent) 12%, #ffffff);border:1px solid var(--line);border-radius:999px;padding:6px 8px;text-align:center;white-space:nowrap;}
     .match .t1{text-align:right;}
     .match .t2{text-align:left;}
     .score{width:64px;text-align:center;}
     .sep{color:var(--muted);}
     .match-tools{display:flex;justify-content:flex-end;}
-    .tiny-btn{padding:6px 9px;font-size:12px !important;border-radius:10px;}
+    .tiny-btn{padding:6px 9px;font-size:12px;border-radius:10px;}
     .inline-editor{display:none;border-top:1px dashed var(--line);padding-top:10px;margin-top:10px;grid-column:1 / -1;}
     .inline-editor.open{display:block;}
     .inline-form{display:grid;grid-template-columns:1.4fr 1fr 110px auto auto;gap:8px;align-items:end;}
     @media(max-width:900px){.inline-form{grid-template-columns:1fr;}}
     .inline-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px !important;}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px;}
     .chip button{padding:2px 7px;font-size:11px;border-radius:999px;}
 
     .scorer-form{display:grid;grid-template-columns:1.5fr 1fr 110px auto auto;gap:8px;margin-top:8px;align-items:end;}
     @media(max-width:780px){.scorer-form{grid-template-columns:1fr;}}
     .goals-inline{display:flex;gap:6px;justify-content:center;align-items:center;}
     .goals-inline input{width:76px;text-align:center;padding:6px 8px;}
-    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px !important;}
-    .badge{font-size:12px !important;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#f7faf8;position:relative;z-index:4999;pointer-events:none;}
+    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px;}
+    .badge{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#f7faf8;position:relative;z-index:4999;pointer-events:none;}
 
-    
-.manual-matrix-table{font-size:12px !important;}
-.manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;font-size:12px !important;min-width:96px !important;width:96px !important;max-width:96px !important;height:32px !important;padding:0 4px !important;}
-.manual-matrix-table th.manual-row-head{min-width:88px;width:88px;max-width:88px;}
-.manual-matrix-table th.manual-corner{min-width:96px !important;width:96px !important;max-width:96px !important;height:32px !important;}
-.manual-matrix-table th,.manual-matrix-table td{min-width:56px !important;width:56px !important;height:44px !important;max-width:56px !important;max-height:44px !important;}
-.manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#595959 0,#595959 4px,#fff 4px,#fff 10px) !important;}
-
-
-.manual-matrix-table th.manual-col-head{position:static;vertical-align:middle;text-align:center;min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;}
-.manual-matrix-table th.manual-col-head .manual-head-text{display:inline;transform:none !important;writing-mode:horizontal-tb !important;white-space:nowrap !important;line-height:1;font-size:12px !important;}
-.manual-matrix-table th.manual-col-head{min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;display:table-cell !important;}
-.manual-matrix-table th.manual-col-head,.manual-matrix-table th.manual-row-head,.manual-matrix-table th.manual-corner{padding:2px 4px !important;}
-
-@media print {
-  .manual-matrix-table th.manual-col-head{min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;}
-  .manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-row-head{min-width:110px !important;width:110px !important;max-width:110px !important;}
-  .manual-matrix-table th,.manual-matrix-table td{min-width:56px !important;width:56px !important;height:44px !important;max-width:56px !important;max-height:44px !important;}
-
-  .manual-matrix-table th.manual-col-head{position:relative;vertical-align:bottom !important;}
-  .manual-matrix-table th.manual-col-head .manual-head-text{display:inline-block !important;transform:none !important;writing-mode:horizontal-tb !important;white-space:nowrap !important;line-height:1 !important;}
-
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
-
+    @media print {
       body{background:#fff;color:#111;}
       .wrap{max-width:none;padding:0;}
       .card{box-shadow:none;border:1px solid #999;background:#fff;color:#111;}
@@ -162,158 +139,14 @@
 .capture-mode .table tr.pos1 td{background:#f6e49d !important;}
 .capture-mode .table tr.pos2 td{background:#d9dde5 !important;}
 .capture-mode .table tr.pos3 td{background:#e7c0ae !important;}
-.manual-matrix-wrap{overflow:auto;}
-.manual-matrix-table{border-collapse:collapse;border:1px solid #999;background:#fff;width:max-content;}
-.manual-matrix-table th,.manual-matrix-table td{border:1px solid #999;min-width:56px;width:56px;height:56px;text-align:center;vertical-align:middle;padding:0;font-size:11px;}
-.manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-col-head,.manual-matrix-table th.manual-row-head{background:#f7faf8;font-weight:700;}
-.manual-matrix-table td.manual-diag{background:repeating-linear-gradient(45deg,#d6d6d6 0,#d6d6d6 6px,#ffffff 6px,#ffffff 12px);}
-
 
 /* Ruční tabulka (sekce na stránce, bez popupů) */
 @media print {
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
-
   html.manual-print body *{visibility:hidden !important;}
   html.manual-print #manualSection, html.manual-print #manualSection *{visibility:visible !important;}
   html.manual-print #manualSection{display:block !important; position:static !important; box-shadow:none !important;}
   html.manual-print #manualCloseBtn{display:none !important;}
 }
-
-
-.manual-matrix-wrap{overflow:auto;padding:4px 0;}
-.manual-matrix-table{border-collapse:collapse;border:2px solid #000;background:#fff;table-layout:fixed;}
-.manual-matrix-table th,.manual-matrix-table td{border:1px solid #000;min-width:34px;width:34px;height:34px;max-width:34px;max-height:34px;padding:0;box-sizing:border-box;text-align:center;vertical-align:middle;overflow:hidden;}
-.manual-matrix-table th{font-size:10px;line-height:1;font-weight:700;background:#fff;color:#111;}
-.manual-matrix-table th.manual-corner{min-width:58px;width:58px;background:#efefef;}
-.manual-matrix-table th.manual-row-head{min-width:58px;width:58px;background:#efefef;}
-.manual-matrix-table th.manual-col-head{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-size:9px;}
-.manual-matrix-table td.manual-cell{background:#fff;}
-.manual-matrix-table td.manual-diag{background:
-  repeating-linear-gradient(135deg,#8f8f8f 0,#8f8f8f 3px,#fff 3px,#fff 8px),
-  #fff;}
-.manual-matrix-table td.manual-diag{background-blend-mode:multiply;}
-.manual-matrix-table tr td, .manual-matrix-table tr th{box-shadow:inset 0 0 0 1px #000;}
-@media print {
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
-
-  html, body{background:#fff !important;}
-  #manualSection{background:#fff !important;}
-  .manual-matrix-table{border:2px solid #000 !important; table-layout:auto !important; width:max-content !important;}
-  .manual-matrix-table th,.manual-matrix-table td{border:1px solid #000 !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-  .manual-matrix-table td.manual-diag{background:repeating-linear-gradient(135deg,#777 0,#777 3px,#fff 3px,#fff 8px) !important;}
-  .manual-matrix-table{page-break-inside:avoid;}
-}
-
-
-.manual-matrix-wrap{overflow:auto;padding:0;margin:0;display:inline-block;}
-.manual-matrix-table{border-collapse:collapse;border:2px solid #000;background:#fff;table-layout:fixed;}
-.manual-matrix-table th,.manual-matrix-table td{border:2px solid #000 !important;min-width:34px;width:34px;height:34px;max-width:34px;max-height:34px;padding:0;margin:0;box-sizing:border-box;text-align:center;vertical-align:middle;overflow:hidden;background-clip:padding-box;}
-.manual-matrix-table th{font-size:10px;line-height:1;font-weight:700;background:#fff;color:#111;}
-.manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-row-head{min-width:58px;width:58px;max-width:58px;background:#efefef;}
-.manual-matrix-table th.manual-col-head{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-size:9px;}
-.manual-matrix-table td.manual-cell{background:#fff;}
-.manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#6d6d6d 0,#6d6d6d 3px,#fff 3px,#fff 7px) !important; background-color:#fff !important;}
-.manual-matrix-table tr td,.manual-matrix-table tr th{box-shadow:none;}
-@media print {
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
-
-  html,body{background:#fff !important;}
-  #manualSection{display:block !important;visibility:visible !important;background:#fff !important;}
-  #manualSection *{visibility:visible !important;}
-  .manual-matrix-table{border:2px solid #000 !important; table-layout:auto !important; width:max-content !important;}
-  .manual-matrix-table th,.manual-matrix-table td{border:2px solid #000 !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-  .manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#555 0,#555 4px,#fff 4px,#fff 8px) !important;background-color:#fff !important;}
-}
-
-
-.manual-show-flash{outline:2px solid #0b7a3b; outline-offset:4px;}
-
-
-@page { size: landscape; margin: 8mm; }
-@media print {
-  html, body { width: 100% !important; height: auto !important; overflow: visible !important; }
-  body { transform: none !important; }
-  .wrap, .grid, .card { max-width: none !important; width: 100% !important; }
-  .card { break-inside: avoid !important; page-break-inside: avoid !important; }
-  #manualSection { break-before: avoid !important; break-after: avoid !important; page-break-before: avoid !important; page-break-after: avoid !important; }
-  #manualBody { overflow: visible !important; }
-  .manual-matrix-wrap { overflow: visible !important; width: auto !important; }
-  .manual-matrix-table { break-inside: avoid !important; page-break-inside: avoid !important; width: auto !important; max-width: none !important; }
-  .manual-matrix-table thead { display: table-header-group !important; }
-  .manual-matrix-table tbody { display: table-row-group !important; }
-  .manual-matrix-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
-  .manual-matrix-table th, .manual-matrix-table td { break-inside: avoid !important; page-break-inside: avoid !important; }
-  .manual-matrix-table th.manual-col-head{min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;}
-  .manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-row-head{min-width:110px !important;width:110px !important;max-width:110px !important;}
-  .manual-matrix-table th,.manual-matrix-table td{min-width:56px !important;width:56px !important;height:44px !important;max-width:56px !important;max-height:44px !important;}
-  .manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#555 0,#555 4px,#fff 4px,#fff 8px) !important;background-color:#fff !important;}
-  .manual-show-flash{outline:none !important;}
-  .export-panel, #manualCloseBtn, #manualPrintBtn{display:none !important;}
-}
-
-
-@page { size: landscape; margin: 4mm; }
-@media print {
-  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-  html, body { width: 100% !important; height: auto !important; overflow: hidden !important; }
-  body > *:not(#manualSection) { display: none !important; }
-  #manualSection { position: fixed !important; inset: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; overflow: hidden !important; background: #fff !important; }
-  #manualSection .row, #manualSection .small, #manualCloseBtn, #manualPrintBtn { display: none !important; }
-  #manualSection #manualBody { position: absolute !important; left: 0 !important; top: 0 !important; overflow: hidden !important; }
-  .manual-matrix-wrap{overflow:visible !important;}
-  .manual-matrix-table{border:2px solid #000 !important; table-layout:auto !important; width:max-content !important;}
-  .manual-matrix-table thead { display: table-header-group !important; }
-  .manual-matrix-table tbody { display: table-row-group !important; }
-  .manual-matrix-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
-}
-
-
-#manualSection{display:flex;flex-direction:column;align-items:center;}
-#manualBody{width:100%;display:flex;justify-content:center;}
-.manual-matrix-wrap{margin:0 auto;}
-@media print {
-  #manualSection{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:flex-start !important;}
-  #manualBody{width:100% !important;display:flex !important;justify-content:center !important;align-items:flex-start !important;}
-  .manual-matrix-wrap{margin:0 auto !important;}
-}
-
-
-#manualSection{min-height:100%;justify-content:center;}
-#manualBody{min-height:calc(100vh - 120px);align-items:center;}
-@media print {
-  @page { size: landscape; margin: 4mm; }
-  html, body { height: 100% !important; }
-  body { display:flex !important; align-items:center !important; justify-content:center !important; }
-  #manualSection{min-height:100vh !important;justify-content:center !important;align-items:center !important;}
-  #manualBody{min-height:0 !important;align-items:center !important;justify-content:center !important;}
-  .manual-matrix-wrap{margin:auto !important;}
-}
-
-
-@media print {
-  html, body { width: 100% !important; height: 100% !important; margin: 0 !important; }
-  body { display: grid !important; place-items: center !important; align-content: center !important; justify-content: center !important; }
-  #manualSection { position: relative !important; inset: auto !important; margin: 0 auto !important; width: fit-content !important; height: fit-content !important; max-height: 100vh !important; }
-  #manualBody { min-height: auto !important; height: auto !important; }
-  .manual-matrix-wrap { transform: none !important; margin: 0 auto !important; }
-}
-
-
-.manual-matrix-table th.manual-col-head .manual-head-text,
-.manual-matrix-table th.manual-row-head,
-.manual-matrix-table th.manual-corner{
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-  hyphens: auto !important;
-  line-height: 1.05 !important;
-}
-.manual-matrix-table th.manual-col-head{vertical-align:top !important;}
-.manual-matrix-table th.manual-col-head .manual-head-text{display:block !important; padding:2px 4px !important;}
-.manual-matrix-table th.manual-row-head{padding:2px 4px !important;}
-.manual-matrix-table th.manual-col-head, .manual-matrix-table th.manual-row-head{height:auto !important; min-height:34px !important;}
-.manual-matrix-table th.manual-col-head, .manual-matrix-table th.manual-row-head{font-size:11px !important;}
-.manual-matrix-table th.manual-corner{padding:2px 4px !important;}
 
 </style>
 </head>
@@ -360,7 +193,7 @@
         <button id="exportPdfBtn" type="button" class="secondary">Tisk / PDF</button>
         <button id="exportHtmlBtn" type="button" class="secondary">Export HTML</button>
         <button id="exportGitBtn" type="button" class="secondary git-export">export pro GIT</button>
- <button id="exportManualTableBtn" type="button" class="secondary" onclick="openManualTableExport()">Export ruční tabulky</button>
+ <button id=\"exportManualTableBtn\" type=\"button\" class=\"secondary\">Export ruční tabulky</button>
 <button id="exportCsvStandingsBtn" type="button" class="secondary">CSV – tabulka</button>
         <button id="exportCsvMatchesBtn" type="button" class="secondary">CSV – zápasy</button>
         <button id="exportCsvScorersBtn" type="button" class="secondary">CSV – střelci</button>
@@ -483,180 +316,7 @@
   <div id="manualBody" style="margin-top:10px; overflow:auto;"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
-
-
-function buildManualMatrixTable(teams){
-  teams = Array.isArray(teams) ? teams.slice() : [];
-  const wrap = document.createElement('div');
-  wrap.className = 'manual-matrix-wrap';
-  const table = document.createElement('table');
-  table.className = 'manual-matrix-table';
-  table.style.tableLayout = 'fixed';
-  table.style.width = 'max-content';
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.font = getComputedStyle(document.body).font;
-
-  let longest = '';
-  teams.forEach(t => { if (String(t).length > longest.length) longest = String(t); });
-  const longestW = Math.ceil(ctx.measureText(longest).width) + 48;
-  const headW = Math.max(90, Math.min(140, longestW));
-  const rowW = Math.max(90, Math.min(140, longestW));
-  const cellSize = Math.max(44, Math.min(72, Math.ceil(Math.max(headW, rowW) * 0.45)));
-
-  const setSize = (el, w) => {
-    el.style.width = w + 'px';
-    el.style.minWidth = w + 'px';
-    el.style.maxWidth = w + 'px';
-  };
-
-  const thead = document.createElement('thead');
-  const hr = document.createElement('tr');
-  const corner = document.createElement('th');
-  corner.className = 'manual-corner';
-  corner.innerHTML = '<span class="manual-head-text">TÝMY</span>'; 
-  setSize(corner, rowW);
-  hr.appendChild(corner);
-
-  teams.forEach(t => {
-    const th = document.createElement('th');
-    th.className = 'manual-col-head';
-    const sp = document.createElement('span');
-    sp.className = 'manual-head-text';
-    sp.textContent = t;
-    th.appendChild(sp);
-    setSize(th, headW); th.style.height = 'auto';
-    hr.appendChild(th);
-  });
-  thead.appendChild(hr);
-  table.appendChild(thead);
-
-  const tbody = document.createElement('tbody');
-  teams.forEach((rowTeam, i) => {
-    const tr = document.createElement('tr');
-    const th = document.createElement('th');
-    th.className = 'manual-row-head';
-    th.innerHTML = '<span class="manual-head-text">' + String(rowTeam).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>'; 
-    setSize(th, rowW); th.style.height = 'auto';
-    tr.appendChild(th);
-    teams.forEach((_, j) => {
-      const td = document.createElement('td');
-      td.className = i === j ? 'manual-diag' : 'manual-cell';
-      td.style.width = cellSize + 'px';
-      td.style.minWidth = cellSize + 'px';
-      td.style.maxWidth = cellSize + 'px';
-      td.style.height = cellSize + 'px';
-      td.style.minHeight = cellSize + 'px';
-      td.style.maxHeight = cellSize + 'px';
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
-}
-
-
-window.buildManualMatrixTable = function(teams){
-  teams = Array.isArray(teams) ? teams.slice() : [];
-  const wrap = document.createElement('div');
-  wrap.className = 'manual-matrix-wrap';
-  const table = document.createElement('table');
-  table.className = 'matrix-table manual-matrix-table';
-  const thead = document.createElement('thead');
-  const hr = document.createElement('tr');
-  const corner = document.createElement('th');
-  corner.className = 'manual-corner';
-  corner.innerHTML = '<span class="manual-head-text">TÝMY</span>'; 
-  hr.appendChild(corner);
-  teams.forEach((t) => { const th = document.createElement('th'); th.className = 'manual-col-head'; th.textContent = t; hr.appendChild(th); });
-  thead.appendChild(hr);
-  table.appendChild(thead);
-  const tbody = document.createElement('tbody');
-  teams.forEach((rowTeam, i) => { const tr = document.createElement('tr'); const th = document.createElement('th'); th.className = 'manual-row-head'; th.textContent = rowTeam; tr.appendChild(th); teams.forEach((_, j) => { const td = document.createElement('td'); td.className = i===j ? 'manual-diag' : 'manual-cell'; tr.appendChild(td); }); tbody.appendChild(tr); });
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
-};
-
-window.openManualTableExport = function(){
-  console.log('manual export click');
-  const teams = Array.isArray(state?.teams) ? state.teams : [];
-  if (teams.length < 2) {
-    setStatus('Nejdříve přidejte alespoň 2 týmy.', 'warn');
-    return;
-  }
-  const sec = document.getElementById('manualSection');
-  const body = document.getElementById('manualBody');
-  if (!sec || !body) {
-    setStatus('Chybí sekce pro ruční tabulku.', 'warn');
-    return;
-  }
-  body.innerHTML = '';
-  body.appendChild(buildManualMatrixTable(teams));
-  sec.style.display = 'block';
-  sec.hidden = false;
-  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  sec.tabIndex = -1;
-  sec.focus({ preventScroll: true });
-  sec.classList.add('manual-show-flash');
-  setTimeout(() => sec.classList.remove('manual-show-flash'), 800);
-  setTimeout(fitManualMatrixTable, 0);
-}
-
-function printManualSection(){
-  document.documentElement.classList.add('manual-print');
-  fitManualForPrint();
-  requestAnimationFrame(() => {
-    window.print();
-    setTimeout(() => {
-      document.documentElement.classList.remove('manual-print');
-      resetManualPrintFit();
-    }, 300);
-  });
-}
-
-
-
-
-
-
-
-function fitManualForPrint(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const table = document.querySelector('#manualBody .manual-matrix-table');
-  const sec = document.getElementById('manualSection');
-  if(!wrap || !table || !sec) return;
-  wrap.style.transform = '';
-  wrap.style.width = '';
-  const pageW = 1120;
-  const pageH = 740;
-  const rect = table.getBoundingClientRect();
-  const scaleW = pageW / Math.max(1, rect.width);
-  const scaleH = pageH / Math.max(1, rect.height);
-  const scale = Math.min(1, scaleW, scaleH);
-  wrap.style.transformOrigin = 'center center';
-  wrap.style.transform = 'scale(' + scale.toFixed(3) + ')';
-  wrap.style.width = (100 / scale) + '%';
-  wrap.style.margin = '0 auto';
-  sec.style.overflow = 'hidden';
-  sec.style.display = 'flex';
-  sec.style.alignItems = 'center';
-  sec.style.justifyContent = 'center';
-  sec.style.minHeight = '100vh';
-}
-function resetManualPrintFit(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const sec = document.getElementById('manualSection');
-  if(wrap){ wrap.style.transform = ''; wrap.style.transformOrigin = ''; wrap.style.width = ''; }
-  if(sec){ sec.style.overflow = ''; }
-}
-
-
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>  const LOCAL_LS_KEY = 'league_manager_v7_local_backup';
   const BACKUP_HISTORY_KEY = 'league_manager_backup_history_v1';
   const BACKUP_HISTORY_LIMIT = 5;
@@ -1753,7 +1413,7 @@ function renderAll(){
 
     return {
       meta: {
-        title: 'TJ SŘepy – turnaj',
+        title: 'turnaj',
         subtitle: 'Veřejný přehled pro rodiče',
         updatedAt: state.updatedAt || new Date().toISOString(),
         teamCount: state.teams.length,
@@ -1797,7 +1457,7 @@ function renderAll(){
     const flatMatches = getFlatMatches().map(item => `
       <div class="match"><div class="badge">${item.slotStart || '--:--'}–${item.slotEnd || '--:--'}</div><div class="badge">Hřiště ${item.pitch || 1}</div><div style="text-align:right;">${escapeHtml(item.home)}</div><div>vs</div><div style="text-align:left;">${escapeHtml(item.away)}</div><div>${escapeHtml(item.hs || '')}</div><div>${escapeHtml(item.as || '')}</div></div>`).join('');
     const topHtml = elTopScorerBox.innerHTML;
-    return `<!doctype html><html lang="cs"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Ligový report</title><style>body{font-family:Arial,sans-serif;margin:24px;color:#111;background:#fff;}h1,h2{margin:0 0 12px;}.section{margin-bottom:24px;}table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #999;padding:8px;text-align:center;font-size:13px;}th{background:#eee;}td.left{text-align:left;}.pos1 td{background:#f6e49d!important;}.pos2 td{background:#d9dde5!important;}.pos3 td{background:#e7c0ae!important;}.match{display:grid;grid-template-columns:95px 110px 1fr auto 1fr 60px 60px;gap:8px;align-items:center;border:1px solid #bbb;border-radius:10px;padding:8px;margin-bottom:8px;}.badge{display:inline-block;padding:4px 8px;border:1px solid #999;border-radius:999px;background:#f7f7f7;font-size:12px !important;}.leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid #bbb;background:#f9f9f9;margin-bottom:10px;}.leader-icon{font-size:28px;line-height:1;}.leader-title{font-size:12px !important;color:#555;text-transform:uppercase;letter-spacing:.05em;}.leader-name{font-size:18px;font-weight:700;}.leader-meta{font-size:13px;color:#222;}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f7f7f7;border:1px solid #bbb;font-size:12px !important;}#pdfArea{display:block !important;}#pdfArea .split{display:block !important;}#pdfArea .card{width:100% !important;}
+    return `<!doctype html><html lang="cs"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Ligový report</title><style>body{font-family:Arial,sans-serif;margin:24px;color:#111;background:#fff;}h1,h2{margin:0 0 12px;}.section{margin-bottom:24px;}table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #999;padding:8px;text-align:center;font-size:13px;}th{background:#eee;}td.left{text-align:left;}.pos1 td{background:#f6e49d!important;}.pos2 td{background:#d9dde5!important;}.pos3 td{background:#e7c0ae!important;}.match{display:grid;grid-template-columns:95px 110px 1fr auto 1fr 60px 60px;gap:8px;align-items:center;border:1px solid #bbb;border-radius:10px;padding:8px;margin-bottom:8px;}.badge{display:inline-block;padding:4px 8px;border:1px solid #999;border-radius:999px;background:#f7f7f7;font-size:12px;}.leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid #bbb;background:#f9f9f9;margin-bottom:10px;}.leader-icon{font-size:28px;line-height:1;}.leader-title{font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.05em;}.leader-name{font-size:18px;font-weight:700;}.leader-meta{font-size:13px;color:#222;}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f7f7f7;border:1px solid #bbb;font-size:12px;}#pdfArea{display:block !important;}#pdfArea .split{display:block !important;}#pdfArea .card{width:100% !important;}
 
 /* export-safe barvy (bez color-mix) */
 .capture-mode .tag,
@@ -1813,12 +1473,6 @@ function renderAll(){
 .capture-mode .table tr.pos1 td{background:#f6e49d !important;}
 .capture-mode .table tr.pos2 td{background:#d9dde5 !important;}
 .capture-mode .table tr.pos3 td{background:#e7c0ae !important;}
-.manual-matrix-wrap{overflow:auto;}
-.manual-matrix-table{border-collapse:collapse;border:1px solid #999;background:#fff;width:max-content;}
-.manual-matrix-table th,.manual-matrix-table td{border:1px solid #999;min-width:56px;width:56px;height:56px;text-align:center;vertical-align:middle;padding:0;font-size:11px;}
-.manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-col-head,.manual-matrix-table th.manual-row-head{background:#f7faf8;font-weight:700;}
-.manual-matrix-table td.manual-diag{background:repeating-linear-gradient(45deg,#d6d6d6 0,#d6d6d6 6px,#ffffff 6px,#ffffff 12px);}
-
 
 </style></head><body><h1>Ligový report</h1><div class="section"><h2>Tabulka</h2><table><thead><tr><th>Poř.</th><th style="text-align:left;">Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead><tbody>${standingsRows}</tbody></table></div><div class="section"><h2>Nejlepší střelec</h2><div class="leader-box">${topHtml}</div></div><div class="section"><h2>Zápasy</h2>${flatMatches}</div><div class="section"><h2>Střelci gólů</h2><table><thead><tr><th>Poř.</th><th style="text-align:left;">Hráč</th><th style="text-align:left;">Tým</th><th>Góly</th></tr></thead><tbody>${scorerRows}</tbody></table></div></body></html>`;
   }
@@ -1971,212 +1625,124 @@ function renderAll(){
   if(elExportManualTableBtn) elExportManualTableBtn.addEventListener('click', openManualTableExport);
   
 
-
-
+// -------- Tabulka pro ruční zápis (matice týmů) --------
 function buildManualMatrixTable(teams){
-  teams = Array.isArray(teams) ? teams.slice() : [];
-  const wrap = document.createElement('div');
-  wrap.className = 'manual-matrix-wrap';
+  teams = [].concat(teams || []);
   const table = document.createElement('table');
-  table.className = 'manual-matrix-table';
-  table.style.tableLayout = 'fixed';
-  table.style.width = 'max-content';
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.font = getComputedStyle(document.body).font;
-
-  let longest = '';
-  teams.forEach(t => { if (String(t).length > longest.length) longest = String(t); });
-  const longestW = Math.ceil(ctx.measureText(longest).width) + 48;
-  const headW = Math.max(90, Math.min(140, longestW));
-  const rowW = Math.max(90, Math.min(140, longestW));
-  const cellSize = Math.max(44, Math.min(72, Math.ceil(Math.max(headW, rowW) * 0.45)));
-
-  const setSize = (el, w) => {
-    el.style.width = w + 'px';
-    el.style.minWidth = w + 'px';
-    el.style.maxWidth = w + 'px';
-  };
+  table.className = 'matrix-table';
 
   const thead = document.createElement('thead');
-  const hr = document.createElement('tr');
-  const corner = document.createElement('th');
-  corner.className = 'manual-corner';
-  corner.innerHTML = '<span class="manual-head-text">TÝMY</span>'; 
-  setSize(corner, rowW);
-  hr.appendChild(corner);
+  const trh = document.createElement('tr');
 
-  teams.forEach(t => {
+  const corner = document.createElement('th');
+  corner.className = 'corner';
+  const csp = document.createElement('span');
+  csp.className = 'celltxt';
+  csp.textContent = 'TÝMY';
+  corner.appendChild(csp);
+  trh.appendChild(corner);
+
+  teams.forEach(function(t){
     const th = document.createElement('th');
-    th.className = 'manual-col-head';
+    th.className = 'col-head';
     const sp = document.createElement('span');
-    sp.className = 'manual-head-text';
+    sp.className = 'celltxt';
     sp.textContent = t;
     th.appendChild(sp);
-    setSize(th, headW); th.style.height = 'auto';
-    hr.appendChild(th);
+    trh.appendChild(th);
   });
-  thead.appendChild(hr);
+
+  thead.appendChild(trh);
   table.appendChild(thead);
 
   const tbody = document.createElement('tbody');
-  teams.forEach((rowTeam, i) => {
+  teams.forEach(function(rowTeam, i){
     const tr = document.createElement('tr');
     const th = document.createElement('th');
-    th.className = 'manual-row-head';
-    th.innerHTML = '<span class="manual-head-text">' + String(rowTeam).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>'; 
-    setSize(th, rowW); th.style.height = 'auto';
+    th.className = 'row-head';
+    const sp = document.createElement('span');
+    sp.className = 'celltxt';
+    sp.textContent = rowTeam;
+    th.appendChild(sp);
     tr.appendChild(th);
-    teams.forEach((_, j) => {
+
+    teams.forEach(function(colTeam, j){
       const td = document.createElement('td');
-      td.className = i === j ? 'manual-diag' : 'manual-cell';
-      td.style.width = cellSize + 'px';
-      td.style.minWidth = cellSize + 'px';
-      td.style.maxWidth = cellSize + 'px';
-      td.style.height = cellSize + 'px';
-      td.style.minHeight = cellSize + 'px';
-      td.style.maxHeight = cellSize + 'px';
+      if(i === j){ td.className = 'diag'; }
+      else { td.className = 'cell'; td.textContent = ''; }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
   });
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
-}
 
+  table.appendChild(tbody);
+  return table;
+}
 
 function openManualTableExport(){
-  const teams = Array.isArray(state && state.teams) ? state.teams : [];
-  const sec = document.getElementById('manualSection');
-  const body = document.getElementById('manualBody');
-  if(!sec || !body) return;
-  body.innerHTML = '';
-  if(teams.length < 2){
-    body.innerHTML = '<div class="muted">Nejdříve přidejte alespoň 2 týmy.</div>';
-    sec.style.display = 'block';
-    return;
+  const teams = [].concat(state.teams || []);
+  if(teams.length < 2){ setStatus('Nejdříve přidejte alespoň 2 týmy.', 'warn'); return; }
+
+  const w = window.open('', '_blank');
+  if(!w){ setStatus('Pro export ruční tabulky povolte prosím vyskakovací okna (pop-up).', 'warn'); return; }
+
+  const css = `
+    body{font-family:Arial,sans-serif;margin:24px;color:#111;background:#fff;}
+    h1{margin:0 0 12px;}
+    .small{color:#555;font-size:13px;margin:0 0 16px;}
+    .matrix-wrap{overflow:auto;}
+    .matrix-table{border-collapse:collapse;border:1px solid #999;background:#fff;}
+    .matrix-table th,.matrix-table td{border:1px solid #999;width:56px;height:56px;min-width:56px;min-height:56px;max-width:56px;max-height:56px;padding:4px;font-size:10px;line-height:1.1;text-align:center;vertical-align:middle;overflow:hidden;}
+    .matrix-table th.corner{background:#f2f2f2;font-weight:800;}
+    .matrix-table th.row-head{background:#f7f7f7;font-weight:700;}
+    .matrix-table th.col-head{background:#f7f7f7;font-weight:700;}
+    .matrix-table th .celltxt{display:block;width:100%;height:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .matrix-table th.col-head .celltxt{display:flex;align-items:center;justify-content:center;transform:rotate(-90deg);transform-origin:center;}
+    .matrix-table td.diag{background-color:#fff;background-image:repeating-linear-gradient(45deg,#d6d6d6 0,#d6d6d6 6px,#ffffff 6px,#ffffff 12px);} 
+  `;
+
+  w.document.open();
+  w.document.write('<!doctype html><html><head><meta charset=\"utf-8\"><title>Ruční tabulka</title><style>' + css + '</style></head><body>');
+  w.document.write('<h1>Ruční tabulka</h1><p class="small">První řádek i sloupec obsahuje týmy. Diagonála je vyšrafovaná. Buňky jsou čtvercové.</p>');
+  w.document.write('<div class="matrix-wrap" id="wrap"></div>');
+  w.document.write('</body></html>');
+  w.document.close();
+
+  // Postavíme tabulku v novém okně přes DOM
+  const wrap = w.document.getElementById('wrap');
+  if(wrap){
+    const table = buildManualMatrixTable(teams);
+    wrap.appendChild(table);
   }
+
+  w.focus();
+  setTimeout(function(){ try{ w.print(); }catch(e){ console.error(e); } }, 350);
+}
+
+// --- Ruční tabulka bez popupů (sekce na stránce) ---
+function openManualTableExport(){
+  var teams = [].concat(state.teams || []);
+  if(teams.length < 2){ setStatus('Nejdříve přidejte alespoň 2 týmy.', 'warn'); return; }
+  var sec = document.getElementById('manualSection');
+  var body = document.getElementById('manualBody');
+  if(!sec || !body){ setStatus('Chybí sekce pro ruční tabulku.', 'warn'); return; }
+  body.innerHTML = '';
   body.appendChild(buildManualMatrixTable(teams));
   sec.style.display = 'block';
-  sec.hidden = false;
-  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  sec.tabIndex = -1;
-  sec.focus({ preventScroll: true });
-  sec.classList.add('manual-show-flash');
-  setTimeout(() => sec.classList.remove('manual-show-flash'), 800);
-  setTimeout(fitManualMatrixTable, 0);
+  try{ sec.scrollIntoView(true); }catch(e){}
+  setStatus('Ruční tabulka připravena. Pro uložení klikněte na Tisk / PDF.', 'ok');
 }
-
+function closeManualSection(){
+  var sec = document.getElementById('manualSection');
+  if(sec) sec.style.display = 'none';
+}
 function printManualSection(){
   document.documentElement.classList.add('manual-print');
-  fitManualForPrint();
-  requestAnimationFrame(() => {
-    window.print();
-    setTimeout(() => {
-      document.documentElement.classList.remove('manual-print');
-      resetManualPrintFit();
-    }, 300);
-  });
-}
-
-
-function fitManualForPrint(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const table = document.querySelector('#manualBody .manual-matrix-table');
-  const sec = document.getElementById('manualSection');
-  if(!wrap || !table || !sec) return;
-  wrap.style.transform = '';
-  wrap.style.width = '';
-  const pageW = 1120;
-  const pageH = 740;
-  const rect = table.getBoundingClientRect();
-  const scaleW = pageW / Math.max(1, rect.width);
-  const scaleH = pageH / Math.max(1, rect.height);
-  const scale = Math.min(1, scaleW, scaleH);
-  wrap.style.transformOrigin = 'center center';
-  wrap.style.transform = 'scale(' + scale.toFixed(3) + ')';
-  wrap.style.width = (100 / scale) + '%';
-  wrap.style.margin = '0 auto';
-  sec.style.overflow = 'hidden';
-  sec.style.display = 'flex';
-  sec.style.alignItems = 'center';
-  sec.style.justifyContent = 'center';
-  sec.style.minHeight = '100vh';
-}
-function resetManualPrintFit(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const sec = document.getElementById('manualSection');
-  if(wrap){ wrap.style.transform = ''; wrap.style.transformOrigin = ''; wrap.style.width = ''; }
-  if(sec){ sec.style.overflow = ''; }
-}
-
-
-
-
-async function exportManualTableAsImage(){
-  const sec = document.getElementById('manualSection');
-  const body = document.getElementById('manualBody');
-  if(!sec || !body) return;
-  const target = body.querySelector('.manual-matrix-wrap');
-  if(!target){
-    openManualTableExport();
-  }
-  const el = body.querySelector('.manual-matrix-wrap');
-  if(!el) return;
-  fitManualMatrixTable();
-  const prev = document.documentElement.classList.contains('manual-print');
-  document.documentElement.classList.add('manual-print');
-  try{
-    const canvas = await html2canvas(el, {backgroundColor:'#ffffff', scale:2, useCORS:true});
-    const dataUrl = canvas.toDataURL('image/png');
-    const win = window.open('');
-    if(win){
-      win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Ruční tabulka</title><style>body{margin:0;padding:20px;background:#fff;}img{max-width:100%;height:auto;display:block;}</style></head><body><img src="'+dataUrl+'"></body></html>');
-      win.document.close();
-      win.focus();
-    }
-  } finally {
-    if(!prev) document.documentElement.classList.remove('manual-print');
-  }
-}
-
-
-function fitManualMatrixTable(){
-  const table = document.querySelector('#manualBody .manual-matrix-table');
-  if(!table) return;
-  const headers = Array.from(table.querySelectorAll('thead th'));
-  const rowHeads = Array.from(table.querySelectorAll('tbody th'));
-  const cells = Array.from(table.querySelectorAll('tbody td'));
-  const allTexts = [];
-  headers.forEach((el, i) => { if(i>0) allTexts.push((el.textContent || '').trim()); });
-  rowHeads.forEach(el => allTexts.push((el.textContent || '').trim()));
-  allTexts.push(...cells.map(() => '')); 
-  const ctx = document.createElement('canvas').getContext('2d');
-  const font = getComputedStyle(document.body).font;
-  ctx.font = font;
-  let maxText = 0;
-  allTexts.forEach(t => { const w = ctx.measureText(t).width; if(w > maxText) maxText = w; });
-  const colWidth = Math.max(56, Math.ceil(maxText + 28));
-  const rowHeadWidth = Math.max(88, Math.ceil(maxText + 36));
-  const cellSize = Math.max(36, Math.min(60, colWidth - 20));
-  table.style.tableLayout = 'fixed';
-  table.querySelectorAll('th.manual-col-head').forEach(th => { th.style.width = colWidth + 'px'; th.style.minWidth = colWidth + 'px'; th.style.maxWidth = colWidth + 'px'; });
-  table.querySelectorAll('th.manual-corner, th.manual-row-head').forEach(th => { th.style.width = rowHeadWidth + 'px'; th.style.minWidth = rowHeadWidth + 'px'; th.style.maxWidth = rowHeadWidth + 'px'; });
-  table.querySelectorAll('th.manual-col-head, th.manual-row-head, th.manual-corner').forEach(th => { th.style.height = '34px'; });
-  table.querySelectorAll('tbody td').forEach(td => { td.style.width = cellSize + 'px'; td.style.minWidth = cellSize + 'px'; td.style.maxWidth = cellSize + 'px'; td.style.height = cellSize + 'px'; td.style.minHeight = cellSize + 'px'; td.style.maxHeight = cellSize + 'px'; });
-  table.querySelectorAll('tbody tr').forEach(tr => { tr.style.height = cellSize + 'px'; });
+  window.print();
+  setTimeout(function(){ document.documentElement.classList.remove('manual-print'); }, 300);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.addEventListener('resize', () => { if(document.querySelector('#manualBody .manual-matrix-table')) fitManualMatrixTable(); });
-  const manualExportBtn = document.getElementById('exportManualTableBtn');
-  const manualPrintBtn = document.getElementById('manualPrintBtn');
-  const manualCloseBtn = document.getElementById('manualCloseBtn');
-  if (manualExportBtn) manualExportBtn.addEventListener('click', window.openManualTableExport);
-  if (manualPrintBtn) manualPrintBtn.addEventListener('click', printManualSection);
-  if (manualCloseBtn) manualCloseBtn.addEventListener('click', () => { const sec = document.getElementById('manualSection'); if (sec) sec.style.display='none'; });
-
     syncInputsFromState();
     initCsvExportButtons();
     initImageExportButtons();
