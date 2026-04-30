@@ -1,2196 +1,1119 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Správce ligy zdarma – admin</title>
+  <meta charset="UTF-8" />
+  <title>Turnaj – administrace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root{
-      --bg:#f3f6f4;            /* pozadí stránky */
-      --card:#ffffff;          /* karty */
-      --muted:#4a5a52;         /* sekundární text */
-      --text:#0f1a14;          /* hlavní text */
-      --accent:#0b7a3b;        /* klubová zelená */
-      --accent2:#0f9a4a;       /* světlejší zelená */
-      --line:#d8e2db;          /* linky / border */
-      --gold:#c9a227;
-      --silver:#9aa7a0;
-      --bronze:#a06a4b;
-      --success:#0f7a3c;
-      --danger:#b4232c;
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --panel-light: #f5f5f5;
+      --panel-border: #dddddd;
+
+      --accent: #ffd800;
+      --accent-soft: rgba(255,216,0,0.12);
+      --accent-strong: #ffb800;
+
+      --accent-green: #28a745;
+      --accent-green-soft: rgba(40,167,69,0.12);
+
+      --text: #222222;
+      --muted: #777777;
+      --danger: #dc3545;
+      --success: #28a745;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#ffffff,var(--bg));color:var(--text);}
-    .wrap{max-width:1380px;margin:0 auto;padding:18px;}
-    h1{font-size:22px;margin:0 0 12px;}
-    h2{margin:0 0 8px;font-size:16px;}
-    h3{margin:0 0 8px;font-size:15px;}
-    .grid{display:block;}
-    @media(min-width:980px){.grid{display:block;}}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.10);padding:14px;position:relative;overflow:visible;isolation:isolate;z-index:1;width:100%;box-sizing:border-box;}
-    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:relative;}
-    .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
-    .actions-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-    label.small-label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:110px;}
 
-    input, select, button, textarea{border-radius:12px;border:1px solid var(--line);background:#f7faf8;color:var(--text);padding:10px 12px;font-size:14px;position:relative;width:100%;}
-    input:focus, textarea:focus, select:focus{outline:2px solid color-mix(in srgb, var(--accent) 30%, transparent);border-color:color-mix(in srgb, var(--accent) 55%, var(--line));}
-    button{cursor:pointer;background:linear-gradient(180deg,var(--accent2),var(--accent));border-color:color-mix(in srgb, var(--accent) 70%, #000);width:auto;}
-    button:hover{filter:brightness(1.05);}
-    button.secondary{background:#f7faf8;}
-    button.git-export{background:linear-gradient(180deg,#ffe08a,#f0b400);border-color:#c08a00;color:#2d2000;font-weight:700;}
-    button.git-export:hover{filter:brightness(1.04);}
-    button.success{background:linear-gradient(180deg,#18a957,#0f7a3c);border-color:#0f7a3c;}
-    button.danger{background:linear-gradient(180deg,#d43a42,#b4232c);border-color:#b4232c;}
-    button:disabled, input:disabled, textarea:disabled, select:disabled{opacity:.45;cursor:not-allowed;}
+    * { box-sizing: border-box; }
 
-    .muted{color:var(--muted);font-size:13px;line-height:1.4;}
-    .small{font-size:12px !important;color:var(--muted);}
-    .ok{color:var(--success);}
-    .warn{color:#b45309;}
-    .notice{padding:10px 12px;border-radius:12px;background:#f7faf8;border:1px solid var(--line);margin-top:10px;}
-    ul{margin:10px 0 0;padding-left:18px;}
-    li{margin:6px 0;}
-    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#f7faf8;white-space:nowrap;}
-    .pill b{font-weight:600;}
-    .split{display:block;}
-    @media(min-width:1180px){.split{display:block;}}
-
-    .table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:16px;border:1px solid var(--line);position:relative;z-index:1;}
-    .table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;font-size:13px;}
-    .table th{background:#f7faf8;color:#cfe0ff;font-weight:600;}
-    .table td.team,.table td.left{text-align:left;}
-    .table tr:nth-child(even) td{background:#f7faf8;}
-    .table tr.pos1 td{background:color-mix(in srgb, var(--gold) 25%, #ffffff)!important;}
-    .table tr.pos2 td{background:color-mix(in srgb, var(--silver) 25%, #ffffff)!important;}
-    .table tr.pos3 td{background:color-mix(in srgb, var(--bronze) 25%, #ffffff)!important;}
-    .table tr.pos1 td:first-child,.table tr.pos2 td:first-child,.table tr.pos3 td:first-child{font-weight:700;}
-
-    .leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#f7faf8;margin-bottom:10px;}
-    .leader-icon{font-size:28px;line-height:1;}
-    .leader-title{font-size:12px !important;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
-    .leader-name{font-size:18px;font-weight:700;}
-    .leader-meta{font-size:13px;color:color-mix(in srgb, var(--accent) 65%, #000);}
-    .leader-empty{color:var(--muted);font-size:13px;}
-
-    .matches{display:grid;gap:8px;position:relative;z-index:1;width:100%;}
-    .match{display:grid;grid-template-columns:42px 42px 95px 100px 1fr auto 1fr auto auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:#f7faf8;}.match-order{font-size:12px !important;font-weight:700;color:#0b7a3b;background:#edf8f1;border:1px solid #cfe9d6;border-radius:999px;padding:4px 0;text-align:center}.match-move{display:flex;flex-direction:column;gap:3px;align-items:center}.match-move button{width:18px;height:18px;padding:0;border-radius:999px;line-height:16px;font-size:11px;font-weight:700}
-    .time-badge,.pitch-badge{font-size:12px !important;color:var(--text);background:color-mix(in srgb, var(--accent) 12%, #ffffff);border:1px solid var(--line);border-radius:999px;padding:6px 8px;text-align:center;white-space:nowrap;}
-    .match .t1{text-align:right;}
-    .match .t2{text-align:left;}
-    .score{width:64px;text-align:center;}
-    .sep{color:var(--muted);}
-    .match-tools{display:flex;justify-content:flex-end;}
-    .tiny-btn{padding:6px 9px;font-size:12px !important;border-radius:10px;}
-    .inline-editor{display:none;border-top:1px dashed var(--line);padding-top:10px;margin-top:10px;grid-column:1 / -1;}
-    .inline-editor.open{display:block;}
-    .inline-form{display:grid;grid-template-columns:1.4fr 1fr 110px auto auto;gap:8px;align-items:end;}
-    @media(max-width:900px){.inline-form{grid-template-columns:1fr;}}
-    .inline-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px !important;}
-    .chip button{padding:2px 7px;font-size:11px;border-radius:999px;}
-
-    .scorer-form{display:grid;grid-template-columns:1.5fr 1fr 110px auto auto;gap:8px;margin-top:8px;align-items:end;}
-    @media(max-width:780px){.scorer-form{grid-template-columns:1fr;}}
-    .goals-inline{display:flex;gap:6px;justify-content:center;align-items:center;}
-    .goals-inline input{width:76px;text-align:center;padding:6px 8px;}
-    .tag{display:inline-block;padding:4px 8px;border-radius:999px;background:color-mix(in srgb, var(--accent) 10%, #ffffff);border:1px solid var(--line);font-size:12px !important;}
-    .badge{font-size:12px !important;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#f7faf8;position:relative;z-index:4999;pointer-events:none;}
-
-    
-.manual-matrix-table{font-size:12px !important;}
-.manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;font-size:12px !important;min-width:96px !important;width:96px !important;max-width:96px !important;height:32px !important;padding:0 4px !important;}
-.manual-matrix-table th.manual-row-head{min-width:88px;width:88px;max-width:88px;}
-.manual-matrix-table th.manual-corner{min-width:96px !important;width:96px !important;max-width:96px !important;height:32px !important;}
-.manual-matrix-table th,.manual-matrix-table td{min-width:56px !important;width:56px !important;height:44px !important;max-width:56px !important;max-height:44px !important;}
-.manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#595959 0,#595959 4px,#fff 4px,#fff 10px) !important;}
-
-
-.manual-matrix-table th.manual-col-head{position:static;vertical-align:middle;text-align:center;min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;}
-.manual-matrix-table th.manual-col-head .manual-head-text{display:inline;transform:none !important;writing-mode:horizontal-tb !important;white-space:nowrap !important;line-height:1;font-size:12px !important;}
-.manual-matrix-table th.manual-col-head{min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;display:table-cell !important;}
-.manual-matrix-table th.manual-col-head,.manual-matrix-table th.manual-row-head,.manual-matrix-table th.manual-corner{padding:2px 4px !important;}
-
-@media print {
-  .manual-matrix-table th.manual-col-head{min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;}
-  .manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-row-head{min-width:110px !important;width:110px !important;max-width:110px !important;}
-  .manual-matrix-table th,.manual-matrix-table td{min-width:56px !important;width:56px !important;height:44px !important;max-width:56px !important;max-height:44px !important;}
-
-  .manual-matrix-table th.manual-col-head{position:relative;vertical-align:bottom !important;}
-  .manual-matrix-table th.manual-col-head .manual-head-text{display:inline-block !important;transform:none !important;writing-mode:horizontal-tb !important;white-space:nowrap !important;line-height:1 !important;}
-
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
-
-      body{background:#fff;color:#111;}
-      .wrap{max-width:none;padding:0;}
-      .card{box-shadow:none;border:1px solid #999;background:#fff;color:#111;}
-      .muted,.small,.badge,.lockbar,.controls-panel,.json-panel,.export-panel,.actions-wrap,.match-tools,.inline-editor{display:none!important;}
-      .table th{background:#eee;color:#111;}
-      .match{background:#fff;border-color:#bbb;grid-template-columns:95px 100px 1fr auto 1fr 60px 60px;}
-      .time-badge,.pitch-badge,.tag,.chip{color:#111;background:#f5f5f5;border-color:#bbb;}
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
     }
-  
 
-    /* Režim pro export obrázků: zjednoduší vzhled do bíla a skryje ovládací prvky */
-    .capture-mode body{background:#fff !important;}
-    .capture-mode .card{box-shadow:none !important; border:1px solid #999 !important; background:#fff !important; color:#111 !important;}
-    .capture-mode h1,.capture-mode h2,.capture-mode h3,.capture-mode p,.capture-mode td,.capture-mode th{color:#111 !important;}
-    .capture-mode .table th{background:#eee !important; color:#111 !important;}
-    .capture-mode .muted,.capture-mode .small,.capture-mode .badge,.capture-mode .lockbar,.capture-mode .controls-panel,.capture-mode .json-panel,.capture-mode .export-panel,.capture-mode .actions-wrap,.capture-mode .inline-editor{display:none !important;}
-    .capture-mode .match{background:#fff !important; border-color:#bbb !important;  grid-template-columns:95px 110px 1fr auto 1fr 60px 60px !important;}
-    .capture-mode .match span{display:block; text-align:center;  white-space:nowrap;}
-    
-.capture-mode .match .t1,
-.capture-mode .match .t2,
-.capture-mode .match .sep{
-  white-space:nowrap;
-}
-  #pdfArea{display:block !important;}#pdfArea .split{display:block !important;}#pdfArea .card{width:100% !important;}
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px;
+    }
 
-/* export-safe barvy (bez color-mix) */
-.capture-mode .tag,
-.capture-mode .chip,
-.capture-mode .pill,
-.capture-mode .time-badge,
-.capture-mode .pitch-badge,
-.capture-mode .leader-box{
-  background:#f5f5f5 !important;
-  border-color:#bbb !important;
-  color:#111 !important;
-}
-.capture-mode .table tr.pos1 td{background:#f6e49d !important;}
-.capture-mode .table tr.pos2 td{background:#d9dde5 !important;}
-.capture-mode .table tr.pos3 td{background:#e7c0ae !important;}
-.manual-matrix-wrap{overflow:auto;}
-.manual-matrix-table{border-collapse:collapse;border:1px solid #999;background:#fff;width:max-content;}
-.manual-matrix-table th,.manual-matrix-table td{border:1px solid #999;min-width:56px;width:56px;height:56px;text-align:center;vertical-align:middle;padding:0;font-size:11px;}
-.manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-col-head,.manual-matrix-table th.manual-row-head{background:#f7faf8;font-weight:700;}
-.manual-matrix-table td.manual-diag{background:repeating-linear-gradient(45deg,#d6d6d6 0,#d6d6d6 6px,#ffffff 6px,#ffffff 12px);}
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
 
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.03em;
+    }
 
-/* Ruční tabulka (sekce na stránce, bez popupů) */
-@media print {
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
+    header small {
+      color: var(--muted);
+      font-size: 12px;
+    }
 
-  html.manual-print body *{visibility:hidden !important;}
-  html.manual-print #manualSection, html.manual-print #manualSection *{visibility:visible !important;}
-  html.manual-print #manualSection{display:block !important; position:static !important; box-shadow:none !important;}
-  html.manual-print #manualCloseBtn{display:none !important;}
-}
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+      gap: 16px;
+    }
 
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
 
-.manual-matrix-wrap{overflow:auto;padding:4px 0;}
-.manual-matrix-table{border-collapse:collapse;border:2px solid #000;background:#fff;table-layout:fixed;}
-.manual-matrix-table th,.manual-matrix-table td{border:1px solid #000;min-width:34px;width:34px;height:34px;max-width:34px;max-height:34px;padding:0;box-sizing:border-box;text-align:center;vertical-align:middle;overflow:hidden;}
-.manual-matrix-table th{font-size:10px;line-height:1;font-weight:700;background:#fff;color:#111;}
-.manual-matrix-table th.manual-corner{min-width:58px;width:58px;background:#efefef;}
-.manual-matrix-table th.manual-row-head{min-width:58px;width:58px;background:#efefef;}
-.manual-matrix-table th.manual-col-head{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-size:9px;}
-.manual-matrix-table td.manual-cell{background:#fff;}
-.manual-matrix-table td.manual-diag{background:
-  repeating-linear-gradient(135deg,#8f8f8f 0,#8f8f8f 3px,#fff 3px,#fff 8px),
-  #fff;}
-.manual-matrix-table td.manual-diag{background-blend-mode:multiply;}
-.manual-matrix-table tr td, .manual-matrix-table tr th{box-shadow:inset 0 0 0 1px #000;}
-@media print {
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
+    .panel {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      border: 1px solid var(--panel-border);
+    }
 
-  html, body{background:#fff !important;}
-  #manualSection{background:#fff !important;}
-  .manual-matrix-table{border:2px solid #000 !important; table-layout:auto !important; width:max-content !important;}
-  .manual-matrix-table th,.manual-matrix-table td{border:1px solid #000 !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-  .manual-matrix-table td.manual-diag{background:repeating-linear-gradient(135deg,#777 0,#777 3px,#fff 3px,#fff 8px) !important;}
-  .manual-matrix-table{page-break-inside:avoid;}
-}
+    h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
 
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 6px 0 2px;
+    }
 
-.manual-matrix-wrap{overflow:auto;padding:0;margin:0;display:inline-block;}
-.manual-matrix-table{border-collapse:collapse;border:2px solid #000;background:#fff;table-layout:fixed;}
-.manual-matrix-table th,.manual-matrix-table td{border:2px solid #000 !important;min-width:34px;width:34px;height:34px;max-width:34px;max-height:34px;padding:0;margin:0;box-sizing:border-box;text-align:center;vertical-align:middle;overflow:hidden;background-clip:padding-box;}
-.manual-matrix-table th{font-size:10px;line-height:1;font-weight:700;background:#fff;color:#111;}
-.manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-row-head{min-width:58px;width:58px;max-width:58px;background:#efefef;}
-.manual-matrix-table th.manual-col-head{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-size:9px;}
-.manual-matrix-table td.manual-cell{background:#fff;}
-.manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#6d6d6d 0,#6d6d6d 3px,#fff 3px,#fff 7px) !important; background-color:#fff !important;}
-.manual-matrix-table tr td,.manual-matrix-table tr th{box-shadow:none;}
-@media print {
-  .manual-matrix-table th.manual-col-head{writing-mode:horizontal-tb !important;transform:none !important;white-space:nowrap !important;}
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #cccccc;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 13px;
+    }
 
-  html,body{background:#fff !important;}
-  #manualSection{display:block !important;visibility:visible !important;background:#fff !important;}
-  #manualSection *{visibility:visible !important;}
-  .manual-matrix-table{border:2px solid #000 !important; table-layout:auto !important; width:max-content !important;}
-  .manual-matrix-table th,.manual-matrix-table td{border:2px solid #000 !important;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-  .manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#555 0,#555 4px,#fff 4px,#fff 8px) !important;background-color:#fff !important;}
-}
+    textarea { min-height: 120px; resize: vertical; }
 
+    .row {
+      display: flex;
+      gap: 8px;
+    }
 
-.manual-show-flash{outline:2px solid #0b7a3b; outline-offset:4px;}
+    .row > div { flex: 1; }
 
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #dddddd;
+      color: #222222;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
 
-@page { size: landscape; margin: 8mm; }
-@media print {
-  html, body { width: 100% !important; height: auto !important; overflow: visible !important; }
-  body { transform: none !important; }
-  .wrap, .grid, .card { max-width: none !important; width: 100% !important; }
-  .card { break-inside: avoid !important; page-break-inside: avoid !important; }
-  #manualSection { break-before: avoid !important; break-after: avoid !important; page-break-before: avoid !important; page-break-after: avoid !important; }
-  #manualBody { overflow: visible !important; }
-  .manual-matrix-wrap { overflow: visible !important; width: auto !important; }
-  .manual-matrix-table { break-inside: avoid !important; page-break-inside: avoid !important; width: auto !important; max-width: none !important; }
-  .manual-matrix-table thead { display: table-header-group !important; }
-  .manual-matrix-table tbody { display: table-row-group !important; }
-  .manual-matrix-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
-  .manual-matrix-table th, .manual-matrix-table td { break-inside: avoid !important; page-break-inside: avoid !important; }
-  .manual-matrix-table th.manual-col-head{min-width:120px !important;width:120px !important;max-width:120px !important;height:34px !important;}
-  .manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-row-head{min-width:110px !important;width:110px !important;max-width:110px !important;}
-  .manual-matrix-table th,.manual-matrix-table td{min-width:56px !important;width:56px !important;height:44px !important;max-width:56px !important;max-height:44px !important;}
-  .manual-matrix-table td.manual-diag{background-image:repeating-linear-gradient(135deg,#555 0,#555 4px,#fff 4px,#fff 8px) !important;background-color:#fff !important;}
-  .manual-show-flash{outline:none !important;}
-  .export-panel, #manualCloseBtn, #manualPrintBtn{display:none !important;}
-}
+    .btn-primary {
+      background: var(--accent-green);
+      color: #ffffff;
+    }
 
+    .btn-yellow {
+      background: var(--accent);
+      color: #5a4a00;
+    }
 
-@page { size: landscape; margin: 4mm; }
-@media print {
-  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-  html, body { width: 100% !important; height: auto !important; overflow: hidden !important; }
-  body > *:not(#manualSection) { display: none !important; }
-  #manualSection { position: fixed !important; inset: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; overflow: hidden !important; background: #fff !important; }
-  #manualSection .row, #manualSection .small, #manualCloseBtn, #manualPrintBtn { display: none !important; }
-  #manualSection #manualBody { position: absolute !important; left: 0 !important; top: 0 !important; overflow: hidden !important; }
-  .manual-matrix-wrap{overflow:visible !important;}
-  .manual-matrix-table{border:2px solid #000 !important; table-layout:auto !important; width:max-content !important;}
-  .manual-matrix-table thead { display: table-header-group !important; }
-  .manual-matrix-table tbody { display: table-row-group !important; }
-  .manual-matrix-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
-}
+    .btn.secondary {
+      background: transparent;
+      color: #555555;
+      border: 1px solid #cccccc;
+      box-shadow: none;
+    }
 
+    .btn.danger {
+      background: var(--danger);
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
 
-#manualSection{display:flex;flex-direction:column;align-items:center;}
-#manualBody{width:100%;display:flex;justify-content:center;}
-.manual-matrix-wrap{margin:0 auto;}
-@media print {
-  #manualSection{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:flex-start !important;}
-  #manualBody{width:100% !important;display:flex !important;justify-content:center !important;align-items:flex-start !important;}
-  .manual-matrix-wrap{margin:0 auto !important;}
-}
+    .btn.tiny { padding: 3px 8px; font-size: 11px; }
+    .btn:disabled { opacity: 0.5; cursor: default; }
 
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#f0f0f0;
+      font-size:11px;
+      color:var(--muted);
+    }
 
-#manualSection{min-height:100%;justify-content:center;}
-#manualBody{min-height:calc(100vh - 120px);align-items:center;}
-@media print {
-  @page { size: landscape; margin: 4mm; }
-  html, body { height: 100% !important; }
-  body { display:flex !important; align-items:center !important; justify-content:center !important; }
-  #manualSection{min-height:100vh !important;justify-content:center !important;align-items:center !important;}
-  #manualBody{min-height:0 !important;align-items:center !important;justify-content:center !important;}
-  .manual-matrix-wrap{margin:auto !important;}
-}
+    .status {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .status.ok { color: var(--success); }
+    .status.err { color: var(--danger); }
+    .status.warn{ color: var(--accent-strong); }
 
+    .matches-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 8px;
+      max-height: 420px;
+      overflow: auto;
+    }
 
-@media print {
-  html, body { width: 100% !important; height: 100% !important; margin: 0 !important; }
-  body { display: grid !important; place-items: center !important; align-content: center !important; justify-content: center !important; }
-  #manualSection { position: relative !important; inset: auto !important; margin: 0 auto !important; width: fit-content !important; height: fit-content !important; max-height: 100vh !important; }
-  #manualBody { min-height: auto !important; height: auto !important; }
-  .manual-matrix-wrap { transform: none !important; margin: 0 auto !important; }
-}
+    .match-row {
+      display: grid;
+      grid-template-columns: 32px 46px 82px 64px minmax(0,1fr) 20px minmax(0,1fr) 40px 40px 80px;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      background: var(--panel-light);
+      font-size: 11px;
+    }
 
+    .match-row .order { text-align:center; opacity:0.8; }
+    .match-row .time { font-family:monospace; }
+    .match-row .pitch { font-size:10px; opacity:0.8; }
+    .match-row .team { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-.manual-matrix-table th.manual-col-head .manual-head-text,
-.manual-matrix-table th.manual-row-head,
-.manual-matrix-table th.manual-corner{
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-  hyphens: auto !important;
-  line-height: 1.05 !important;
-}
-.manual-matrix-table th.manual-col-head{vertical-align:top !important;}
-.manual-matrix-table th.manual-col-head .manual-head-text{display:block !important; padding:2px 4px !important;}
-.manual-matrix-table th.manual-row-head{padding:2px 4px !important;}
-.manual-matrix-table th.manual-col-head, .manual-matrix-table th.manual-row-head{height:auto !important; min-height:34px !important;}
-.manual-matrix-table th.manual-col-head, .manual-matrix-table th.manual-row-head{font-size:11px !important;}
-.manual-matrix-table th.manual-corner{padding:2px 4px !important;}
+    .score-input {
+      width: 100%;
+      text-align: center;
+      padding: 2px 4px;
+      border-radius: 4px;
+      border: 1px solid #cccccc;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 12px;
+    }
 
-</style>
+    .scorer-toggle {
+      justify-self: flex-start;
+    }
+
+    .inline-editor {
+      grid-column: 1 / -1;
+      display: none;
+      margin-top: 4px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+    }
+
+    .inline-editor.open { display:block; }
+
+    .inline-editor .inline-form {
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+      align-items:flex-end;
+      margin-bottom:4px;
+    }
+
+    .inline-editor label { font-size:11px; }
+    .inline-editor input,
+    .inline-editor select { font-size:11px; }
+
+    .inline-list {
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+    }
+
+    .scorer-chip {
+      font-size:11px;
+      padding:2px 6px;
+      border-radius:999px;
+      background:rgba(40,167,69,0.08);
+      border:1px solid rgba(40,167,69,0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 4px 6px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      background: #f7f7f7;
+    }
+
+    td.team { text-align:left; }
+    tr.pos1 { background: rgba(40,167,69,0.12); font-weight: 700; }
+    tr.pos2 { background: rgba(255,216,0,0.12); font-weight: 600; }
+    tr.pos3 { background: rgba(80,160,255,0.12); font-weight: 600; }
+
+    .export-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:6px;
+    }
+
+    .h2h-table {
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .h2h-table th,
+    .h2h-table td {
+      border:1px solid #cccccc;
+      padding:2px 4px;
+      text-align:center;
+    }
+    .h2h-diag {
+      background:#f0f0f0;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      body.print-single .app > * {
+        display: none;
+      }
+      body.print-single #h2h-panel.print-only,
+      body.print-single #matches-panel.print-only,
+      body.print-single #standings-panel.print-only {
+        display: block !important;
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        border: none;
+      }
+      body.print-single #h2h-panel.print-only h2,
+      body.print-single #matches-panel.print-only h2,
+      body.print-single #standings-panel.print-only h2 {
+        color: #000;
+      }
+
+      #standings-panel.print-only #btn-print-standings {
+        display: none;
+      }
+
+      #matches-panel.print-only .matches-list {
+        max-height: none;
+        overflow: visible;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Správce ligy — každý s každým + vzájemné zápasy</h1>
-
-  <div class="grid">
-    <div class="card controls-panel">
-
-      <div class="row">
-        <input id="teamName" placeholder="Název týmu…" style="flex:1;" />
-        <button id="addTeamBtn" type="button">Přidat</button>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Turnaj – administrace</h1>
+        <small>Generátor rozpisu, výsledků a střelců</small>
       </div>
+      <div class="pill" id="summary-pill">Týmy: 0 · Zápasů: 0 · Hřiště: 1</div>
+    </header>
 
-      <div class="controls-grid">
-        <label class="small-label" for="pitchCount">
-          Počet hřišť
-          <select id="pitchCount">
-            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-            <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
-          </select>
-        </label>
-        <label class="small-label" for="matchDuration">
-          Délka zápasu (min)
-          <input id="matchDuration" type="number" min="1" max="180" step="1" value="12" />
-        </label>
-        <label class="small-label" for="startTime">
-          Začátek 1. bloku
-          <input id="startTime" type="time" value="09:00" />
-        </label>
-        <label class="small-label" for="breakDuration">
-          Pauza mezi zápasy (min)
-          <input id="breakDuration" type="number" min="0" max="180" step="1" value="3" />
-        </label>
-      </div>
+    <div class="grid">
+      <div class="panel">
+        <h2>Nastavení</h2>
+        <label>Týmy (každý na nový řádek)</label>
+        <textarea id="teams-input" placeholder="TJ Řepy&#10;tým 2&#10;tým 3"></textarea>
 
-      <div class="actions-wrap">
-        <button id="generateBtn" type="button">Vygenerovat zápasy</button>
-        <button id="resetBtn" type="button" class="danger">Resetovat vše</button>
-      </div>
-
-      <div class="actions-wrap export-panel">
-        <button id="exportPdfBtn" type="button" class="secondary">Tisk / PDF</button>
-        <button id="exportHtmlBtn" type="button" class="secondary">Export HTML</button>
-        <button id="exportGitBtn" type="button" class="secondary git-export">export pro GIT</button>
- <button id="exportManualTableBtn" type="button" class="secondary" onclick="openManualTableExport()">Export ruční tabulky</button>
-<button id="exportCsvStandingsBtn" type="button" class="secondary">CSV – tabulka</button>
-        <button id="exportCsvMatchesBtn" type="button" class="secondary">CSV – zápasy</button>
-        <button id="exportCsvScorersBtn" type="button" class="secondary">CSV – střelci</button>
-        <button id="exportCsvAllBtn" type="button" class="secondary">CSV – vše</button>
-      </div>
-
-      <p class="muted" style="margin-top:10px;">
-        ✅ Zápasy se plánují férově: systém se snaží, aby tým ideálně odehrál 1 zápas a pak měl volno, přičemž nikdy nenaplánuje více než 2 zápasy za sebou.<br>
-        ✅ Vyberete počet hřišť, délku zápasu, začátek turnaje a délku pauzy mezi zápasy.<br>
-        ✅ U každého zápasu je tlačítko <strong>Střelci</strong>, kterým si okamžitě otevřete zadávání střelců pro daný zápas.<br>
-        ✅ K dispozici je zvýrazněný box nejlepšího střelce a filtr střelců podle týmu.<br>
-        ✅ Data se ukládají lokálně do tohoto prohlížeče. Pro přenos na jiné zařízení použijte „Lokální záloha“ (soubor JSON).
-      </p>
-
-      <div class="notice small" id="storageNotice"></div>
-
-      <div style="margin-top:10px;">
-        <div class="row" style="justify-content:space-between;gap:6px;">
-          <span class="pill"><b>Týmy:</b> <span id="teamCount">0</span></span>
-          <span class="pill"><b>Zápasy:</b> <span id="matchCount">0</span></span>
-          <span class="pill"><b>Hřiště:</b> <span id="pitchCountBadge">1</span></span>
-        </div>
-        <ul id="teamList"></ul>
-      </div>
-
-      <hr style="border:0;border-top:1px solid var(--line);margin:14px 0;">
-
-      <div class="json-panel">
-        <h3>Záloha / sdílení</h3>
-        <p class="muted" style="margin:0 0 8px;">Udělejte si lokální zálohu do souboru (JSON) a kdykoliv ji zase načtěte zpět. Hodí se pro přenos na jiné zařízení nebo jako pojistka před resetem.</p>
         <div class="row">
-          <button id="exportBtn" type="button" class="secondary">Export JSON</button>
-          <button id="importBtn" type="button" class="secondary">Import JSON</button>
-          <button id="downloadBackupBtn" type="button" class="secondary">Stáhnout zálohu (.json)</button>
-          <button id="loadBackupBtn" type="button" class="secondary">Načíst zálohu ze souboru</button>
-          <input id="backupFileInput" type="file" accept="application/json,.json" style="display:none" />
-        </div>
-        <div style="margin-top:10px;">
-          <textarea id="jsonBox" placeholder="Sem se zobrazí exportovaný JSON… nebo sem JSON vložte pro import"></textarea>
-          <div class="small" id="status"></div>
-        </div>
-
-        <div class="notice small" style="margin-top:10px;" id="backupHistory"></div>
-      </div>
-    </div>
-
-    <div class="card" id="pdfArea">
-      <div class="split">
-        <div>
-          <h2>Tabulka</h2>
-          <table class="table" id="standingsTable">
-            <thead>
-              <tr>
-                <th>Poř.</th><th style="text-align:left;">Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-          <p class="small">Řazení: body → vzájemné zápasy (body, rozdíl gólů, vstřelené góly) → celkový rozdíl gólů → celkové vstřelené góly → název týmu.</p>
-
-          <div style="margin-top:12px;">
-            <h2>Střelci gólů</h2>
-            <div class="leader-box" id="topScorerBox"></div>
-            <div class="row export-panel" style="margin-bottom:8px;">
-              <label class="small-label" for="scorerFilterTeam" style="min-width:180px;">
-                Filtr podle týmu
-                <select id="scorerFilterTeam"></select>
-              </label>
-            </div>
-
-            <div class="scorer-form export-panel">
-              <label class="small-label" for="scorerName">
-                Jméno hráče
-                <input id="scorerName" placeholder="Např. Jan Novák" />
-              </label>
-              <label class="small-label" for="scorerTeam">
-                Tým
-                <select id="scorerTeam"></select>
-              </label>
-              <label class="small-label" for="scorerGoals">
-                Počet gólů
-                <input id="scorerGoals" type="number" min="1" max="99" step="1" value="1" />
-              </label>
-              <button id="addGoalsBtn" type="button" class="success">Přidat</button>
-              <button id="removeGoalsBtn" type="button" class="danger">Odebrat</button>
-            </div>
-
-            <table class="table" id="scorersTable" style="margin-top:10px;">
-              <thead>
-                <tr>
-                  <th>Poř.</th><th style="text-align:left;">Hráč</th><th style="text-align:left;">Tým</th><th>Góly</th><th class="export-panel">Úpravy</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
+          <div>
+            <label>Počet hřišť</label>
+            <input type="number" id="pitch-count" min="1" max="8" value="2" />
+          </div>
+          <div>
+            <label>Délka zápasu (min)</label>
+            <input type="number" id="match-duration" min="5" max="90" value="15" />
           </div>
         </div>
 
-        <div>
-          <h2>Zápasy</h2>
-          <div class="matches" id="matches"></div>
-          <p class="small">Kliknutím na tlačítko <strong>Střelci</strong> u konkrétního zápasu otevřete rychlé zadávání střelců pouze pro oba týmy z daného zápasu.</p>
+        <div class="row">
+          <div>
+            <label>Pauza mezi zápasy (min)</label>
+            <input type="number" id="break-duration" min="0" max="60" value="5" />
+          </div>
+          <div>
+            <label>Začátek turnaje (HH:MM)</label>
+            <input type="text" id="start-time" value="09:00" />
+          </div>
+        </div>
+
+        <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btn-generate">Vygenerovat zápasy</button>
+          <button class="btn btn-yellow" id="btn-recalc">Přepočítat časy pro více hřišť</button>
+          <button class="btn secondary" id="btn-import-json">Import JSON</button>
+          <input type="file" id="file-import-json" accept="application/json" style="display:none" />
+        </div>
+
+        <div class="status" id="status-line"></div>
+      </div>
+
+      <div class="panel" id="matches-panel">
+        <h2>Zápasy</h2>
+        <div class="matches-list" id="matches"></div>
+
+        <div class="export-row">
+          <button class="btn secondary tiny" id="btn-print-matches">Tisk zápasů</button>
+          <button class="btn secondary tiny" id="btn-print">Tisk celé stránky / PDF</button>
+          <button class="btn secondary tiny" id="btn-print-h2h">Tisk H2H</button>
+          <button class="btn secondary tiny" id="btn-export-html">Export HTML</button>
+          <button class="btn secondary tiny" id="btn-export-json">Export JSON</button>
+          <button class="btn secondary tiny" id="btn-export-h2h">Ruční tabulka (H2H)</button>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="card" id="manualSection" style="display:none; margin-top:14px;">
-  <div class="row" style="justify-content:space-between; align-items:flex-start; gap:10px;">
-    <div>
-      <h2>Ruční tabulka</h2>
-      <div class="small">První řádek i sloupec obsahuje týmy. Diagonála je vyšrafovaná. Buňky jsou čtvercové.</div>
+    <div class="panel" style="margin-top:12px;" id="standings-panel">
+      <h2>Tabulka</h2>
+      <div style="margin-bottom:6px; display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="btn secondary tiny" id="btn-print-standings">Tisk tabulky</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Poř.</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+      </table>
     </div>
-    <div class="row" style="gap:8px;">
-      <button type="button" class="secondary" id="manualPrintBtn">Tisk / PDF</button>
-      <button type="button" class="danger" id="manualCloseBtn">Zavřít</button>
+
+    <div class="panel" style="margin-top:12px;" id="h2h-panel" hidden>
+      <h2>Ruční tabulka (H2H)</h2>
+      <div id="h2h-container"></div>
     </div>
   </div>
-  <div id="manualBody" style="margin-top:10px; overflow:auto;"></div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+  <script>
+    const elTeamsInput = document.getElementById('teams-input');
+    const elPitchCount = document.getElementById('pitch-count');
+    const elMatchDuration = document.getElementById('match-duration');
+    const elBreakDuration = document.getElementById('break-duration');
+    const elStartTime = document.getElementById('start-time');
+    const elMatches = document.getElementById('matches');
+    const elStatus = document.getElementById('status-line');
+    const elStandingsBody = document.getElementById('standings-body');
+    const elSummaryPill = document.getElementById('summary-pill');
 
-
-function buildManualMatrixTable(teams){
-  teams = Array.isArray(teams) ? teams.slice() : [];
-  const wrap = document.createElement('div');
-  wrap.className = 'manual-matrix-wrap';
-  const table = document.createElement('table');
-  table.className = 'manual-matrix-table';
-  table.style.tableLayout = 'fixed';
-  table.style.width = 'max-content';
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.font = getComputedStyle(document.body).font;
-
-  let longest = '';
-  teams.forEach(t => { if (String(t).length > longest.length) longest = String(t); });
-  const longestW = Math.ceil(ctx.measureText(longest).width) + 48;
-  const headW = Math.max(90, Math.min(140, longestW));
-  const rowW = Math.max(90, Math.min(140, longestW));
-  const cellSize = Math.max(44, Math.min(72, Math.ceil(Math.max(headW, rowW) * 0.45)));
-
-  const setSize = (el, w) => {
-    el.style.width = w + 'px';
-    el.style.minWidth = w + 'px';
-    el.style.maxWidth = w + 'px';
-  };
-
-  const thead = document.createElement('thead');
-  const hr = document.createElement('tr');
-  const corner = document.createElement('th');
-  corner.className = 'manual-corner';
-  corner.innerHTML = '<span class="manual-head-text">TÝMY</span>'; 
-  setSize(corner, rowW);
-  hr.appendChild(corner);
-
-  teams.forEach(t => {
-    const th = document.createElement('th');
-    th.className = 'manual-col-head';
-    const sp = document.createElement('span');
-    sp.className = 'manual-head-text';
-    sp.textContent = t;
-    th.appendChild(sp);
-    setSize(th, headW); th.style.height = 'auto';
-    hr.appendChild(th);
-  });
-  thead.appendChild(hr);
-  table.appendChild(thead);
-
-  const tbody = document.createElement('tbody');
-  teams.forEach((rowTeam, i) => {
-    const tr = document.createElement('tr');
-    const th = document.createElement('th');
-    th.className = 'manual-row-head';
-    th.innerHTML = '<span class="manual-head-text">' + String(rowTeam).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>'; 
-    setSize(th, rowW); th.style.height = 'auto';
-    tr.appendChild(th);
-    teams.forEach((_, j) => {
-      const td = document.createElement('td');
-      td.className = i === j ? 'manual-diag' : 'manual-cell';
-      td.style.width = cellSize + 'px';
-      td.style.minWidth = cellSize + 'px';
-      td.style.maxWidth = cellSize + 'px';
-      td.style.height = cellSize + 'px';
-      td.style.minHeight = cellSize + 'px';
-      td.style.maxHeight = cellSize + 'px';
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
-}
-
-
-window.buildManualMatrixTable = function(teams){
-  teams = Array.isArray(teams) ? teams.slice() : [];
-  const wrap = document.createElement('div');
-  wrap.className = 'manual-matrix-wrap';
-  const table = document.createElement('table');
-  table.className = 'matrix-table manual-matrix-table';
-  const thead = document.createElement('thead');
-  const hr = document.createElement('tr');
-  const corner = document.createElement('th');
-  corner.className = 'manual-corner';
-  corner.innerHTML = '<span class="manual-head-text">TÝMY</span>'; 
-  hr.appendChild(corner);
-  teams.forEach((t) => { const th = document.createElement('th'); th.className = 'manual-col-head'; th.textContent = t; hr.appendChild(th); });
-  thead.appendChild(hr);
-  table.appendChild(thead);
-  const tbody = document.createElement('tbody');
-  teams.forEach((rowTeam, i) => { const tr = document.createElement('tr'); const th = document.createElement('th'); th.className = 'manual-row-head'; th.textContent = rowTeam; tr.appendChild(th); teams.forEach((_, j) => { const td = document.createElement('td'); td.className = i===j ? 'manual-diag' : 'manual-cell'; tr.appendChild(td); }); tbody.appendChild(tr); });
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
-};
-
-window.openManualTableExport = function(){
-  console.log('manual export click');
-  const teams = Array.isArray(state?.teams) ? state.teams : [];
-  if (teams.length < 2) {
-    setStatus('Nejdříve přidejte alespoň 2 týmy.', 'warn');
-    return;
-  }
-  const sec = document.getElementById('manualSection');
-  const body = document.getElementById('manualBody');
-  if (!sec || !body) {
-    setStatus('Chybí sekce pro ruční tabulku.', 'warn');
-    return;
-  }
-  body.innerHTML = '';
-  body.appendChild(buildManualMatrixTable(teams));
-  sec.style.display = 'block';
-  sec.hidden = false;
-  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  sec.tabIndex = -1;
-  sec.focus({ preventScroll: true });
-  sec.classList.add('manual-show-flash');
-  setTimeout(() => sec.classList.remove('manual-show-flash'), 800);
-  setTimeout(fitManualMatrixTable, 0);
-}
-
-function printManualSection(){
-  document.documentElement.classList.add('manual-print');
-  fitManualForPrint();
-  requestAnimationFrame(() => {
-    window.print();
-    setTimeout(() => {
-      document.documentElement.classList.remove('manual-print');
-      resetManualPrintFit();
-    }, 300);
-  });
-}
-
-
-
-
-
-
-
-function fitManualForPrint(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const table = document.querySelector('#manualBody .manual-matrix-table');
-  const sec = document.getElementById('manualSection');
-  if(!wrap || !table || !sec) return;
-  wrap.style.transform = '';
-  wrap.style.width = '';
-  const pageW = 1120;
-  const pageH = 740;
-  const rect = table.getBoundingClientRect();
-  const scaleW = pageW / Math.max(1, rect.width);
-  const scaleH = pageH / Math.max(1, rect.height);
-  const scale = Math.min(1, scaleW, scaleH);
-  wrap.style.transformOrigin = 'center center';
-  wrap.style.transform = 'scale(' + scale.toFixed(3) + ')';
-  wrap.style.width = (100 / scale) + '%';
-  wrap.style.margin = '0 auto';
-  sec.style.overflow = 'hidden';
-  sec.style.display = 'flex';
-  sec.style.alignItems = 'center';
-  sec.style.justifyContent = 'center';
-  sec.style.minHeight = '100vh';
-}
-function resetManualPrintFit(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const sec = document.getElementById('manualSection');
-  if(wrap){ wrap.style.transform = ''; wrap.style.transformOrigin = ''; wrap.style.width = ''; }
-  if(sec){ sec.style.overflow = ''; }
-}
-
-
-
-</script>
-<script>  const LOCAL_LS_KEY = 'league_manager_v7_local_backup';
-  const BACKUP_HISTORY_KEY = 'league_manager_backup_history_v1';
-  const BACKUP_HISTORY_LIMIT = 5;
-
-  const firebaseConfig = {
-    apiKey: 'DOPLNIT',
-    authDomain: 'DOPLNIT',
-    databaseURL: 'DOPLNIT',
-    projectId: 'DOPLNIT',
-    storageBucket: 'DOPLNIT',
-    messagingSenderId: 'DOPLNIT',
-    appId: 'DOPLNIT'
-  };
-
-  const DB_PATH = 'leagueManager/publicState';
-  const FIREBASE_ENABLED = false;
-
-  let app = null;
-  let db = null;
-  let state = normalizeState(loadLocalBackup());
-  let suppressSave = false;
-
-  if (FIREBASE_ENABLED) {
-    app = initializeApp(firebaseConfig);
-    db = getDatabase(app, firebaseConfig.databaseURL);
-  }
-
-  window.addEventListener('error', (e) => {
-    const s = document.getElementById('status');
-    if(s) s.textContent = 'Chyba skriptu: ' + (e.message || 'neznámá chyba');
-    console.error(e.error || e.message);
-  });
-
-  const elTeamName = document.getElementById('teamName');
-  const elAddTeamBtn = document.getElementById('addTeamBtn');
-  const elGenerateBtn = document.getElementById('generateBtn');
-  const elResetBtn = document.getElementById('resetBtn');
-  const elTeamList = document.getElementById('teamList');
-  const elTeamCount = document.getElementById('teamCount');
-  const elMatchCount = document.getElementById('matchCount');
-  const elPitchCount = document.getElementById('pitchCount');
-  const elPitchCountBadge = document.getElementById('pitchCountBadge');
-  const elMatchDuration = document.getElementById('matchDuration');
-  const elStartTime = document.getElementById('startTime');
-  const elBreakDuration = document.getElementById('breakDuration');
-  const elStandingsBody = document.querySelector('#standingsTable tbody');
-  const elMatches = document.getElementById('matches');
-  const elExportBtn = document.getElementById('exportBtn');
-  const elImportBtn = document.getElementById('importBtn');
-  const elDownloadBackupBtn = document.getElementById('downloadBackupBtn');
-  const elLoadBackupBtn = document.getElementById('loadBackupBtn');
-  const elBackupFileInput = document.getElementById('backupFileInput');
-  const elBackupHistory = document.getElementById('backupHistory');
-  const elExportPdfBtn = document.getElementById('exportPdfBtn');
-  const elExportHtmlBtn = document.getElementById('exportHtmlBtn');
-  const elExportGitBtn = document.getElementById('exportGitBtn');
-  const elExportManualTableBtn = document.getElementById('exportManualTableBtn');
-  const elExportImgStandingsBtn = document.getElementById('exportImgStandingsBtn');
-  const elExportImgMatchesBtn = document.getElementById('exportImgMatchesBtn');
-  const elExportImgScorersBtn = document.getElementById('exportImgScorersBtn');
-  const elExportCsvStandingsBtn = document.getElementById('exportCsvStandingsBtn');
-  const elExportCsvMatchesBtn = document.getElementById('exportCsvMatchesBtn');
-  const elExportCsvScorersBtn = document.getElementById('exportCsvScorersBtn');
-  const elExportCsvAllBtn = document.getElementById('exportCsvAllBtn');
-  const elJsonBox = document.getElementById('jsonBox');
-  const elStatus = document.getElementById('status');
-  const elStorageNotice = document.getElementById('storageNotice');
-  const elPdfArea = document.getElementById('pdfArea');
-  const elScorerName = document.getElementById('scorerName');
-  const elScorerTeam = document.getElementById('scorerTeam');
-  const elScorerGoals = document.getElementById('scorerGoals');
-  const elAddGoalsBtn = document.getElementById('addGoalsBtn');
-  const elRemoveGoalsBtn = document.getElementById('removeGoalsBtn');
-  const elScorersBody = document.querySelector('#scorersTable tbody');
-  const elScorerFilterTeam = document.getElementById('scorerFilterTeam');
-  const elTopScorerBox = document.getElementById('topScorerBox');
-
-  function defaultState(){
-    return {
+    const state = {
+      settings: {
+        pitchCount: 2,
+        matchDuration: 15,
+        breakDuration: 5,
+        startTime: '09:00'
+      },
       teams: [],
       rounds: [],
-      scorers: [],
-      pitchCount: 1,
-      matchDuration: 12,
-      breakDuration: 3,
-      startTime: '09:00',
-      scorerFilterTeam: 'ALL',
-      updatedAt: null
+      scorers: []
     };
-  }
 
-  function normalizeScorers(list){
-    if(!Array.isArray(list)) return [];
-    return list.map(item => ({
-      id: item.id || cryptoRandomId(),
-      name: typeof item.name === 'string' ? item.name : '',
-      team: typeof item.team === 'string' ? item.team : '',
-      goals: clampInt(item.goals, 0, 999, 0),
-      byMatch: item.byMatch && typeof item.byMatch === 'object' ? item.byMatch : {}
-    })).filter(item => item.name && item.team && item.goals >= 0);
-  }
-
-  function normalizeState(obj){
-    const base = defaultState();
-    const merged = { ...base, ...(obj || {}) };
-    merged.teams = Array.isArray(merged.teams) ? merged.teams : [];
-    merged.rounds = Array.isArray(merged.rounds) ? merged.rounds : [];
-    merged.scorers = normalizeScorers(merged.scorers);
-    merged.pitchCount = clampInt(merged.pitchCount, 1, 8, 1);
-    merged.matchDuration = clampInt(merged.matchDuration, 1, 180, 12);
-    merged.breakDuration = clampInt(merged.breakDuration, 0, 180, 3);
-    merged.startTime = isValidTime(merged.startTime) ? merged.startTime : '09:00';
-    merged.scorerFilterTeam = typeof merged.scorerFilterTeam === 'string' ? merged.scorerFilterTeam : 'ALL';
-    return merged;
-  }
-
-  function loadLocalBackup(){
-    try {
-      const raw = localStorage.getItem(LOCAL_LS_KEY);
-      return raw ? JSON.parse(raw) : defaultState();
-    } catch(e){
-      return defaultState();
+    function setStatus(msg, kind){
+      elStatus.textContent = msg || '';
+      elStatus.className = 'status' + (kind ? ' ' + kind : '');
     }
-  }
 
-  function saveLocalBackup(){ try{ localStorage.setItem(LOCAL_LS_KEY, JSON.stringify(state)); }catch(e){ /* ignore storage blocked */ } }
-
-  function loadBackupHistory(){
-    try{
-      const raw = localStorage.getItem(BACKUP_HISTORY_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
-    }catch(e){
-      return [];
+    function escapeHtml(str){
+      return String(str ?? '').replace(/[&<>"']/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c];
+      });
     }
-  }
 
-  function saveBackupHistory(list){
-    try{
-      const arr = (Array.isArray(list) ? list : []).slice(0, BACKUP_HISTORY_LIMIT);
-      localStorage.setItem(BACKUP_HISTORY_KEY, JSON.stringify(arr));
-    }catch(e){
-      // ignore
+    function timeToMinutes(t){
+      var m = String(t || '').match(/^(\d{1,2}):(\d{2})$/);
+      if(!m) return 9*60;
+      var h = parseInt(m[1],10), mi = parseInt(m[2],10);
+      if(!Number.isFinite(h) || !Number.isFinite(mi)) return 9*60;
+      return h*60 + mi;
     }
-  }
 
-  function addBackupToHistory(note = ''){
-    try{
-      const data = JSON.stringify(state);
-      const ts = new Date().toISOString();
-      const item = { ts, note: String(note || ''), data };
-      const list = loadBackupHistory();
-      const filtered = list.filter(x => x && x.data !== data);
-      filtered.unshift(item);
-      saveBackupHistory(filtered);
-    }catch(e){
-      // ignore
+    function minutesToTime(min){
+      var h = Math.floor(min/60);
+      var m = min%60;
+      return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
     }
-  }
 
-  function deleteBackupFromHistory(ts){
-    const list = loadBackupHistory().filter(x => x && x.ts !== ts);
-    saveBackupHistory(list);
-    renderBackupHistory();
-  }
-
-  async function restoreBackupFromHistory(ts){
-    const item = loadBackupHistory().find(x => x && x.ts === ts);
-    if(!item){ setStatus('Záloha nebyla nalezena.', 'warn'); return; }
-    await importBackupFromText(item.data);
-  }
-
-  function downloadBackupFromHistory(ts){
-    const item = loadBackupHistory().find(x => x && x.ts === ts);
-    if(!item){ setStatus('Záloha nebyla nalezena.', 'warn'); return; }
-    try{
-      const blob = new Blob([item.data], { type: 'application/json;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `liga-zaloha-${(item.ts || '').slice(0,10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }catch(e){
-      console.error(e);
-      setStatus('Nepodařilo se stáhnout zálohu.', 'warn');
+    function readSettingsFromInputs(){
+      var teamsRaw = elTeamsInput.value.split(/\r?\n/).map(function(x){return x.trim();}).filter(function(x){return x;});
+      state.teams = teamsRaw;
+      state.settings.pitchCount = Math.max(1, parseInt(elPitchCount.value, 10) || 1);
+      state.settings.matchDuration = Math.max(5, parseInt(elMatchDuration.value, 10) || 15);
+      state.settings.breakDuration = Math.max(0, parseInt(elBreakDuration.value, 10) || 5);
+      state.settings.startTime = elStartTime.value || '09:00';
     }
-  }
 
-  function renderBackupHistory(){
-    if(!elBackupHistory) return;
-    const list = loadBackupHistory();
-    if(list.length === 0){
-      elBackupHistory.innerHTML = '<strong>Historie záloh</strong><br><span class="muted">Zatím nemáte žádné uložené zálohy (max. 5).</span>';
-      return;
+    function updateSummary(){
+      var totalMatches = state.rounds.reduce(function(acc,r){ return acc + ((r.matches && r.matches.length) || 0); }, 0);
+      elSummaryPill.textContent = 'Týmy: ' + state.teams.length + ' · Zápasů: ' + totalMatches + ' · Hřiště: ' + state.settings.pitchCount;
     }
-    const rows = list.map(x => {
-      const dt = (x.ts || '').replace('T',' ').slice(0,16);
-      const note = x.note ? ` — ${escapeHtml(x.note)}` : '';
-      return `
-        <div class="row" style="justify-content:space-between; gap:8px; align-items:center; margin:6px 0;">
-          <div style="flex:1; min-width:180px;">
-            <span class="tag">${escapeHtml(dt)}</span>${note}
-          </div>
-          <div class="row" style="gap:6px;">
-            <button type="button" class="secondary tiny-btn" data-bk-restore="${escapeAttr(x.ts)}">Obnovit</button>
-            <button type="button" class="secondary tiny-btn" data-bk-download="${escapeAttr(x.ts)}">Stáhnout</button>
-            <button type="button" class="danger tiny-btn" data-bk-del="${escapeAttr(x.ts)}">Smazat</button>
-          </div>
-        </div>`;
-    }).join('');
 
-    elBackupHistory.innerHTML = `<strong>Historie záloh</strong><br>${rows}`;
-
-    elBackupHistory.querySelectorAll('[data-bk-restore]').forEach(btn => btn.addEventListener('click', async () => {
-      if(!confirm('Opravdu chcete obnovit tuto zálohu? Současná data budou přepsána.')) return;
-      await restoreBackupFromHistory(btn.dataset.bkRestore);
-    }));
-    elBackupHistory.querySelectorAll('[data-bk-download]').forEach(btn => btn.addEventListener('click', () => downloadBackupFromHistory(btn.dataset.bkDownload)));
-    elBackupHistory.querySelectorAll('[data-bk-del]').forEach(btn => btn.addEventListener('click', () => {
-      if(!confirm('Smazat tuto zálohu z historie?')) return;
-      deleteBackupFromHistory(btn.dataset.bkDel);
-    }));
-  }
-
-  function isAdminUnlocked(){ return true; }
-  function setAdminUnlocked(v){ /* ochrana vypnuta */ }
-  function setStatus(msg, kind = 'muted'){
-    elStatus.className = 'small ' + (kind === 'ok' ? 'ok' : kind === 'warn' ? 'warn' : '');
-    elStatus.textContent = msg;
-  }
-
-  function setStorageNotice(){
-    elStorageNotice.textContent = 'Ukládání: pouze do tohoto prohlížeče (localStorage). Pro přenos na jiné zařízení použijte lokální zálohu (soubor .json).';
-  }
-
-  function clampInt(value, min, max, fallback){
-    const n = parseInt(value, 10);
-    if(Number.isNaN(n)) return fallback;
-    return Math.min(max, Math.max(min, n));
-  }
-  function isValidTime(value){ return /^\d{2}:\d{2}$/.test(String(value || '')); }
-  function timeToMinutes(timeStr){ const [hh, mm] = String(timeStr).split(':').map(Number); return (hh * 60) + mm; }
-  function minutesToTime(totalMinutes){ const safe = ((totalMinutes % 1440) + 1440) % 1440; return `${String(Math.floor(safe/60)).padStart(2,'0')}:${String(safe%60).padStart(2,'0')}`; }
-  function cryptoRandomId(){ return (window.crypto && typeof window.crypto.randomUUID === 'function') ? window.crypto.randomUUID() : ('id_' + Math.random().toString(16).slice(2) + Date.now()); }
-  function escapeHtml(str){
-  str = (str === null || str === undefined) ? '' : String(str);
-  return str.replace(/[&<>"']/g, (ch) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[ch]));
-}
-function escapeAttr(str){
-  // stejné jako escapeHtml, navíc jistota pro atributy
-  return escapeHtml(str);
-}
-function normalizeName(s){ return String(s || '').trim().replace(/\s+/g, ' '); }
-  function scorerKey(name, team){ return `${normalizeName(name).toLowerCase()}||${normalizeName(team).toLowerCase()}`; }
-
-  function syncInputsFromState(){
-    elPitchCount.value = String(state.pitchCount);
-    elPitchCountBadge.textContent = String(state.pitchCount);
-    elMatchDuration.value = String(state.matchDuration);
-    elBreakDuration.value = String(state.breakDuration);
-    elStartTime.value = state.startTime;
-    renderScorerTeamOptions();
-    renderScorerFilterOptions();
-  }
-
-  function updateStateMeta(){ state.updatedAt = new Date().toISOString(); }
-  async function persistState(){
-    if(suppressSave) return;
-    updateStateMeta();
-    saveLocalBackup();
-    if(FIREBASE_ENABLED){
-      try { await set(ref(db, DB_PATH), state); }
-      catch(err){ console.error(err); setStatus('Nepodařilo se uložit data do Firebase. Zkontrolujte konfiguraci a pravidla databáze.', 'warn'); }
-    }
-  }
-
-  function generateAllPairs(teams){
-    const pairs = [];
-    for(let i = 0; i < teams.length; i++) for(let j = i + 1; j < teams.length; j++) pairs.push({ id: cryptoRandomId(), home: teams[i], away: teams[j], hs: '', as: '' });
-    return pairs;
-  }
-
-  function scheduleFair(matches, pitchCount, matchDuration, breakDuration, startTime){
-    const startMinutes = timeToMinutes(startTime);
-    const teamStats = {};
-    matches.forEach(m => {
-      if(!teamStats[m.home]) teamStats[m.home] = { lastSlot: -999, consecutive: 0 };
-      if(!teamStats[m.away]) teamStats[m.away] = { lastSlot: -999, consecutive: 0 };
-    });
-
-    const remaining = matches.slice();
-    const scheduled = [];
-    let slot = 1;
-
-    while(remaining.length > 0){
-      const selectedIdx = [];
-      const usedTeams = new Set();
-
-      function canUse(match, allowBackToBack){
-        const h = teamStats[match.home];
-        const a = teamStats[match.away];
-        if(usedTeams.has(match.home) || usedTeams.has(match.away)) return false;
-        if(h.consecutive >= 2 || a.consecutive >= 2) return false;
-        const hPlayedLast = h.lastSlot === slot - 1;
-        const aPlayedLast = a.lastSlot === slot - 1;
-        if(!allowBackToBack && (hPlayedLast || aPlayedLast)) return false;
-        return true;
-      }
-
-      for(let i = 0; i < remaining.length && selectedIdx.length < pitchCount; i++){
-        if(canUse(remaining[i], false)){
-          selectedIdx.push(i);
-          usedTeams.add(remaining[i].home); usedTeams.add(remaining[i].away);
+    function generateRoundRobinPairs(teams){
+      var list = teams.slice();
+      if(list.length % 2 === 1) list.push('BYE');
+      var n = list.length;
+      var rounds = [];
+      for(var r = 0; r < n - 1; r++){
+        var round = [];
+        for(var i = 0; i < n / 2; i++){
+          var home = list[i];
+          var away = list[n - 1 - i];
+          if(home !== 'BYE' && away !== 'BYE'){
+            round.push({ home: home, away: away });
+          }
         }
+        rounds.push(round);
+        var fixed = list[0];
+        var rest = list.slice(1);
+        rest.unshift(rest.pop());
+        list = [fixed].concat(rest);
       }
+      return rounds;
+    }
 
-      for(let i = 0; i < remaining.length && selectedIdx.length < pitchCount; i++){
-        if(selectedIdx.includes(i)) continue;
-        if(canUse(remaining[i], true)){
-          selectedIdx.push(i);
-          usedTeams.add(remaining[i].home); usedTeams.add(remaining[i].away);
-        }
-      }
-
-      if(selectedIdx.length === 0){
-        for(let i = 0; i < remaining.length && selectedIdx.length < pitchCount; i++){
-          if(usedTeams.has(remaining[i].home) || usedTeams.has(remaining[i].away)) continue;
-          selectedIdx.push(i);
-          usedTeams.add(remaining[i].home); usedTeams.add(remaining[i].away);
-        }
-      }
-
-      selectedIdx.sort((a,b) => b - a);
-      const slotMatches = [];
-      selectedIdx.forEach(idx => slotMatches.unshift(remaining.splice(idx, 1)[0]));
-
-      slotMatches.forEach((match, idx) => {
-        const slotStart = startMinutes + ((slot - 1) * (matchDuration + breakDuration));
-        const slotEnd = slotStart + matchDuration;
-        scheduled.push({ ...match, pitch: idx + 1, slot, slotStart: minutesToTime(slotStart), slotEnd: minutesToTime(slotEnd) });
-        [match.home, match.away].forEach(team => {
-          const stats = teamStats[team];
-          stats.consecutive = stats.lastSlot === slot - 1 ? stats.consecutive + 1 : 1;
-          stats.lastSlot = slot;
+    function buildSlots(rrRounds, pitchCount){
+      var slots = [];
+      var slotIndex = 1;
+      var queue = [];
+      rrRounds.forEach(function(round, rIdx){
+        round.forEach(function(m, mIdx){
+          queue.push({ roundIndex: rIdx, matchIndex: mIdx, home: m.home, away: m.away });
         });
       });
-      slot++;
-    }
-
-    return [{ matches: scheduled }];
-  }
-
-  function emptyRow(team){ return { team, P:0, W:0, D:0, L:0, GF:0, GA:0, GD:0, Pts:0 }; }
-  function applyMatch(rowHome, rowAway, hs, as){
-    rowHome.P++; rowAway.P++; rowHome.GF += hs; rowHome.GA += as; rowAway.GF += as; rowAway.GA += hs;
-    if(hs > as){ rowHome.W++; rowHome.Pts += 3; rowAway.L++; }
-    else if(hs < as){ rowAway.W++; rowAway.Pts += 3; rowHome.L++; }
-    else { rowHome.D++; rowAway.D++; rowHome.Pts += 1; rowAway.Pts += 1; }
-  }
-
-  function computeOverallTable(teams, rounds){
-    const map = new Map(); teams.forEach(t => map.set(t, emptyRow(t)));
-    rounds.forEach(rd => rd.matches.forEach(m => {
-      const hs = parseInt(m.hs, 10), as = parseInt(m.as, 10);
-      if(Number.isNaN(hs) || Number.isNaN(as)) return;
-      const home = map.get(m.home), away = map.get(m.away);
-      if(!home || !away) return; applyMatch(home, away, hs, as);
-    }));
-    map.forEach(row => row.GD = row.GF - row.GA); return map;
-  }
-
-  function computeMiniTable(teamSet, rounds){
-    const mini = new Map(); teamSet.forEach(t => mini.set(t, emptyRow(t)));
-    rounds.forEach(rd => rd.matches.forEach(m => {
-      const hs = parseInt(m.hs, 10), as = parseInt(m.as, 10);
-      if(Number.isNaN(hs) || Number.isNaN(as)) return;
-      if(!teamSet.has(m.home) || !teamSet.has(m.away)) return;
-      const home = mini.get(m.home), away = mini.get(m.away);
-      if(!home || !away) return; applyMatch(home, away, hs, as);
-    }));
-    mini.forEach(row => row.GD = row.GF - row.GA); return mini;
-  }
-
-  function computeStandingsWithH2H(teams, rounds){
-    const overall = computeOverallTable(teams, rounds);
-    const allRows = Array.from(overall.values());
-    const byPts = new Map();
-    allRows.forEach(row => { if(!byPts.has(row.Pts)) byPts.set(row.Pts, []); byPts.get(row.Pts).push(row); });
-    const ptsKeys = Array.from(byPts.keys()).sort((a,b) => b - a);
-    const final = [];
-    ptsKeys.forEach(pts => {
-      const group = byPts.get(pts);
-      if(group.length <= 1){ final.push(...group); return; }
-      const set = new Set(group.map(r => r.team));
-      const mini = computeMiniTable(set, rounds);
-      group.sort((a,b) => {
-        const ma = mini.get(a.team), mb = mini.get(b.team);
-        return (mb.Pts - ma.Pts) || (mb.GD - ma.GD) || (mb.GF - ma.GF) || (b.GD - a.GD) || (b.GF - a.GF) || a.team.localeCompare(b.team, 'cs');
-      });
-      final.push(...group);
-    });
-    return final;
-  }
-
-  function getFlatMatches(){
-    const flat = [];
-    state.rounds.forEach((rd, roundIndex) => rd.matches.forEach(match => flat.push({ ...match, roundIndex })));
-    return flat.sort((a,b) => {
-      const byTime = timeToMinutes(a.slotStart || '00:00') - timeToMinutes(b.slotStart || '00:00');
-      if(byTime !== 0) return byTime;
-      return (a.pitch || 1) - (b.pitch || 1);
-    });
-  }
-
-  function moveMatchByOne(matchId, direction){
-    const flat = getFlatMatches().slice().sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
-    const idx = flat.findIndex(m => m.id === matchId);
-    if(idx < 0) return;
-    const target = direction === 'up' ? idx - 1 : idx + 1;
-    if(target < 0 || target >= flat.length) return;
-    [flat[idx], flat[target]] = [flat[target], flat[idx]];
-    const startMinutes = timeToMinutes(state.startTime || '09:00');
-    flat.forEach((m, i) => {
-      m.order = i + 1;
-      m.slot = i + 1;
-      const slotStart = startMinutes + (i * (state.matchDuration + state.breakDuration));
-      const slotEnd = slotStart + state.matchDuration;
-      m.slotStart = minutesToTime(slotStart);
-      m.slotEnd = minutesToTime(slotEnd);
-    });
-    state.rounds = [{ matches: flat.map(m => ({ ...m })) }];
-    persistState();
-    renderAll();
-    setStatus('Pořadí zápasu, čas i rozpis byly přepočítány.', 'ok');
-  }
-  window.moveMatchByOne = moveMatchByOne;
-
-function renderScorerTeamOptions(matchTeams = null){
-    const selected = elScorerTeam.value;
-    const teams = Array.isArray(matchTeams) && matchTeams.length ? matchTeams : state.teams;
-    elScorerTeam.innerHTML = '';
-    if(teams.length === 0){
-      const opt = document.createElement('option'); opt.value = ''; opt.textContent = 'Nejdříve přidejte týmy'; elScorerTeam.appendChild(opt); return;
-    }
-    teams.forEach(team => {
-      const opt = document.createElement('option'); opt.value = team; opt.textContent = team; elScorerTeam.appendChild(opt);
-    });
-    if(teams.includes(selected)) elScorerTeam.value = selected;
-  }
-
-  function renderScorerFilterOptions(){
-    const selected = state.scorerFilterTeam || 'ALL';
-    elScorerFilterTeam.innerHTML = '';
-    const allOpt = document.createElement('option'); allOpt.value = 'ALL'; allOpt.textContent = 'Všechny týmy'; elScorerFilterTeam.appendChild(allOpt);
-    state.teams.forEach(team => {
-      const opt = document.createElement('option'); opt.value = team; opt.textContent = team; elScorerFilterTeam.appendChild(opt);
-    });
-    elScorerFilterTeam.value = state.teams.includes(selected) || selected === 'ALL' ? selected : 'ALL';
-  }
-
-  function getSortedScorers(){
-    const teamFilter = state.scorerFilterTeam || 'ALL';
-    return [...state.scorers]
-      .filter(s => teamFilter === 'ALL' ? true : s.team === teamFilter)
-      .sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
-  }
-
-  function renderTopScorer(){
-    const sorted = getSortedScorers();
-    if(sorted.length === 0){
-      elTopScorerBox.innerHTML = '<div class="leader-empty">Zatím nejsou zadaní žádní střelci.</div>';
-      return;
-    }
-    const top = sorted[0];
-    const ties = sorted.filter(s => s.goals === top.goals).length;
-    elTopScorerBox.innerHTML = `
-      <div class="leader-icon">⚽</div>
-      <div>
-        <div class="leader-title">Nejlepší střelec${(state.scorerFilterTeam && state.scorerFilterTeam !== 'ALL') ? ' (filtrovaný výběr)' : ''}</div>
-        <div class="leader-name">${escapeHtml(top.name)}</div>
-        <div class="leader-meta">${escapeHtml(top.team)} · ${top.goals} gólů${ties > 1 ? ` · dělené 1. místo (${ties} hráči)` : ''}</div>
-      </div>
-    `;
-  }
-
-  function renderScorers(){
-    elScorersBody.innerHTML = '';
-    const sorted = getSortedScorers();
-    sorted.forEach((scorer, idx) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${idx + 1}</td>
-        <td class="left">${escapeHtml(scorer.name)}</td>
-        <td class="left"><span class="tag">${escapeHtml(scorer.team)}</span></td>
-        <td><strong>${scorer.goals}</strong></td>
-        <td class="export-panel">
-          <div class="goals-inline">
-            <button type="button" class="tiny-btn success" data-add-scorer="${scorer.id}">+1</button>
-            <button type="button" class="tiny-btn danger" data-sub-scorer="${scorer.id}">-1</button>
-            <input type="number" min="0" max="999" step="1" value="${scorer.goals}" data-edit-scorer="${scorer.id}" />
-          </div>
-        </td>
-      `;
-      elScorersBody.appendChild(tr);
-    });
-
-    document.querySelectorAll('[data-add-scorer]').forEach(btn => btn.addEventListener('click', async () => { await changeScorerTotal(btn.dataset.addScorer, 1); }));
-    document.querySelectorAll('[data-sub-scorer]').forEach(btn => btn.addEventListener('click', async () => { await changeScorerTotal(btn.dataset.subScorer, -1); }));
-    document.querySelectorAll('[data-edit-scorer]').forEach(inp => {
-      inp.addEventListener('change', async () => {
-        if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); renderScorers(); return; }
-        const scorer = state.scorers.find(s => s.id === inp.dataset.editScorer);
-        if(!scorer) return;
-        scorer.goals = clampInt(inp.value, 0, 999, scorer.goals);
-        state.scorers = state.scorers.filter(s => s.goals > 0);
-        await persistState();
-        renderScorers(); renderTopScorer();
-        setStatus('Počet gólů byl upraven.', 'ok');
-      });
-    });
-    renderTopScorer();
-  }
-
-  async function changeScorerTotal(id, delta){
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
-    const scorer = state.scorers.find(s => s.id === id);
-    if(!scorer) return;
-    scorer.goals = Math.max(0, scorer.goals + delta);
-    state.scorers = state.scorers.filter(s => s.goals > 0);
-    await persistState();
-    renderScorers();
-    setStatus(delta > 0 ? 'Gól byl přidán.' : 'Gól byl odebrán.', 'ok');
-  }
-
-  function getScorerByNameTeam(name, team){
-    const key = scorerKey(name, team);
-    return state.scorers.find(s => scorerKey(s.name, s.team) === key);
-  }
-
-  async function updateScorer(deltaDirection, matchId = null, teamsForMatch = null, nameOverride = null, teamOverride = null, goalsOverride = null){
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
-    const name = normalizeName(nameOverride ?? elScorerName.value);
-    const team = normalizeName(teamOverride ?? elScorerTeam.value);
-    const goals = clampInt(goalsOverride ?? elScorerGoals.value, 1, 999, 1);
-    if(!name || !team){ setStatus('Vyplňte jméno hráče a vyberte tým.', 'warn'); return; }
-    if(Array.isArray(teamsForMatch) && teamsForMatch.length && !teamsForMatch.includes(team)){
-      setStatus('Pro tento zápas lze použít jen oba týmy z daného zápasu.', 'warn');
-      return;
-    }
-    const key = normalizeName(name).toLowerCase() + '|' + normalizeName(team).toLowerCase();
-    let scorer = state.scorers.find(s => (normalizeName(s.name).toLowerCase() + '|' + normalizeName(s.team).toLowerCase()) === key);
-    if(!scorer && deltaDirection < 0){ setStatus('Tento hráč ještě v tabulce střelců není.', 'warn'); return; }
-    if(!scorer){ scorer = { id: cryptoRandomId(), name, team, goals: 0, byMatch: {} }; state.scorers.push(scorer); }
-    const delta = goals * deltaDirection;
-    const flat = getFlatMatches();
-    const match = matchId ? flat.find(m => String(m.id) === String(matchId)) : null;
-    if(match){
-      const prev = clampInt(scorer.byMatch[matchId], 0, 999, 0);
-      const next = Math.max(0, prev + delta);
-      const diff = next - prev;
-      if(next === 0) delete scorer.byMatch[matchId]; else scorer.byMatch[matchId] = next;
-      scorer.goals = Math.max(0, scorer.goals + diff);
-      const sideKey = team === match.home ? 'hs' : 'as';
-      const newScore = String(Math.max(0, clampInt(match[sideKey], 0, 999, 0) + delta));
-      match[sideKey] = newScore;
-      const round = state.rounds[match.roundIndex];
-      if(round && round.matches){
-        const rm = round.matches.find(x => x.id === match.id);
-        if(rm) rm[sideKey] = newScore;
+      var consecutive = new Map();
+      function canPlace(match, slot){
+        for(var i=0;i<slot.matches.length;i++){
+          var other = slot.matches[i];
+          if(other.home === match.home || other.away === match.home ||
+             other.home === match.away || other.away === match.away){
+            return false;
+          }
+        }
+        var ch = consecutive.get(match.home) || 0;
+        var ca = consecutive.get(match.away) || 0;
+        if(ch >= 2 || ca >= 2) return false;
+        return true;
       }
-    } else {
-      scorer.goals = Math.max(0, scorer.goals + delta);
-    }
-    state.scorers = state.scorers.filter(s => s.goals > 0);
-    await persistState();
-    renderMatches();
-    renderScorers();
-    renderStandings();
-    renderTopScorer();
-    setStatus(match ? 'Gól byl zapsán do zápasu i do střelců.' : 'Střelec byl uložen.', 'ok');
-    elScorerName.value = '';
-    elScorerGoals.value = '1';
-  }
-
-function getMatchScorerEntries(matchId){
-    return state.scorers
-      .filter(s => clampInt((s.byMatch && s.byMatch[matchId]), 0, 999, 0) > 0)
-      .map(s => ({ id: s.id, name: s.name, team: s.team, goals: clampInt(s.byMatch[matchId], 0, 999, 0) }))
-      .sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
-  }
-
-  function renderInlineScorerChips(container, matchId){
-    const list = getMatchScorerEntries(matchId);
-    container.innerHTML = list.length ? '' : '<span class="small">Zatím nejsou zadaní žádní střelci pro tento zápas.</span>';
-    list.forEach(item => {
-      const chip = document.createElement('span');
-      chip.className = 'chip';
-      chip.innerHTML = `${escapeHtml(item.name)} · ${escapeHtml(item.team)} · ${item.goals}<button type="button" class="danger tiny-btn" data-chip-minus="${item.id}" data-chip-match="${matchId}">-1</button>`;
-      container.appendChild(chip);
-    });
-    container.querySelectorAll('[data-chip-minus]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const scorer = state.scorers.find(s => s.id === btn.dataset.chipMinus);
-        if(!scorer) return;
-        await updateScorer(-1, btn.dataset.chipMatch, null, scorer.name, scorer.team, 1);
-      });
-    });
-  }
-
-  function setEditingEnabled(enabled){
-  // Ochrana je vypnuta – vše je vždy editovatelné (lokální režim).
-  const on = true;
-  [elTeamName, elAddTeamBtn, elGenerateBtn, elResetBtn, elExportBtn, elImportBtn, elJsonBox,
-   elPitchCount, elMatchDuration, elBreakDuration, elStartTime, elScorerName, elScorerTeam,
-   elScorerGoals, elAddGoalsBtn, elRemoveGoalsBtn].forEach(el => { if(el) el.disabled = !on; });
-  document.querySelectorAll('[data-del],[data-add-scorer],[data-sub-scorer],[data-match-scorers]').forEach(btn => { btn.disabled = !on; });
-  document.querySelectorAll('input.score,[data-edit-scorer],[data-inline-name],[data-inline-team],[data-inline-goals],[data-inline-add],[data-inline-remove]').forEach(inp => { inp.disabled = !on; });
-}
-
-  function renderTeams(){
-    elTeamList.innerHTML = '';
-    state.teams.forEach((t, idx) => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span class="pill"><b>${escapeHtml(t)}</b></span><button type="button" class="secondary" data-del="${idx}" style="margin-left:8px;">Odebrat</button>`;
-      elTeamList.appendChild(li);
-    });
-    elTeamCount.textContent = state.teams.length;
-
-    document.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', async () => {
-      if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
-      const i = parseInt(btn.dataset.del, 10);
-      const removedTeam = state.teams[i];
-      state.teams.splice(i, 1);
-      state.rounds = [];
-      state.scorers = state.scorers.filter(s => s.team !== removedTeam);
-      await persistState();
-      renderAll();
-      setStatus('Tým byl odebrán. Rozpis zápasů byl smazán — vygenerujte ho znovu.', 'warn');
-    }));
-  }
-
-  function renderStandings(){
-    const standings = computeStandingsWithH2H(state.teams, state.rounds);
-    elStandingsBody.innerHTML = '';
-    standings.forEach((r, idx) => {
-      const tr = document.createElement('tr');
-      if(idx === 0) tr.classList.add('pos1');
-      if(idx === 1) tr.classList.add('pos2');
-      if(idx === 2) tr.classList.add('pos3');
-      tr.innerHTML = `<td>${idx + 1}</td><td class="team">${escapeHtml(r.team)}</td><td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF}</td><td>${r.GA}</td><td>${r.GD}</td><td><strong>${r.Pts}</strong></td>`;
-      elStandingsBody.appendChild(tr);
-    });
-  }
-
-  function renderMatches(){
-    elMatches.innerHTML = '';
-    const flatMatches = getFlatMatches();
-    elMatchCount.textContent = flatMatches.length;
-    flatMatches.forEach((item, idx) => {
-      const row = document.createElement('div');
-      row.className = 'match';
-      const sourceRound = state.rounds[item.roundIndex];
-      const matchIndex = sourceRound ? sourceRound.matches.findIndex(x => x.id === item.id) : -1;
-      const teamsForMatch = [item.home, item.away];
-      row.innerHTML = `
-        <div class="match-order">${String(item.order ?? (idx + 1)).padStart(2,'0')}</div>
-        <div class="match-move"><button type="button" onclick="window.moveMatchByOne('${item.id}','up')">↑</button><button type="button" onclick="window.moveMatchByOne('${item.id}','down')">↓</button></div>
-        <div class="time-badge">${item.slotStart || '--:--'}–${item.slotEnd || '--:--'}</div>
-        <div class="pitch-badge">Hřiště ${item.pitch || 1}</div>
-        <div class="t1">${escapeHtml(item.home)}</div>
-        <div class="sep">vs</div>
-        <div class="t2">${escapeHtml(item.away)}</div>
-        <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="D" value="${escapeAttr(item.hs)}" data-r="${item.roundIndex}" data-m="${matchIndex}" data-side="hs" />
-        <input class="score" inputmode="numeric" pattern="[0-9]*" placeholder="H" value="${escapeAttr(item.as)}" data-r="${item.roundIndex}" data-m="${matchIndex}" data-side="as" />
-        <div class="match-tools export-panel"><button type="button" class="secondary tiny-btn" data-match-scorers="${item.id}">Střelci</button></div>
-        <div class="inline-editor" id="editor-${item.id}">
-          <div class="inline-form">
-            <label class="small-label">Jméno hráče<input data-inline-name="${item.id}" placeholder="Jméno hráče" /></label>
-            <label class="small-label">Tým<select data-inline-team="${item.id}"><option value="${escapeAttr(item.home)}">${escapeHtml(item.home)}</option><option value="${escapeAttr(item.away)}">${escapeHtml(item.away)}</option></select></label>
-            <label class="small-label">Góly<input data-inline-goals="${item.id}" type="number" min="1" max="99" step="1" value="1" /></label>
-            <button type="button" class="success" data-inline-add="${item.id}">Přidat</button>
-            <button type="button" class="danger" data-inline-remove="${item.id}">Odebrat</button>
-          </div>
-          <div class="inline-list" id="chips-${item.id}"></div>
-        </div>
-      `;
-      elMatches.appendChild(row);
-      renderInlineScorerChips(row.querySelector(`#chips-${CSS.escape(item.id)}`), item.id);
-      const editor = row.querySelector(`#editor-${CSS.escape(item.id)}`);
-      const toggleBtn = row.querySelector(`[data-match-scorers="${item.id}"]`);
-      toggleBtn.addEventListener('click', () => editor.classList.toggle('open'));
-      row.querySelector(`[data-inline-add="${item.id}"]`).addEventListener('click', async () => {
-        const name = row.querySelector(`[data-inline-name="${item.id}"]`).value;
-        const team = row.querySelector(`[data-inline-team="${item.id}"]`).value;
-        const goals = row.querySelector(`[data-inline-goals="${item.id}"]`).value;
-        await updateScorer(1, item.id, teamsForMatch, name, team, goals);
-      });
-      row.querySelector(`[data-inline-remove="${item.id}"]`).addEventListener('click', async () => {
-        const name = row.querySelector(`[data-inline-name="${item.id}"]`).value;
-        const team = row.querySelector(`[data-inline-team="${item.id}"]`).value;
-        const goals = row.querySelector(`[data-inline-goals="${item.id}"]`).value;
-        await updateScorer(-1, item.id, teamsForMatch, name, team, goals);
-      });
-    });
-  }
-
-let matchScoreListenerInited = false;
-let persistTimer = null;
-function persistStateDebounced(){
-  if(persistTimer) clearTimeout(persistTimer);
-  persistTimer = setTimeout(() => { persistState(); }, 250);
-}
-function initMatchScoreListener(){
-  if(matchScoreListenerInited) return;
-  matchScoreListenerInited = true;
-  if(!elMatches) return;
-  elMatches.addEventListener('input', (e) => {
-    const t = e.target;
-    if(!t || !t.classList || !t.classList.contains('score')) return;
-    const r = parseInt(t.dataset.r, 10);
-    const m = parseInt(t.dataset.m, 10);
-    const side = t.dataset.side;
-    if(!Number.isFinite(r) || !Number.isFinite(m) || (side !== 'hs' && side !== 'as')) return;
-    const round = state.rounds[r];
-    if(!round || !Array.isArray(round.matches) || !round.matches[m]) return;
-    let v = String(t.value ?? '').trim();
-    if(v === ''){
-      round.matches[m][side] = '';
-    } else {
-      const n = clampInt(v, 0, 999, 0);
-      t.value = String(n);
-      round.matches[m][side] = String(n);
-    }
-    renderStandings();
-    persistStateDebounced();
-  });
-}
-
-function renderAll(){
-    syncInputsFromState();
-    initCsvExportButtons();
-    initImageExportButtons();
-    initMatchScoreListener();
-    renderTeams();
-    renderMatches();
-    renderStandings();
-    renderScorers();
-    setEditingEnabled(true);
-    setStorageNotice();
-  }
-
-  async function addTeam(name){
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
-    const n = normalizeName(name);
-    if(!n) return;
-    if(state.teams.some(t => t.toLowerCase() === n.toLowerCase())){ setStatus('Tým už existuje (duplicity nejsou povoleny).', 'warn'); return; }
-    state.teams.push(n);
-    state.rounds = [];
-    await persistState();
-    renderAll();
-    setStatus('Tým byl přidán. Až budete hotovi, vygenerujte zápasy.', 'ok');
-  }
-
-  function exportPdf(){
-  // Bez html2canvas: použijte tisk do PDF (Ctrl+P / Uložit jako PDF)
-  window.print();
-}
-
-  /*********************** EXPORT DO OBRÁZKU (PNG/JPG) ************************
-   * Cíl: místo RTF exportu exportovat vybrané sekce jako obrázek.
-   * - Tabulka (standings)
-   * - Zápasy (matches)
-   * - Střelci (scorers)
-   *
-   * Pozn.: Používá html2canvas (přidané přes CDN).
-   ***************************************************************************/
-
-  function makeImgFilename(prefix, ext = 'png'){
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2,'0');
-    const dd = String(d.getDate()).padStart(2,'0');
-    const hh = String(d.getHours()).padStart(2,'0');
-    const mi = String(d.getMinutes()).padStart(2,'0');
-    return `${prefix}_${yyyy}-${mm}-${dd}_${hh}${mi}.${ext}`;
-  }
-
-  async function exportDomToImage(domNode, filenamePrefix, format = 'png'){
-    if(!domNode){ setStatus('Nelze exportovat: prvek nebyl nalezen.', 'err'); return; }
-
-    // dočasně přepneme vzhled do "print" stylu pro čistý výstup
-    document.documentElement.classList.add('capture-mode');
-
-    // html2canvas někdy potřebuje 1 frame na přepočet stylů
-    await new Promise(r => requestAnimationFrame(() => r()));
-
-    try{
-      const canvas = await html2canvas(domNode, {
-        backgroundColor: '#ffffff',
-        scale: 2,
-        useCORS: true,
-        scrollX: 0,
-        scrollY: -window.scrollY
-      });
-
-      const ext = (format === 'jpg' || format === 'jpeg') ? 'jpg' : 'png';
-      const mime = (ext === 'jpg') ? 'image/jpeg' : 'image/png';
-
-      const dataUrl = canvas.toDataURL(mime, ext === 'jpg' ? 0.95 : undefined);
-
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = makeImgFilename(filenamePrefix, ext);
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      setStatus('Obrázek byl vygenerován a stažen.', 'ok');
-    }catch(e){
-      console.error(e);
-      setStatus('Export do obrázku selhal (zkuste prosím znovu).', 'err');
-    }finally{
-      document.documentElement.classList.remove('capture-mode');
-    }
-  }
-
-  function buildTempCaptureNode(titleText, nodes){
-    // vytvoří dočasný "papír" (bílý box), do kterého naklonujeme obsah
-    const wrap = document.createElement('div');
-    wrap.style.position = 'fixed';
-    wrap.style.left = '-10000px';
-    wrap.style.top = '0';
-    wrap.style.width = '1200px';
-    wrap.style.background = '#fff';
-    wrap.style.color = '#111';
-    wrap.style.padding = '16px';
-    wrap.style.border = '1px solid #999';
-    wrap.style.borderRadius = '10px';
-
-    const h = document.createElement('h2');
-    h.textContent = titleText;
-    h.style.margin = '0 0 10px 0';
-    wrap.appendChild(h);
-
-    (nodes || []).forEach(n => wrap.appendChild(n));
-
-    document.body.appendChild(wrap);
-    return wrap;
-  }
-
-  function cloneClean(node){
-    const c = node.cloneNode(true);
-    // některé vstupy mohou v klonu zůstat; v exportu chceme jen hodnoty jako text
-    c.querySelectorAll('input,select,button,textarea').forEach(el => {
-      // u selectů zkusíme nahradit textem vybrané možnosti
-      if(el.tagName === 'SELECT'){
-        const span = document.createElement('span');
-        const opt = el.options[el.selectedIndex];
-        span.textContent = opt ? opt.textContent : '';
-        span.className = 'tag';
-        el.replaceWith(span);
-      }else if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'){
-        const span = document.createElement('span');
-        span.textContent = el.value || '';
-        el.replaceWith(span);
-      }else{
-        // button pryč
-        el.remove();
+      while(queue.length){
+        if(!slots[slotIndex - 1]){
+          slots.push({ slotIndex: slotIndex, matches: [] });
+        }
+        var slot = slots[slotIndex - 1];
+        var placedInThisLoop = false;
+        for(var i = 0; i < queue.length; i++){
+          var m = queue[i];
+          if(slot.matches.length >= pitchCount) break;
+          if(canPlace(m, slot)){
+            slot.matches.push(m);
+            queue.splice(i, 1);
+            consecutive.set(m.home, (consecutive.get(m.home) || 0) + 1);
+            consecutive.set(m.away, (consecutive.get(m.away) || 0) + 1);
+            placedInThisLoop = true;
+            break;
+          }
+        }
+        if(slot.matches.length >= pitchCount || !placedInThisLoop){
+          consecutive.forEach(function(v, t){
+            consecutive.set(t, Math.max(0, v - 1));
+          });
+          slotIndex++;
+        }
       }
-    });
-    return c;
-  }
+      return slots;
+    }
 
-  async function exportStandingsImage(){
-    const table = document.getElementById('standingsTable');
-    if(!table){ setStatus('Tabulka nebyla nalezena.', 'err'); return; }
-    const note = table.nextElementSibling && table.nextElementSibling.tagName === 'P' ? table.nextElementSibling : null;
+    function generateSchedule(){
+      readSettingsFromInputs();
+      if(state.teams.length < 2){
+        setStatus('Zadejte alespoň 2 týmy.', 'warn');
+        return;
+      }
+      var rr = generateRoundRobinPairs(state.teams);
+      var slots = buildSlots(rr, state.settings.pitchCount);
+      var startMinutes = timeToMinutes(state.settings.startTime);
+      var md = state.settings.matchDuration;
+      var bd = state.settings.breakDuration;
+      var order = 1;
+      state.rounds = rr.map(function(round, rIdx){
+        return {
+          name: 'Kolo ' + (rIdx+1),
+          matches: round.map(function(m, mIdx){
+            return {
+              id: 'r' + (rIdx+1) + 'm' + (mIdx+1),
+              home: m.home,
+              away: m.away,
+              pitch: 1,
+              order: 0,
+              slot: 0,
+              slotStart: '',
+              slotEnd: '',
+              hs: '',
+              as: ''
+            };
+          })
+        };
+      });
+      slots.forEach(function(slot, sIdx){
+        var slotStart = startMinutes + sIdx * (md + bd);
+        var slotEnd = slotStart + md;
+        slot.matches.forEach(function(m, pi){
+          var round = state.rounds[m.roundIndex];
+          var match = round.matches[m.matchIndex];
+          match.order = order++;
+          match.pitch = pi + 1;
+          match.slot = slot.slotIndex;
+          match.slotStart = minutesToTime(slotStart);
+          match.slotEnd = minutesToTime(slotEnd);
+        });
+      });
+      state.scorers = [];
+      setStatus('Zápasy byly vygenerovány.', 'ok');
+      renderAll();
+    }
 
-    const temp = buildTempCaptureNode('Tabulka', [cloneClean(table), note ? cloneClean(note) : document.createElement('div')]);
-    await exportDomToImage(temp, 'tabulka', 'png');
-    temp.remove();
-  }
+    function getFlatMatches(){
+      var flat = [];
+      state.rounds.forEach(function(round, roundIndex){
+        if(!round || !Array.isArray(round.matches)) return;
+        round.matches.forEach(function(m, matchIndex){
+          if(!m) return;
+          var copy = Object.assign({}, m);
+          copy.roundIndex = roundIndex;
+          copy.matchIndex = matchIndex;
+          flat.push(copy);
+        });
+      });
+      flat.sort(function(a,b){ return (a.order || 0) - (b.order || 0); });
+      return flat;
+    }
 
-  async function exportMatchesImage(){
-    const matches = document.getElementById('matches');
-    if(!matches){ setStatus('Zápasy nebyly nalezeny.', 'err'); return; }
-    const note = matches.nextElementSibling && matches.nextElementSibling.tagName === 'P' ? matches.nextElementSibling : null;
+    function moveMatchByOne(id, dir){
+      var flat = getFlatMatches();
+      var idx = flat.findIndex(function(m){ return m.id === id; });
+      if(idx === -1) return;
+      var target = dir === 'up' ? idx - 1 : idx + 1;
+      if(target < 0 || target >= flat.length) return;
+      var a = flat[idx];
+      var b = flat[target];
+      var tmp = a.order;
+      a.order = b.order;
+      b.order = tmp;
+      state.rounds.forEach(function(round){
+        round.matches.forEach(function(m){
+          var fm = flat.find(function(x){return x.id === m.id;});
+          if(fm) m.order = fm.order;
+        });
+      });
+      renderAll();
+      setStatus('Pořadí zápasů bylo upraveno.', 'ok');
+    }
 
-    const temp = buildTempCaptureNode('Zápasy', [cloneClean(matches), note ? cloneClean(note) : document.createElement('div')]);
-    await exportDomToImage(temp, 'zapasy', 'png');
-    temp.remove();
-  }
+    function recalcMatchTimesForMultiPitch(){
+      if(!state.rounds.length) return;
+      var flat = getFlatMatches();
+      var pitchCount = state.settings.pitchCount;
+      var md = state.settings.matchDuration;
+      var bd = state.settings.breakDuration;
+      var startMinutes = timeToMinutes(state.settings.startTime);
+      flat.forEach(function(m, i){
+        var slot = Math.floor(i / pitchCount) + 1;
+        var slotStart = startMinutes + (slot - 1) * (md + bd);
+        var slotEnd = slotStart + md;
+        var real = state.rounds[m.roundIndex].matches[m.matchIndex];
+        real.slot = slot;
+        real.slotStart = minutesToTime(slotStart);
+        real.slotEnd = minutesToTime(slotEnd);
+      });
+      setStatus('Časy zápasů byly přepočítány.', 'ok');
+      renderAll();
+    }
 
-  async function exportScorersImage(){
-    const top = document.getElementById('topScorerBox');
-    const table = document.getElementById('scorersTable');
-    if(!table){ setStatus('Střelci nebyli nalezeni.', 'err'); return; }
+    function findMatchById(id){
+      for(var i=0;i<state.rounds.length;i++){
+        var r = state.rounds[i];
+        for(var j=0;j<r.matches.length;j++){
+          var m = r.matches[j];
+          if(m.id === id) return m;
+        }
+      }
+      return null;
+    }
 
-    const nodes = [];
-    if(top) nodes.push(cloneClean(top));
-    nodes.push(cloneClean(table));
+    function sumGoalsForMatch(matchId, teamName){
+      if(!Array.isArray(state.scorers)) return 0;
+      return state.scorers
+        .filter(function(s){ return s.matchId === matchId && s.team === teamName; })
+        .reduce(function(acc,s){ return acc + s.goals; }, 0);
+    }
 
-    const temp = buildTempCaptureNode('Střelci', nodes);
-    await exportDomToImage(temp, 'strelci', 'png');
-    temp.remove();
-  }
+    function updateScorer(deltaSign, matchId, teamsForMatch, name, team, goals){
+      var nm = String(name || '').trim();
+      var tm = String(team || '').trim();
+      var g = parseInt(goals, 10);
+      if(!nm || !tm || !Number.isFinite(g) || g <= 0) return;
+      if(!Array.isArray(state.scorers)) state.scorers = [];
+      var list = state.scorers;
+      var idx = list.findIndex(function(s){
+        return s.matchId === matchId && s.name.toLowerCase() === nm.toLowerCase() && s.team === tm;
+      });
+      if(idx === -1 && deltaSign > 0){
+        list.push({ matchId: matchId, name: nm, team: tm, goals: g });
+      } else if(idx !== -1){
+        list[idx].goals += deltaSign * g;
+        if(list[idx].goals <= 0) list.splice(idx, 1);
+      }
+      var match = findMatchById(matchId);
+      if(match){
+        match.hs = String(sumGoalsForMatch(matchId, match.home));
+        match.as = String(sumGoalsForMatch(matchId, match.away));
+      }
+      renderAll();
+    }
 
-  let imageButtonsInited = false;
+    function renderInlineScorerChips(container, matchId){
+      if(!container) return;
+      container.innerHTML = '';
+      if(!Array.isArray(state.scorers)) return;
+      state.scorers.filter(function(s){ return s.matchId === matchId; }).forEach(function(s){
+        var span = document.createElement('span');
+        span.className = 'scorer-chip';
+        span.textContent = s.name + ' (' + s.team + ') ' + s.goals + 'G';
+        container.appendChild(span);
+      });
+    }
 
-  function initImageExportButtons(){
-    if(imageButtonsInited) return;
-    imageButtonsInited = true;
-    if(elExportImgStandingsBtn) elExportImgStandingsBtn.addEventListener('click', exportStandingsImage);
-    if(elExportImgMatchesBtn) elExportImgMatchesBtn.addEventListener('click', exportMatchesImage);
-    if(elExportImgScorersBtn) elExportImgScorersBtn.addEventListener('click', exportScorersImage);
-  }
+    function renderMatches(){
+      elMatches.innerHTML = '';
+      var flat = getFlatMatches();
+      flat.forEach(function(item, idx){
+        var row = document.createElement('div');
+        row.className = 'match-row';
+        var matchIndex = item.matchIndex;
+        var teamsForMatch = [item.home, item.away];
 
-  /*********************** EXPORT DO CSV ************************
-   * - oddělovač: ';' (lepší pro CZ Excel)
-   * - UTF-8 BOM: aby se správně zobrazila čeština v Excelu
-   * - Střelci: VŽDY VŠICHNI (ignoruje filtr týmu)
-   *************************************************************/
+        row.innerHTML =
+          '<div class="order">' + String(item.order || (idx+1)).padStart(2,'0') + '</div>' +
+          '<div class="move">' +
+            '<button type="button" class="btn tiny secondary" data-move="up">↑</button>' +
+            '<button type="button" class="btn tiny secondary" data-move="down">↓</button>' +
+          '</div>' +
+          '<div class="time">' + (item.slotStart || '--:--') + '–' + (item.slotEnd || '--:--') + '</div>' +
+          '<div class="pitch">Hřiště ' + (item.pitch || 1) + '</div>' +
+          '<div class="team">' + escapeHtml(item.home) + '</div>' +
+          '<div style="text-align:center;">vs</div>' +
+          '<div class="team">' + escapeHtml(item.away) + '</div>' +
+          '<input class="score-input" inputmode="numeric" pattern="[0-9]*" placeholder="D" value="' + (item.hs || '') + '" data-r="' + item.roundIndex + '" data-m="' + matchIndex + '" data-side="hs" />' +
+          '<input class="score-input" inputmode="numeric" pattern="[0-9]*" placeholder="H" value="' + (item.as || '') + '" data-r="' + item.roundIndex + '" data-m="' + matchIndex + '" data-side="as" />' +
+          '<button type="button" class="btn tiny secondary scorer-toggle" data-match-scorers="' + item.id + '">Střelci</button>' +
+          '<div class="inline-editor" id="editor-' + item.id + '">' +
+            '<div class="inline-form">' +
+              '<label>Jméno<input data-inline-name="' + item.id + '" placeholder="Jméno hráče" /></label>' +
+              '<label>Tým<select data-inline-team="' + item.id + '"><option value="' + escapeHtml(item.home) + '">' + escapeHtml(item.home) + '</option><option value="' + escapeHtml(item.away) + '">' + escapeHtml(item.away) + '</option></select></label>' +
+              '<label>Góly<input data-inline-goals="' + item.id + '" type="number" min="1" max="99" step="1" value="1" /></label>' +
+              '<button type="button" class="btn tiny" data-inline-add="' + item.id + '">Přidat</button>' +
+              '<button type="button" class="btn tiny danger" data-inline-remove="' + item.id + '">Odebrat</button>' +
+            '</div>' +
+            '<div class="inline-list" id="chips-' + item.id + '"></div>' +
+          '</div>';
 
-  function csvEscape(value, sep = ';'){
-    const s = String(value ?? '');
-    const mustQuote = s.includes(sep) || s.includes('"') || s.includes('\n') || s.includes('\r');
-    const escaped = s.replace(/"/g, '""');
-    return mustQuote ? `"${escaped}"` : escaped;
-  }
+        elMatches.appendChild(row);
 
-  function buildCsv(rows, sep = ';'){
-    return rows.map(r => r.map(v => csvEscape(v, sep)).join(sep)).join('\r\n');
-  }
+        var chipsEl = row.querySelector('#chips-' + CSS.escape(item.id));
+        renderInlineScorerChips(chipsEl, item.id);
 
-  function downloadCsv(filename, csvText){
-    const bom = '\uFEFF';
-    const blob = new Blob([bom + csvText], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
+        var editor = row.querySelector('#editor-' + CSS.escape(item.id));
+        var toggleBtn = row.querySelector('[data-match-scorers="' + item.id + '"]');
+        toggleBtn.addEventListener('click', function(){ editor.classList.toggle('open'); });
 
-  function makeCsvFilename(prefix){
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2,'0');
-    const dd = String(d.getDate()).padStart(2,'0');
-    const hh = String(d.getHours()).padStart(2,'0');
-    const mi = String(d.getMinutes()).padStart(2,'0');
-    return `${prefix}_${yyyy}-${mm}-${dd}_${hh}${mi}.csv`;
-  }
+        row.querySelector('[data-inline-add="' + item.id + '"]').addEventListener('click', function(){
+          var name = row.querySelector('[data-inline-name="' + item.id + '"]').value;
+          var team = row.querySelector('[data-inline-team="' + item.id + '"]').value;
+          var goals = row.querySelector('[data-inline-goals="' + item.id + '"]').value;
+          updateScorer(1, item.id, teamsForMatch, name, team, goals);
+        });
 
-  function buildStandingsCsvRows(){
-    const standings = computeStandingsWithH2H(state.teams, state.rounds);
-    const rows = [];
-    rows.push(['Pořadí','Tým','Z','V','R','P','VG','OG','RG','Body']);
-    standings.forEach((r, idx) => {
-      rows.push([idx + 1, r.team, r.P, r.W, r.D, r.L, r.GF, r.GA, r.GD, r.Pts]);
-    });
-    return rows;
-  }
+        row.querySelector('[data-inline-remove="' + item.id + '"]').addEventListener('click', function(){
+          var name = row.querySelector('[data-inline-name="' + item.id + '"]').value;
+          var team = row.querySelector('[data-inline-team="' + item.id + '"]').value;
+          var goals = row.querySelector('[data-inline-goals="' + item.id + '"]').value;
+          updateScorer(-1, item.id, teamsForMatch, name, team, goals);
+        });
 
-  function buildMatchesCsvRows(){
-    const matches = getFlatMatches();
-    const rows = [];
-    rows.push(['Čas od','Čas do','Hřiště','Domácí','Hosté','Skóre dom','Skóre host']);
-    matches.forEach(m => {
-      rows.push([
-        m.slotStart || '',
-        m.slotEnd || '',
-        m.pitch ? `H${m.pitch}` : '',
-        m.home || '',
-        m.away || '',
-        (m.hs ?? ''),
-        (m.as ?? '')
-      ]);
-    });
-    return rows;
-  }
+        row.querySelector('[data-move="up"]').addEventListener('click', function(){ moveMatchByOne(item.id, 'up'); });
+        row.querySelector('[data-move="down"]').addEventListener('click', function(){ moveMatchByOne(item.id, 'down'); });
+      });
 
-  function buildScorersCsvRowsAll(){
-    const scorers = [...state.scorers].sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'));
-    const rows = [];
-    rows.push(['Pořadí','Hráč','Tým','Góly']);
-    scorers.forEach((s, idx) => {
-      rows.push([idx + 1, s.name || '', s.team || '', (s.goals ?? 0)]);
-    });
-    return rows;
-  }
+      if(!elMatches._scoreListenerInited){
+        elMatches._scoreListenerInited = true;
+        elMatches.addEventListener('input', function(e){
+          var t = e.target;
+          if(!t.classList.contains('score-input')) return;
+          var r = parseInt(t.dataset.r, 10);
+          var m = parseInt(t.dataset.m, 10);
+          var side = t.dataset.side;
+          if(!Number.isFinite(r) || !Number.isFinite(m)) return;
+          var round = state.rounds[r];
+          if(!round || !round.matches[m]) return;
+          var v = String(t.value || '').trim();
+          if(v === ''){
+            round.matches[m][side] = '';
+          } else {
+            var n = parseInt(v, 10);
+            if(!Number.isFinite(n) || n < 0) n = 0;
+            round.matches[m][side] = String(n);
+            t.value = String(n);
+          }
+          renderStandings();
+        });
+      }
+    }
 
-  function exportStandingsToCSV(){
-    const csv = buildCsv(buildStandingsCsvRows(), ';');
-    downloadCsv(makeCsvFilename('tabulka'), csv);
-    setStatus('CSV – tabulka stažena.', 'ok');
-  }
+    function computeStandings(teams, rounds){
+      var table = new Map();
+      teams.forEach(function(name){
+        var t = String(name || '').trim();
+        if(!t) return;
+        table.set(t, { team: t, Z:0,V:0,R:0,P:0,VG:0,OG:0,RG:0,Body:0 });
+      });
+      rounds.forEach(function(r){
+        if(!r || !Array.isArray(r.matches)) return;
+        r.matches.forEach(function(m){
+          if(!m) return;
+          var home = String(m.home || '').trim();
+          var away = String(m.away || '').trim();
+          if(!home || !away) return;
+          var H = table.get(home), A = table.get(away);
+          if(!H || !A) return;
+          var hs = m.hs === '' ? null : parseInt(m.hs,10);
+          var as = m.as === '' ? null : parseInt(m.as,10);
+          if(hs == null || as == null || !Number.isFinite(hs) || !Number.isFinite(as)) return;
+          H.Z++; A.Z++;
+          H.VG += hs; H.OG += as;
+          A.VG += as; A.OG += hs;
+          H.RG = H.VG - H.OG;
+          A.RG = A.VG - A.OG;
+          if(hs > as){ H.V++; H.Body += 3; A.P++; }
+          else if(hs < as){ A.V++; A.Body += 3; H.P++; }
+          else { H.R++; A.R++; H.Body++; A.Body++; }
+        });
+      });
+      var list = Array.from(table.values());
+      list.sort(function(a,b){
+        if(b.Body !== a.Body) return b.Body - a.Body;
+        if(b.RG !== a.RG) return b.RG - a.RG;
+        if(b.VG !== a.VG) return b.VG - a.VG;
+        return a.team.localeCompare(b.team, 'cs');
+      });
+      return list;
+    }
 
-  function exportMatchesToCSV(){
-    const csv = buildCsv(buildMatchesCsvRows(), ';');
-    downloadCsv(makeCsvFilename('zapasy'), csv);
-    setStatus('CSV – zápasy staženy.', 'ok');
-  }
+    function renderStandings(){
+      var standings = computeStandings(state.teams, state.rounds);
+      elStandingsBody.innerHTML = '';
+      standings.forEach(function(r, idx){
+        var tr = document.createElement('tr');
+        if(idx === 0) tr.classList.add('pos1');
+        if(idx === 1) tr.classList.add('pos2');
+        if(idx === 2) tr.classList.add('pos3');
+        tr.innerHTML =
+          '<td>' + (idx+1) + '</td>' +
+          '<td class="team">' + escapeHtml(r.team) + '</td>' +
+          '<td>' + r.Z + '</td>' +
+          '<td>' + r.V + '</td>' +
+          '<td>' + r.R + '</td>' +
+          '<td>' + r.P + '</td>' +
+          '<td>' + r.VG + '</td>' +
+          '<td>' + r.OG + '</td>' +
+          '<td>' + r.RG + '</td>' +
+          '<td><strong>' + r.Body + '</strong></td>';
+        elStandingsBody.appendChild(tr);
+      });
+    }
 
-  function exportScorersToCSV(){
-    const csv = buildCsv(buildScorersCsvRowsAll(), ';');
-    downloadCsv(makeCsvFilename('strelci'), csv);
-    setStatus('CSV – střelci staženi (vždy všichni).', 'ok');
-  }
+    function renderAll(){
+      updateSummary();
+      renderMatches();
+      renderStandings();
+    }
 
-  function exportAllToCSV(){
-    const sep = ';';
-    const parts = [];
-    parts.push('TABULKA');
-    parts.push(buildCsv(buildStandingsCsvRows(), sep));
-    parts.push(''); parts.push('');
-    parts.push('ZÁPASY');
-    parts.push(buildCsv(buildMatchesCsvRows(), sep));
-    parts.push(''); parts.push('');
-    parts.push('STŘELCI');
-    parts.push(buildCsv(buildScorersCsvRowsAll(), sep));
-    const csv = parts.join('\r\n');
-    downloadCsv(makeCsvFilename('turnaj_export'), csv);
-    setStatus('CSV – vše staženo.', 'ok');
-  }
+    function exportHtml(){
+      var standings = computeStandings(state.teams, state.rounds);
+      var flat = getFlatMatches();
 
-  let csvButtonsInited = false;
-  function initCsvExportButtons(){
-    if(csvButtonsInited) return;
-    csvButtonsInited = true;
-    if(elExportCsvStandingsBtn) elExportCsvStandingsBtn.addEventListener('click', exportStandingsToCSV);
-    if(elExportCsvMatchesBtn) elExportCsvMatchesBtn.addEventListener('click', exportMatchesToCSV);
-    if(elExportCsvScorersBtn) elExportCsvScorersBtn.addEventListener('click', exportScorersToCSV);
-    if(elExportCsvAllBtn) elExportCsvAllBtn.addEventListener('click', exportAllToCSV);
-  }
+      var htmlOut = '';
+      htmlOut += '<h2>Tabulka</h2>\n';
+      htmlOut += '<table>\n<thead><tr><th>Poř.</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead>\n<tbody>\n';
+      standings.forEach(function(r, idx){
+        var cls = '';
+        if(idx === 0) cls = 'pos1';
+        else if(idx === 1) cls = 'pos2';
+        else if(idx === 2) cls = 'pos3';
 
-  function exportJsonToBox(){
-    try{
-      const data = JSON.stringify(state, null, 2);
-      elJsonBox.value = data;
-      setStatus('JSON byl zkopírován do pole pro zálohu.', 'ok');
-    }catch(e){ console.error(e); setStatus('Nepodařilo se vytvořit JSON export.', 'warn'); }
-  }
+        htmlOut += '<tr class="' + cls + '">' +
+          '<td>' + (idx+1) + '</td>' +
+          '<td>' + r.team + '</td>' +
+          '<td>' + r.Z + '</td>' +
+          '<td>' + r.V + '</td>' +
+          '<td>' + r.R + '</td>' +
+          '<td>' + r.P + '</td>' +
+          '<td>' + r.VG + '</td>' +
+          '<td>' + r.OG + '</td>' +
+          '<td>' + r.RG + '</td>' +
+          '<td>' + r.Body + '</td>' +
+          '</tr>\n';
+      });
+      htmlOut += '</tbody></table>\n\n';
 
-  function buildPublicData(){
-    const standings = computeStandingsWithH2H(state.teams, state.rounds).map((r, idx) => ({
-      position: idx + 1,
-      team: r.team,
-      played: r.P,
-      wins: r.W,
-      draws: r.D,
-      losses: r.L,
-      goalsFor: r.GF,
-      goalsAgainst: r.GA,
-      goalDifference: r.GD,
-      points: r.Pts
-    }));
+      htmlOut += '<h2>Zápasy</h2>\n';
+      htmlOut += '<table>\n<thead><tr><th>#</th><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th><th>Skóre</th></tr></thead>\n<tbody>\n';
+      flat.forEach(function(m, idx){
+        var score = (m.hs === '' && m.as === '') ? '' : (m.hs + ':' + m.as);
+        htmlOut += '<tr>' +
+          '<td>' + (idx+1) + '</td>' +
+          '<td>' + (m.slotStart || '') + '-' + (m.slotEnd || '') + '</td>' +
+          '<td>' + (m.pitch || '') + '</td>' +
+          '<td>' + m.home + '</td>' +
+          '<td>' + m.away + '</td>' +
+          '<td>' + score + '</td>' +
+          '</tr>\n';
+      });
+      htmlOut += '</tbody></table>\n';
 
-    const matches = getFlatMatches().map(m => ({
-      id: m.id || '',
-      slot: m.slot || '',
-      pitch: m.pitch || 1,
-      start: m.slotStart || '',
-      end: m.slotEnd || '',
-      home: m.home || '',
-      away: m.away || '',
-      homeScore: m.hs === '' ? null : Number(m.hs),
-      awayScore: m.as === '' ? null : Number(m.as)
-    }));
+      var doc =
+        '<!DOCTYPE html>\n' +
+        '<html lang="cs">\n' +
+        '<head>\n' +
+        '<meta charset="UTF-8" />\n' +
+        '<title>Export turnaj</title>\n' +
+        '<style>\n' +
+        'body{font-family:system-ui,Arial,sans-serif;font-size:13px;color:#111;padding:16px;}\n' +
+        'table{border-collapse:collapse;width:100%;margin-bottom:16px;}\n' +
+        'th,td{border:1px solid #ccc;padding:4px 6px;text-align:center;}\n' +
+        'td:nth-child(2),td:nth-child(4),td:nth-child(5){text-align:left;}\n' +
+        'h2{margin:8px 0;}\n' +
+        'tr.pos1{background:rgba(40,167,69,0.12);font-weight:700;}\n' +
+        'tr.pos2{background:rgba(255,216,0,0.12);font-weight:600;}\n' +
+        'tr.pos3{background:rgba(80,160,255,0.12);font-weight:600;}\n' +
+        '</style>\n' +
+        '</head>\n' +
+        '<body>\n' +
+        htmlOut +
+        '\n</body>\n</html>';
 
-    const scorers = [...state.scorers]
-      .sort((a,b) => (b.goals - a.goals) || a.team.localeCompare(b.team, 'cs') || a.name.localeCompare(b.name, 'cs'))
-      .map((s, idx) => ({
-        position: idx + 1,
-        name: s.name || '',
-        team: s.team || '',
-        goals: Number(s.goals || 0)
-      }));
-
-    const topScorer = scorers.length ? scorers[0] : null;
-    const completedMatches = matches.filter(m => Number.isFinite(m.homeScore) && Number.isFinite(m.awayScore)).length;
-
-    return {
-      meta: {
-        title: 'TJ SŘepy – turnaj',
-        subtitle: 'Veřejný přehled pro rodiče',
-        updatedAt: state.updatedAt || new Date().toISOString(),
-        teamCount: state.teams.length,
-        matchCount: matches.length,
-        completedMatches,
-        pitchCount: state.pitchCount,
-        matchDuration: state.matchDuration,
-        breakDuration: state.breakDuration,
-        startTime: state.startTime
-      },
-      teams: [...state.teams],
-      standings,
-      matches,
-      scorers,
-      topScorer
-    };
-  }
-
-  function downloadPublicDataFile(){
-    try{
-      const data = JSON.stringify(buildPublicData(), null, 2);
-      const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      var blob = new Blob([doc], {type:'text/html'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
       a.href = url;
-      a.download = 'public_data.json';
-      document.body.appendChild(a);
+      a.download = 'index.html';
       a.click();
-      a.remove();
       URL.revokeObjectURL(url);
-      setStatus('HTML report byl vytvořen a stažen.', 'ok');
-    }catch(e){
-      console.error(e);
-      setStatus('Nepodařilo se vytvořit public-data.json.', 'warn');
     }
-  }
 
-  function createSnapshotHtml(){
-    const standingsRows = Array.from(elStandingsBody.querySelectorAll('tr')).map(tr => tr.outerHTML).join('');
-    const scorerRows = Array.from(elScorersBody.querySelectorAll('tr')).map(tr => tr.outerHTML.replace(/<td class="export-panel">[\s\S]*?<\/td>/g, '')).join('');
-    const flatMatches = getFlatMatches().map(item => `
-      <div class="match"><div class="badge">${item.slotStart || '--:--'}–${item.slotEnd || '--:--'}</div><div class="badge">Hřiště ${item.pitch || 1}</div><div style="text-align:right;">${escapeHtml(item.home)}</div><div>vs</div><div style="text-align:left;">${escapeHtml(item.away)}</div><div>${escapeHtml(item.hs || '')}</div><div>${escapeHtml(item.as || '')}</div></div>`).join('');
-    const topHtml = elTopScorerBox.innerHTML;
-    return `<!doctype html><html lang="cs"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Ligový report</title><style>body{font-family:Arial,sans-serif;margin:24px;color:#111;background:#fff;}h1,h2{margin:0 0 12px;}.section{margin-bottom:24px;}table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #999;padding:8px;text-align:center;font-size:13px;}th{background:#eee;}td.left{text-align:left;}.pos1 td{background:#f6e49d!important;}.pos2 td{background:#d9dde5!important;}.pos3 td{background:#e7c0ae!important;}.match{display:grid;grid-template-columns:95px 110px 1fr auto 1fr 60px 60px;gap:8px;align-items:center;border:1px solid #bbb;border-radius:10px;padding:8px;margin-bottom:8px;}.badge{display:inline-block;padding:4px 8px;border:1px solid #999;border-radius:999px;background:#f7f7f7;font-size:12px !important;}.leader-box{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid #bbb;background:#f9f9f9;margin-bottom:10px;}.leader-icon{font-size:28px;line-height:1;}.leader-title{font-size:12px !important;color:#555;text-transform:uppercase;letter-spacing:.05em;}.leader-name{font-size:18px;font-weight:700;}.leader-meta{font-size:13px;color:#222;}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f7f7f7;border:1px solid #bbb;font-size:12px !important;}#pdfArea{display:block !important;}#pdfArea .split{display:block !important;}#pdfArea .card{width:100% !important;}
-
-/* export-safe barvy (bez color-mix) */
-.capture-mode .tag,
-.capture-mode .chip,
-.capture-mode .pill,
-.capture-mode .time-badge,
-.capture-mode .pitch-badge,
-.capture-mode .leader-box{
-  background:#f5f5f5 !important;
-  border-color:#bbb !important;
-  color:#111 !important;
-}
-.capture-mode .table tr.pos1 td{background:#f6e49d !important;}
-.capture-mode .table tr.pos2 td{background:#d9dde5 !important;}
-.capture-mode .table tr.pos3 td{background:#e7c0ae !important;}
-.manual-matrix-wrap{overflow:auto;}
-.manual-matrix-table{border-collapse:collapse;border:1px solid #999;background:#fff;width:max-content;}
-.manual-matrix-table th,.manual-matrix-table td{border:1px solid #999;min-width:56px;width:56px;height:56px;text-align:center;vertical-align:middle;padding:0;font-size:11px;}
-.manual-matrix-table th.manual-corner,.manual-matrix-table th.manual-col-head,.manual-matrix-table th.manual-row-head{background:#f7faf8;font-weight:700;}
-.manual-matrix-table td.manual-diag{background:repeating-linear-gradient(45deg,#d6d6d6 0,#d6d6d6 6px,#ffffff 6px,#ffffff 12px);}
-
-
-</style></head><body><h1>Ligový report</h1><div class="section"><h2>Tabulka</h2><table><thead><tr><th>Poř.</th><th style="text-align:left;">Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead><tbody>${standingsRows}</tbody></table></div><div class="section"><h2>Nejlepší střelec</h2><div class="leader-box">${topHtml}</div></div><div class="section"><h2>Zápasy</h2>${flatMatches}</div><div class="section"><h2>Střelci gólů</h2><table><thead><tr><th>Poř.</th><th style="text-align:left;">Hráč</th><th style="text-align:left;">Tým</th><th>Góly</th></tr></thead><tbody>${scorerRows}</tbody></table></div></body></html>`;
-  }
-
-  function exportHtmlSnapshot(){
-    const html = createSnapshotHtml();
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `liga-report-${new Date().toISOString().slice(0,10)}.html`;
-    document.body.appendChild(a);
-    a.click(); a.remove(); URL.revokeObjectURL(url);
-    setStatus('Soubor public_data.json byl vytvořen a stažen.', 'ok');
-  }
-
-  async function regenerateScheduleAfterSettingsChange(message){
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); syncInputsFromState(); return; }
-    state.pitchCount = clampInt(elPitchCount.value, 1, 8, state.pitchCount);
-    state.matchDuration = clampInt(elMatchDuration.value, 1, 180, state.matchDuration);
-    state.breakDuration = clampInt(elBreakDuration.value, 0, 180, state.breakDuration);
-    state.startTime = isValidTime(elStartTime.value) ? elStartTime.value : state.startTime;
-    state.rounds = [];
-    await persistState();
-    renderAll();
-    setStatus(message, 'ok');
-  }
-
-  function loadSharedState(){
-    if(!FIREBASE_ENABLED){ renderAll(); return; }
-    onValue(ref(db, DB_PATH), snapshot => {
-      const data = snapshot.val();
-      suppressSave = true;
-      state = data ? normalizeState(data) : defaultState();
-      saveLocalBackup();
-      renderAll();
-      suppressSave = false;
-    }, error => {
-      console.error(error);
-      setStatus('Nepodařilo se načíst sdílená data z Firebase.', 'warn');
-      renderAll();
-    });
-  }
-  if(elAddTeamBtn) elAddTeamBtn.addEventListener('click', async () => {
-    await addTeam(elTeamName.value); elTeamName.value = ''; elTeamName.focus();
-  });
-  if(elTeamName) elTeamName.addEventListener('keydown', async e => {
-    if(e.key === 'Enter'){ e.preventDefault(); await addTeam(elTeamName.value); elTeamName.value = ''; elTeamName.focus(); }
-  });
-  if(elPitchCount) elPitchCount.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Počet hřišť byl uložen. Pro nový rozpis vygenerujte zápasy znovu.'));
-  if(elMatchDuration) elMatchDuration.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Délka zápasu byla uložena. Pro nový rozpis vygenerujte zápasy znovu.'));
-  if(elBreakDuration) elBreakDuration.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Pauza mezi zápasy byla uložena. Pro nový rozpis vygenerujte zápasy znovu.'));
-  if(elStartTime) elStartTime.addEventListener('change', async () => await regenerateScheduleAfterSettingsChange('Začátek 1. bloku byl uložen. Pro nový rozpis vygenerujte zápasy znovu.'));
-  if(elGenerateBtn) elGenerateBtn.addEventListener('click', async () => {
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
-    if(state.teams.length < 2){ setStatus('Nejdříve přidejte alespoň 2 týmy.', 'warn'); return; }
-    state.pitchCount = clampInt(elPitchCount.value, 1, 8, state.pitchCount);
-    state.matchDuration = clampInt(elMatchDuration.value, 1, 180, state.matchDuration);
-    state.breakDuration = clampInt(elBreakDuration.value, 0, 180, state.breakDuration);
-    state.startTime = isValidTime(elStartTime.value) ? elStartTime.value : state.startTime;
-    state.rounds = scheduleFair(generateAllPairs(state.teams), state.pitchCount, state.matchDuration, state.breakDuration, state.startTime);
-    await persistState();
-    renderAll();
-    setStatus(`Rozpis zápasů byl vygenerován pro ${state.pitchCount} hřiště / hřišť.`, 'ok');
-  });
-  if(elResetBtn) elResetBtn.addEventListener('click', async () => {
-    // Nabídka rychlé zálohy před resetem
-    const wantBackup = confirm('Chcete PŘED resetem stáhnout rychlou zálohu do souboru?');
-    if(wantBackup){
-      downloadBackupFile();
-    }
-    if(!confirm('Opravdu chcete vše resetovat? Týmy, zápasy, střelci i skóre budou smazány (v tomto prohlížeči).')) return;
-
-    addBackupToHistory('Automatická záloha před resetem');
-    renderBackupHistory();
-
-    state = defaultState();
-    await persistState();
-    renderAll();
-    elJsonBox.value = '';
-    setStatus('Vše bylo resetováno.', 'ok');
-  });
-
-  // --- Lokální záloha do souboru (JSON) ---
-  function downloadBackupFile(){
-    try{
-      const data = JSON.stringify(state, null, 2);
-      const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+    function exportJson(){
+      var blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
       a.href = url;
-      a.download = `liga-zaloha-${new Date().toISOString().slice(0,10)}.json`;
-      document.body.appendChild(a);
+      a.download = 'turnaj-state.json';
       a.click();
-      a.remove();
       URL.revokeObjectURL(url);
-      addBackupToHistory('Ruční záloha');
-      renderBackupHistory();
-      setStatus('Záloha byla stažena jako soubor .json. (uložena i do historie)', 'ok');
-    }catch(e){
-      console.error(e);
-      setStatus('Nepodařilo se vytvořit zálohu do souboru.', 'warn');
     }
-  }
 
-  async function importBackupFromText(raw){
-    if(!raw){ setStatus('Nejdříve vyberte soubor nebo vložte JSON.', 'warn'); return; }
-    try{
-      state = normalizeState(JSON.parse(raw));
-      await persistState();
-      renderAll();
-      addBackupToHistory('Obnova zálohy');
-      renderBackupHistory();
-      setStatus('Záloha byla úspěšně načtena.', 'ok');
-    }catch(e){
-      console.error(e);
-      setStatus('Neplatný JSON soubor (chyba při čtení).', 'warn');
+    function importJsonFromFile(file){
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        try{
+          var data = JSON.parse(ev.target.result);
+          if(!data || typeof data !== 'object') throw new Error('Neplatný formát JSON.');
+          if(!Array.isArray(data.teams) || !Array.isArray(data.rounds)) throw new Error('JSON neobsahuje potřebná pole.');
+          state.teams = data.teams || [];
+          state.rounds = data.rounds || [];
+          state.scorers = data.scorers || [];
+          if(data.settings){
+            state.settings.pitchCount = data.settings.pitchCount || state.settings.pitchCount;
+            state.settings.matchDuration = data.settings.matchDuration || state.settings.matchDuration;
+            state.settings.breakDuration = data.settings.breakDuration || state.settings.breakDuration;
+            state.settings.startTime = data.settings.startTime || state.settings.startTime;
+          }
+          elTeamsInput.value = state.teams.join('\n');
+          elPitchCount.value = state.settings.pitchCount;
+          elMatchDuration.value = state.settings.matchDuration;
+          elBreakDuration.value = state.settings.breakDuration;
+          elStartTime.value = state.settings.startTime;
+          renderAll();
+          setStatus('JSON byl úspěšně načten.', 'ok');
+        } catch(e){
+          console.error(e);
+          setStatus('Chyba při načítání JSON: ' + e.message, 'err');
+        }
+      };
+      reader.onerror = function(){
+        setStatus('Chyba při čtení souboru JSON.', 'err');
+      };
+      reader.readAsText(file, 'utf-8');
     }
-  }
 
-  function pickBackupFile(){
-    if(elBackupFileInput) elBackupFileInput.click();
-  }
-  if(elExportBtn) elExportBtn.addEventListener('click', () => {
-    if(!isAdminUnlocked()){ setStatus('Úpravy jsou zamčené.', 'warn'); return; }
-    elJsonBox.value = JSON.stringify(state, null, 2);
-    setStatus('Export hotov. JSON si zkopírujte pro zálohu nebo přenos.', 'ok');
-  });
+    function exportH2H(){
+      var teams = state.teams;
+      var standings = computeStandings(teams, state.rounds);
+      var order = standings.map(function(s){ return s.team; });
+      var n = order.length;
+      var html = '<table class="h2h-table">\n<tr><th></th>';
+      order.forEach(function(t){ html += '<th>' + escapeHtml(t) + '</th>'; });
+      html += '</tr>\n';
+      for(var i=0;i<n;i++){
+        html += '<tr><th>' + escapeHtml(order[i]) + '</th>';
+        for(var j=0;j<n;j++){
+          if(i===j){ html += '<td class="h2h-diag">–</td>'; }
+          else { html += '<td></td>'; }
+        }
+        html += '</tr>\n';
+      }
+      html += '</table>';
+      var panel = document.getElementById('h2h-panel');
+      var c = document.getElementById('h2h-container');
+      c.innerHTML = html;
+      panel.hidden = false;
+      setStatus('Ruční tabulka (H2H) byla vygenerována dole na stránce.', 'ok');
+    }
 
-  if(elDownloadBackupBtn) elDownloadBackupBtn.addEventListener('click', downloadBackupFile);
-  if(elLoadBackupBtn) elLoadBackupBtn.addEventListener('click', pickBackupFile);
-  if(elBackupFileInput) elBackupFileInput.addEventListener('change', async () => {
-    const file = elBackupFileInput.files && elBackupFileInput.files[0];
-    if(!file) return;
-    const text = await file.text();
-    await importBackupFromText(text);
-    elBackupFileInput.value = '';
-  });
-  if(elImportBtn) elImportBtn.addEventListener('click', async () => {
-    const raw = elJsonBox.value.trim();
-    await importBackupFromText(raw);
-  });
-  if(elAddGoalsBtn) elAddGoalsBtn.addEventListener('click', async () => { await updateScorer(1); });
-  if(elRemoveGoalsBtn) elRemoveGoalsBtn.addEventListener('click', async () => { await updateScorer(-1); });
-  elScorerFilterTeam.addEventListener('change', () => { state.scorerFilterTeam = elScorerFilterTeam.value; renderScorers(); });
-  if(elExportPdfBtn) elExportPdfBtn.addEventListener('click', exportPdf);
-  if(elExportHtmlBtn) elExportHtmlBtn.addEventListener('click', exportHtmlSnapshot);
-  if(elExportGitBtn) elExportGitBtn.addEventListener('click', downloadPublicDataFile);
+    function printH2H(){
+      var panel = document.getElementById('h2h-panel');
+      if (!panel || panel.hidden) {
+        setStatus('Nejprve vygenerujte H2H tabulku (tlačítkem Ruční tabulka).', 'warn');
+        return;
+      }
+      document.body.classList.add('print-single');
+      panel.classList.add('print-only');
+      window.print();
+      setTimeout(function(){
+        panel.classList.remove('print-only');
+        document.body.classList.remove('print-single');
+      }, 0);
+    }
 
-  if(elExportManualTableBtn) elExportManualTableBtn.addEventListener('click', openManualTableExport);
-  
+    function printMatches(){
+      var flat = getFlatMatches();
+      if (!flat.length) {
+        setStatus('Nejsou žádné zápasy k tisku. Nejdříve je vygenerujte.', 'warn');
+        return;
+      }
 
+      var html = '';
+      html += '<h2>Zápasy</h2>\n';
+      html += '<table>\n';
+      html += '<thead><tr><th>#</th><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th></tr></thead>\n';
+      html += '<tbody>\n';
 
+      flat.forEach(function(m, idx){
+        html += '<tr>' +
+          '<td>' + (idx + 1) + '</td>' +
+          '<td>' + (m.slotStart || '') + ' - ' + (m.slotEnd || '') + '</td>' +
+          '<td>' + (m.pitch || '') + '</td>' +
+          '<td>' + escapeHtml(m.home) + '</td>' +
+          '<td>' + escapeHtml(m.away) + '</td>' +
+          '</tr>\n';
+      });
 
-function buildManualMatrixTable(teams){
-  teams = Array.isArray(teams) ? teams.slice() : [];
-  const wrap = document.createElement('div');
-  wrap.className = 'manual-matrix-wrap';
-  const table = document.createElement('table');
-  table.className = 'manual-matrix-table';
-  table.style.tableLayout = 'fixed';
-  table.style.width = 'max-content';
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.font = getComputedStyle(document.body).font;
+      html += '</tbody>\n</table>\n';
 
-  let longest = '';
-  teams.forEach(t => { if (String(t).length > longest.length) longest = String(t); });
-  const longestW = Math.ceil(ctx.measureText(longest).width) + 48;
-  const headW = Math.max(90, Math.min(140, longestW));
-  const rowW = Math.max(90, Math.min(140, longestW));
-  const cellSize = Math.max(44, Math.min(72, Math.ceil(Math.max(headW, rowW) * 0.45)));
+      var doc =
+        '<!DOCTYPE html>\n' +
+        '<html lang="cs">\n' +
+        '<head>\n' +
+        '<meta charset="UTF-8" />\n' +
+        '<title>Zápasy – tisk</title>\n' +
+        '<style>\n' +
+        'body{font-family:system-ui,Arial,sans-serif;font-size:13px;color:#111;padding:16px;}\n' +
+        'table{border-collapse:collapse;width:100%;margin-bottom:16px;}\n' +
+        'th,td{border:1px solid #ccc;padding:4px 6px;text-align:center;}\n' +
+        'td:nth-child(4),td:nth-child(5){text-align:left;}\n' +
+        'h2{margin:8px 0;}\n' +
+        '</style>\n' +
+        '</head>\n' +
+        '<body>\n' +
+        html +
+        '\n<script>window.onload = function(){ window.print(); }<\/script>\n' +
+        '</body>\n</html>';
 
-  const setSize = (el, w) => {
-    el.style.width = w + 'px';
-    el.style.minWidth = w + 'px';
-    el.style.maxWidth = w + 'px';
-  };
-
-  const thead = document.createElement('thead');
-  const hr = document.createElement('tr');
-  const corner = document.createElement('th');
-  corner.className = 'manual-corner';
-  corner.innerHTML = '<span class="manual-head-text">TÝMY</span>'; 
-  setSize(corner, rowW);
-  hr.appendChild(corner);
-
-  teams.forEach(t => {
-    const th = document.createElement('th');
-    th.className = 'manual-col-head';
-    const sp = document.createElement('span');
-    sp.className = 'manual-head-text';
-    sp.textContent = t;
-    th.appendChild(sp);
-    setSize(th, headW); th.style.height = 'auto';
-    hr.appendChild(th);
-  });
-  thead.appendChild(hr);
-  table.appendChild(thead);
-
-  const tbody = document.createElement('tbody');
-  teams.forEach((rowTeam, i) => {
-    const tr = document.createElement('tr');
-    const th = document.createElement('th');
-    th.className = 'manual-row-head';
-    th.innerHTML = '<span class="manual-head-text">' + String(rowTeam).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>'; 
-    setSize(th, rowW); th.style.height = 'auto';
-    tr.appendChild(th);
-    teams.forEach((_, j) => {
-      const td = document.createElement('td');
-      td.className = i === j ? 'manual-diag' : 'manual-cell';
-      td.style.width = cellSize + 'px';
-      td.style.minWidth = cellSize + 'px';
-      td.style.maxWidth = cellSize + 'px';
-      td.style.height = cellSize + 'px';
-      td.style.minHeight = cellSize + 'px';
-      td.style.maxHeight = cellSize + 'px';
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
-}
-
-
-function openManualTableExport(){
-  const teams = Array.isArray(state && state.teams) ? state.teams : [];
-  const sec = document.getElementById('manualSection');
-  const body = document.getElementById('manualBody');
-  if(!sec || !body) return;
-  body.innerHTML = '';
-  if(teams.length < 2){
-    body.innerHTML = '<div class="muted">Nejdříve přidejte alespoň 2 týmy.</div>';
-    sec.style.display = 'block';
-    return;
-  }
-  body.appendChild(buildManualMatrixTable(teams));
-  sec.style.display = 'block';
-  sec.hidden = false;
-  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  sec.tabIndex = -1;
-  sec.focus({ preventScroll: true });
-  sec.classList.add('manual-show-flash');
-  setTimeout(() => sec.classList.remove('manual-show-flash'), 800);
-  setTimeout(fitManualMatrixTable, 0);
-}
-
-function printManualSection(){
-  document.documentElement.classList.add('manual-print');
-  fitManualForPrint();
-  requestAnimationFrame(() => {
-    window.print();
-    setTimeout(() => {
-      document.documentElement.classList.remove('manual-print');
-      resetManualPrintFit();
-    }, 300);
-  });
-}
-
-
-function fitManualForPrint(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const table = document.querySelector('#manualBody .manual-matrix-table');
-  const sec = document.getElementById('manualSection');
-  if(!wrap || !table || !sec) return;
-  wrap.style.transform = '';
-  wrap.style.width = '';
-  const pageW = 1120;
-  const pageH = 740;
-  const rect = table.getBoundingClientRect();
-  const scaleW = pageW / Math.max(1, rect.width);
-  const scaleH = pageH / Math.max(1, rect.height);
-  const scale = Math.min(1, scaleW, scaleH);
-  wrap.style.transformOrigin = 'center center';
-  wrap.style.transform = 'scale(' + scale.toFixed(3) + ')';
-  wrap.style.width = (100 / scale) + '%';
-  wrap.style.margin = '0 auto';
-  sec.style.overflow = 'hidden';
-  sec.style.display = 'flex';
-  sec.style.alignItems = 'center';
-  sec.style.justifyContent = 'center';
-  sec.style.minHeight = '100vh';
-}
-function resetManualPrintFit(){
-  const wrap = document.querySelector('#manualBody .manual-matrix-wrap');
-  const sec = document.getElementById('manualSection');
-  if(wrap){ wrap.style.transform = ''; wrap.style.transformOrigin = ''; wrap.style.width = ''; }
-  if(sec){ sec.style.overflow = ''; }
-}
-
-
-
-
-async function exportManualTableAsImage(){
-  const sec = document.getElementById('manualSection');
-  const body = document.getElementById('manualBody');
-  if(!sec || !body) return;
-  const target = body.querySelector('.manual-matrix-wrap');
-  if(!target){
-    openManualTableExport();
-  }
-  const el = body.querySelector('.manual-matrix-wrap');
-  if(!el) return;
-  fitManualMatrixTable();
-  const prev = document.documentElement.classList.contains('manual-print');
-  document.documentElement.classList.add('manual-print');
-  try{
-    const canvas = await html2canvas(el, {backgroundColor:'#ffffff', scale:2, useCORS:true});
-    const dataUrl = canvas.toDataURL('image/png');
-    const win = window.open('');
-    if(win){
-      win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Ruční tabulka</title><style>body{margin:0;padding:20px;background:#fff;}img{max-width:100%;height:auto;display:block;}</style></head><body><img src="'+dataUrl+'"></body></html>');
+      var win = window.open('', '_blank');
+      if (!win) {
+        setStatus('Prohlížeč blokuje vyskakovací okna. Povolte je pro tuto stránku.', 'warn');
+        return;
+      }
+      win.document.open();
+      win.document.write(doc);
       win.document.close();
-      win.focus();
     }
-  } finally {
-    if(!prev) document.documentElement.classList.remove('manual-print');
-  }
-}
 
+    function printStandings(){
+      var panel = document.getElementById('standings-panel');
+      if(!panel){
+        window.print();
+        return;
+      }
+      document.body.classList.add('print-single');
+      panel.classList.add('print-only');
+      window.print();
+      setTimeout(function(){
+        panel.classList.remove('print-only');
+        document.body.classList.remove('print-single');
+      }, 0);
+    }
 
-function fitManualMatrixTable(){
-  const table = document.querySelector('#manualBody .manual-matrix-table');
-  if(!table) return;
-  const headers = Array.from(table.querySelectorAll('thead th'));
-  const rowHeads = Array.from(table.querySelectorAll('tbody th'));
-  const cells = Array.from(table.querySelectorAll('tbody td'));
-  const allTexts = [];
-  headers.forEach((el, i) => { if(i>0) allTexts.push((el.textContent || '').trim()); });
-  rowHeads.forEach(el => allTexts.push((el.textContent || '').trim()));
-  allTexts.push(...cells.map(() => '')); 
-  const ctx = document.createElement('canvas').getContext('2d');
-  const font = getComputedStyle(document.body).font;
-  ctx.font = font;
-  let maxText = 0;
-  allTexts.forEach(t => { const w = ctx.measureText(t).width; if(w > maxText) maxText = w; });
-  const colWidth = Math.max(56, Math.ceil(maxText + 28));
-  const rowHeadWidth = Math.max(88, Math.ceil(maxText + 36));
-  const cellSize = Math.max(36, Math.min(60, colWidth - 20));
-  table.style.tableLayout = 'fixed';
-  table.querySelectorAll('th.manual-col-head').forEach(th => { th.style.width = colWidth + 'px'; th.style.minWidth = colWidth + 'px'; th.style.maxWidth = colWidth + 'px'; });
-  table.querySelectorAll('th.manual-corner, th.manual-row-head').forEach(th => { th.style.width = rowHeadWidth + 'px'; th.style.minWidth = rowHeadWidth + 'px'; th.style.maxWidth = rowHeadWidth + 'px'; });
-  table.querySelectorAll('th.manual-col-head, th.manual-row-head, th.manual-corner').forEach(th => { th.style.height = '34px'; });
-  table.querySelectorAll('tbody td').forEach(td => { td.style.width = cellSize + 'px'; td.style.minWidth = cellSize + 'px'; td.style.maxWidth = cellSize + 'px'; td.style.height = cellSize + 'px'; td.style.minHeight = cellSize + 'px'; td.style.maxHeight = cellSize + 'px'; });
-  table.querySelectorAll('tbody tr').forEach(tr => { tr.style.height = cellSize + 'px'; });
-}
+    document.getElementById('btn-generate').addEventListener('click', generateSchedule);
+    document.getElementById('btn-recalc').addEventListener('click', recalcMatchTimesForMultiPitch);
+    document.getElementById('btn-print').addEventListener('click', function(){ window.print(); });
+    document.getElementById('btn-print-h2h').addEventListener('click', printH2H);
+    document.getElementById('btn-print-matches').addEventListener('click', printMatches);
+    document.getElementById('btn-print-standings').addEventListener('click', printStandings);
+    document.getElementById('btn-export-html').addEventListener('click', exportHtml);
+    document.getElementById('btn-export-json').addEventListener('click', exportJson);
+    document.getElementById('btn-export-h2h').addEventListener('click', exportH2H);
 
-document.addEventListener('DOMContentLoaded', () => {
-  window.addEventListener('resize', () => { if(document.querySelector('#manualBody .manual-matrix-table')) fitManualMatrixTable(); });
-  const manualExportBtn = document.getElementById('exportManualTableBtn');
-  const manualPrintBtn = document.getElementById('manualPrintBtn');
-  const manualCloseBtn = document.getElementById('manualCloseBtn');
-  if (manualExportBtn) manualExportBtn.addEventListener('click', window.openManualTableExport);
-  if (manualPrintBtn) manualPrintBtn.addEventListener('click', printManualSection);
-  if (manualCloseBtn) manualCloseBtn.addEventListener('click', () => { const sec = document.getElementById('manualSection'); if (sec) sec.style.display='none'; });
+    const fileInput = document.getElementById('file-import-json');
+    document.getElementById('btn-import-json').addEventListener('click', function(){
+      fileInput.click();
+    });
+    fileInput.addEventListener('change', function(e){
+      var file = e.target.files[0];
+      if(!file){
+        setStatus('Nebyl vybrán žádný soubor.', 'warn');
+        return;
+      }
+      importJsonFromFile(file);
+      fileInput.value = '';
+    });
 
-    syncInputsFromState();
-    initCsvExportButtons();
-    initImageExportButtons();
-    renderBackupHistory();
-  
-    const mp=document.getElementById('manualPrintBtn');
-    const mc=document.getElementById('manualCloseBtn');
-    if(mp) mp.addEventListener('click', printManualSection);
-    if(mc) mc.addEventListener('click', closeManualSection);
-});
-
-  setStorageNotice();
-  loadSharedState();
-  renderAll();
-</script>
+    readSettingsFromInputs();
+    updateSummary();
+  </script>
 </body>
 </html>
