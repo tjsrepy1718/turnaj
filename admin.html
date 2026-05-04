@@ -1,1119 +1,291 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <title>Turnaj – administrace</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #ffffff;
-      --panel: #ffffff;
-      --panel-light: #f5f5f5;
-      --panel-border: #dddddd;
-
-      --accent: #ffd800;
-      --accent-soft: rgba(255,216,0,0.12);
-      --accent-strong: #ffb800;
-
-      --accent-green: #28a745;
-      --accent-green-soft: rgba(40,167,69,0.12);
-
-      --text: #222222;
-      --muted: #777777;
-      --danger: #dc3545;
-      --success: #28a745;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    .app {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 16px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-      letter-spacing: 0.03em;
-    }
-
-    header small {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
-      gap: 16px;
-    }
-
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-    }
-
-    .panel {
-      background: var(--panel);
-      border-radius: 8px;
-      padding: 12px 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      border: 1px solid var(--panel-border);
-    }
-
-    h2 {
-      margin: 0 0 8px;
-      font-size: 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin: 6px 0 2px;
-    }
-
-    input[type="text"], input[type="number"], textarea, select {
-      width: 100%;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid #cccccc;
-      background: #ffffff;
-      color: var(--text);
-      font-size: 13px;
-    }
-
-    textarea { min-height: 120px; resize: vertical; }
-
-    .row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .row > div { flex: 1; }
-
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #dddddd;
-      color: #222222;
-      font-weight: 600;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    }
-
-    .btn-primary {
-      background: var(--accent-green);
-      color: #ffffff;
-    }
-
-    .btn-yellow {
-      background: var(--accent);
-      color: #5a4a00;
-    }
-
-    .btn.secondary {
-      background: transparent;
-      color: #555555;
-      border: 1px solid #cccccc;
-      box-shadow: none;
-    }
-
-    .btn.danger {
-      background: var(--danger);
-      color: #ffffff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    }
-
-    .btn.tiny { padding: 3px 8px; font-size: 11px; }
-    .btn:disabled { opacity: 0.5; cursor: default; }
-
-    .pill {
-      display:inline-flex;
-      align-items:center;
-      padding:2px 8px;
-      border-radius:999px;
-      background:#f0f0f0;
-      font-size:11px;
-      color:var(--muted);
-    }
-
-    .status {
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .status.ok { color: var(--success); }
-    .status.err { color: var(--danger); }
-    .status.warn{ color: var(--accent-strong); }
-
-    .matches-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-top: 8px;
-      max-height: 420px;
-      overflow: auto;
-    }
-
-    .match-row {
-      display: grid;
-      grid-template-columns: 32px 46px 82px 64px minmax(0,1fr) 20px minmax(0,1fr) 40px 40px 80px;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 6px;
-      border-radius: 6px;
-      background: var(--panel-light);
-      font-size: 11px;
-    }
-
-    .match-row .order { text-align:center; opacity:0.8; }
-    .match-row .time { font-family:monospace; }
-    .match-row .pitch { font-size:10px; opacity:0.8; }
-    .match-row .team { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    .score-input {
-      width: 100%;
-      text-align: center;
-      padding: 2px 4px;
-      border-radius: 4px;
-      border: 1px solid #cccccc;
-      background: #ffffff;
-      color: var(--text);
-      font-size: 12px;
-    }
-
-    .scorer-toggle {
-      justify-self: flex-start;
-    }
-
-    .inline-editor {
-      grid-column: 1 / -1;
-      display: none;
-      margin-top: 4px;
-      padding: 4px 6px;
-      border-radius: 6px;
-      background: #f8f8f8;
-      border: 1px solid #e0e0e0;
-    }
-
-    .inline-editor.open { display:block; }
-
-    .inline-editor .inline-form {
-      display:flex;
-      flex-wrap:wrap;
-      gap:4px;
-      align-items:flex-end;
-      margin-bottom:4px;
-    }
-
-    .inline-editor label { font-size:11px; }
-    .inline-editor input,
-    .inline-editor select { font-size:11px; }
-
-    .inline-list {
-      display:flex;
-      flex-wrap:wrap;
-      gap:4px;
-    }
-
-    .scorer-chip {
-      font-size:11px;
-      padding:2px 6px;
-      border-radius:999px;
-      background:rgba(40,167,69,0.08);
-      border:1px solid rgba(40,167,69,0.5);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-
-    th, td {
-      padding: 4px 6px;
-      text-align: center;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    th {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      background: #f7f7f7;
-    }
-
-    td.team { text-align:left; }
-    tr.pos1 { background: rgba(40,167,69,0.12); font-weight: 700; }
-    tr.pos2 { background: rgba(255,216,0,0.12); font-weight: 600; }
-    tr.pos3 { background: rgba(80,160,255,0.12); font-weight: 600; }
-
-    .export-row {
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-top:6px;
-    }
-
-    .h2h-table {
-      border-collapse: collapse;
-      font-size: 11px;
-    }
-    .h2h-table th,
-    .h2h-table td {
-      border:1px solid #cccccc;
-      padding:2px 4px;
-      text-align:center;
-    }
-    .h2h-diag {
-      background:#f0f0f0;
-    }
-
-    @media print {
-      body {
-        background: #fff;
-        color: #000;
-      }
-
-      body.print-single .app > * {
-        display: none;
-      }
-      body.print-single #h2h-panel.print-only,
-      body.print-single #matches-panel.print-only,
-      body.print-single #standings-panel.print-only {
-        display: block !important;
-        margin: 0;
-        box-shadow: none;
-        border-radius: 0;
-        border: none;
-      }
-      body.print-single #h2h-panel.print-only h2,
-      body.print-single #matches-panel.print-only h2,
-      body.print-single #standings-panel.print-only h2 {
-        color: #000;
-      }
-
-      #standings-panel.print-only #btn-print-standings {
-        display: none;
-      }
-
-      #matches-panel.print-only .matches-list {
-        max-height: none;
-        overflow: visible;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turnaj Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;display:flex;min-height:100vh;background:#f5f5f5}
+.sidebar{width:240px;background:#1e8449;color:#fff;padding:20px;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar h1{font-size:22px;margin-bottom:30px}
+.nav-btn{display:block;width:100%;padding:12px;margin:8px 0;background:#1e8449;color:#fff;border:none;cursor:pointer;text-align:left;border-radius:4px;font-size:14px}
+.nav-btn:hover,.nav-btn.active{background:#27ae60}
+.main{flex:1;padding:30px;overflow-y:auto}
+.section{display:none}
+.section.active{display:block}
+h2{color:#1e8449;margin-bottom:20px;border-bottom:2px solid #27ae60;padding-bottom:10px}
+h3{color:#1e8449;margin:25px 0 15px;font-size:18px}
+.field-label{display:block;margin:10px 0 5px;font-weight:600;color:#555;font-size:14px}
+input[type="text"],input[type="number"],input[type="time"],textarea,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;font-size:14px}
+textarea{min-height:150px;font-family:monospace;resize:vertical}
+button{padding:10px 20px;margin:10px 10px 10px 0;background:#27ae60;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px}
+button:hover{background:#1e8449}
+button.danger{background:#e74c3c}
+button.danger:hover{background:#c0392b}
+button.success{background:#27ae60}
+button.success:hover{background:#229954}
+button.small{padding:5px 10px;margin:2px;font-size:12px}
+table{width:100%;border-collapse:collapse;margin:20px 0;background:#fff}
+table th,table td{border:1px solid #ddd;padding:10px;text-align:left}
+table th{background:#1e8449;color:#fff;font-weight:600}
+table tr:nth-child(even){background:#f9f9f9}
+table input[type="number"],table input[type="text"]{width:60px;padding:5px}
+.setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin:20px 0}
+.setup-grid>div{display:flex;flex-direction:column}
+.print-only{display:none}
+.print-section{margin:10px 0}
+.scorer-row{background:#f0f0f0;border-top:2px solid #27ae60}
+.scorer-row td{padding:5px!important}
+.scorer-inputs{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.scorer-inputs input{width:150px;padding:5px}
+.support-box{margin-top:auto;padding:15px;background:rgba(52,73,94,0.5);border-radius:8px;font-size:12px;line-height:1.6}
+.support-box p{margin:0 0 10px}
+.support-box img{width:100%;border-radius:4px;margin-top:10px}
+.support-box a{color:#27ae60}
+.legend-text{margin:15px 0;font-size:14px;color:#555}
+.add-scorer-form{background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0;border:1px solid #ddd}
+.add-scorer-form>div{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.add-scorer-form>div>div{flex:1;min-width:150px}
+@media print{
+body{background:#fff}
+.sidebar,.no-print,button{display:none!important}
+.main{padding:20px}
+.section{display:block!important}
+.print-only{display:block}
+table{page-break-inside:avoid}
+.scorer-row{display:none!important}
+.add-scorer-form{display:none!important}
+}
+body.black-white-mode{background:#fff}
+body.black-white-mode .main{background:#fff;color:#000}
+body.black-white-mode table th{background:#000;color:#fff}
+body.black-white-mode table tr:nth-child(even){background:#e0e0e0}
+.center{text-align:center}
+.diagonal{background:repeating-linear-gradient(45deg,#ccc,#ccc 10px,#fff 10px,#fff 20px)}
+.qr-notice{margin:20px 0;padding:15px;background:#e6f6e6;border-left:4px solid #27ae60;border-radius:4px;color:#1e8449}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div>
-        <h1>Turnaj – administrace</h1>
-        <small>Generátor rozpisu, výsledků a střelců</small>
-      </div>
-      <div class="pill" id="summary-pill">Týmy: 0 · Zápasů: 0 · Hřiště: 1</div>
-    </header>
+<div class="sidebar">
+<h1>Turnaj Admin</h1>
+<button class="nav-btn active" onclick="showSection('setup')">Zadání</button>
+<button class="nav-btn" onclick="showSection('matches')">Zápasy / Rozpis</button>
+<button class="nav-btn" onclick="showSection('standings')">Výsledky</button>
+<button class="nav-btn" onclick="showSection('matrix')">Ruční zápis</button>
+<button class="nav-btn" onclick="showSection('scorers')">Střelci</button>
+<button class="nav-btn" onclick="showSection('export')">QR / Export</button>
 
-    <div class="grid">
-      <div class="panel">
-        <h2>Nastavení</h2>
-        <label>Týmy (každý na nový řádek)</label>
-        <textarea id="teams-input" placeholder="TJ Řepy&#10;tým 2&#10;tým 3"></textarea>
+<div class="support-box">
+<p><strong>Podpora projektu</strong></p>
+<p>Chcete-li podpořit projekt Turnaj admin, který je zdarma, použijte QR kód níže. V základu je nastaveno 25 Kč, ale poslat můžete kolik chcete - nebo taky nemusíte poslat nic.</p>
+<p>Kdyby Vás napadlo nějaké vylepšení, kontaktujte mě na <a href="mailto:t.bruckner@seznam.cz">t.bruckner@seznam.cz</a></p>
+<img src="https://raw.githubusercontent.com/tjsrepy1718/turnaj/main/podpora.jpg" alt="QR kód pro podporu">
+</div>
+</div>
 
-        <div class="row">
-          <div>
-            <label>Počet hřišť</label>
-            <input type="number" id="pitch-count" min="1" max="8" value="2" />
-          </div>
-          <div>
-            <label>Délka zápasu (min)</label>
-            <input type="number" id="match-duration" min="5" max="90" value="15" />
-          </div>
-        </div>
+<div class="main">
+<div id="setup" class="section active">
+<h2>Zadání turnaje</h2>
+<h3>Turnaj</h3>
+<div class="setup-grid">
+<div>
+<span class="field-label">Název turnaje</span>
+<input type="text" id="t-name" value="Turnaj TJ SŘEPY 17/18">
+</div>
+<div>
+<span class="field-label">Organizátor</span>
+<input type="text" id="t-organizer" value="TJ SŘEPY">
+</div>
+<div>
+<span class="field-label">Místo</span>
+<input type="text" id="t-location" value="Sřepy">
+</div>
+<div>
+<span class="field-label">Datum začátku</span>
+<input type="text" id="t-start" placeholder="dd.mm.yyyy">
+</div>
+<div>
+<span class="field-label">Datum konce</span>
+<input type="text" id="t-end" placeholder="dd.mm.yyyy">
+</div>
+<div>
+<span class="field-label">Veřejný popis</span>
+<input type="text" id="t-desc" placeholder="Popis turnaje...">
+</div>
+</div>
 
-        <div class="row">
-          <div>
-            <label>Pauza mezi zápasy (min)</label>
-            <input type="number" id="break-duration" min="0" max="60" value="5" />
-          </div>
-          <div>
-            <label>Začátek turnaje (HH:MM)</label>
-            <input type="text" id="start-time" value="09:00" />
-          </div>
-        </div>
+<h3>Nastavení</h3>
+<div class="setup-grid">
+<div>
+<span class="field-label">Počet hřišť</span>
+<input type="number" id="s-pitches" value="2" min="1">
+</div>
+<div>
+<span class="field-label">Délka zápasu (min)</span>
+<input type="number" id="s-duration" value="20" min="1">
+</div>
+<div>
+<span class="field-label">Délka pauzy (min)</span>
+<input type="number" id="s-break" value="5">
+</div>
+<div>
+<span class="field-label">Čas do vyhlášení (min)</span>
+<input type="number" id="s-ceremony" value="15">
+</div>
+<div>
+<span class="field-label">Body za výhru</span>
+<input type="number" id="s-ptwin" value="3">
+</div>
+<div>
+<span class="field-label">Body za remízu</span>
+<input type="number" id="s-ptdraw" value="1">
+</div>
+<div>
+<span class="field-label">Body za prohru</span>
+<input type="number" id="s-ptloss" value="0">
+</div>
+<div>
+<span class="field-label">Čas začátku prvního zápasu</span>
+<input type="time" id="s-starttime" value="09:00">
+</div>
+</div>
 
-        <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
-          <button class="btn btn-primary" id="btn-generate">Vygenerovat zápasy</button>
-          <button class="btn btn-yellow" id="btn-recalc">Přepočítat časy pro více hřišť</button>
-          <button class="btn secondary" id="btn-import-json">Import JSON</button>
-          <input type="file" id="file-import-json" accept="application/json" style="display:none" />
-        </div>
+<h3>Týmy</h3>
+<textarea id="tm-list" placeholder="Každý řádek = tým"></textarea>
+<button id="btn-load-teams" onclick="loadTeams()">Načíst týmy</button>
+<button class="success" id="btn-gen-matches" onclick="generateMatches()">Vygenerovat zápasy</button>
+<button class="danger" id="btn-clear-matches" onclick="clearMatches()">Vyčistit zápasy</button>
 
-        <div class="status" id="status-line"></div>
-      </div>
+<h3>Záloha dat</h3>
+<button onclick="downloadBackup()">Stáhnout zálohu (JSON)</button>
+<button onclick="document.getElementById('file-restore').click()">Obnovit ze zálohy</button>
+<input type="file" id="file-restore" accept=".json" style="display:none" onchange="restoreBackup(event)">
+</div>
 
-      <div class="panel" id="matches-panel">
-        <h2>Zápasy</h2>
-        <div class="matches-list" id="matches"></div>
+<div id="matches" class="section">
+<h2>Zápasy / Rozpis</h2>
+<div id="matches-wrap"></div>
+<div class="print-section no-print">
+<button onclick="printSection('matches-wrap',false)">Tisknout rozpis</button>
+</div>
+</div>
 
-        <div class="export-row">
-          <button class="btn secondary tiny" id="btn-print-matches">Tisk zápasů</button>
-          <button class="btn secondary tiny" id="btn-print">Tisk celé stránky / PDF</button>
-          <button class="btn secondary tiny" id="btn-print-h2h">Tisk H2H</button>
-          <button class="btn secondary tiny" id="btn-export-html">Export HTML</button>
-          <button class="btn secondary tiny" id="btn-export-json">Export JSON</button>
-          <button class="btn secondary tiny" id="btn-export-h2h">Ruční tabulka (H2H)</button>
-        </div>
-      </div>
-    </div>
+<div id="standings" class="section">
+<h2>Výsledky</h2>
+<div id="standings-wrap">
+<table id="standings-table">
+<thead><tr><th>Poř.</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead>
+<tbody></tbody>
+</table>
+<div class="legend-text">
+<p><small><strong>Legenda:</strong> Poř. = Pořadí, Tým, Z = Zápasy, V = Výhry, R = Remízy, P = Prohry, VG = Vstřelené góly, OG = Obdržené góly, RG = Rozdíl gólů, Body</small></p>
+<p><small><strong>Kritéria řazení:</strong> Body, vzájemný zápas, RG, penalty, abeceda</small></p>
+</div>
+</div>
+<div class="print-section no-print">
+<button onclick="printSection('standings-wrap',false)">Tisknout výsledky</button>
+</div>
+</div>
 
-    <div class="panel" style="margin-top:12px;" id="standings-panel">
-      <h2>Tabulka</h2>
-      <div style="margin-bottom:6px; display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="btn secondary tiny" id="btn-print-standings">Tisk tabulky</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Poř.</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th>
-          </tr>
-        </thead>
-        <tbody id="standings-body"></tbody>
-      </table>
-    </div>
+<div id="matrix" class="section">
+<h2>Ruční zápis výsledků (matice)</h2>
+<p><small>Řádek = domácí, sloupec = hosté. Zadej skóre ve formátu "2:1".</small></p>
+<button onclick="renderMatrix()">Aktualizovat matici</button>
+<div id="matrix-wrap"></div>
+<div class="print-section no-print">
+<button onclick="printSection('matrix-wrap',false)">Tisknout matici</button>
+</div>
+</div>
 
-    <div class="panel" style="margin-top:12px;" id="h2h-panel" hidden>
-      <h2>Ruční tabulka (H2H)</h2>
-      <div id="h2h-container"></div>
-    </div>
-  </div>
+<div id="scorers" class="section">
+<h2>Střelci</h2>
 
-  <script>
-    const elTeamsInput = document.getElementById('teams-input');
-    const elPitchCount = document.getElementById('pitch-count');
-    const elMatchDuration = document.getElementById('match-duration');
-    const elBreakDuration = document.getElementById('break-duration');
-    const elStartTime = document.getElementById('start-time');
-    const elMatches = document.getElementById('matches');
-    const elStatus = document.getElementById('status-line');
-    const elStandingsBody = document.getElementById('standings-body');
-    const elSummaryPill = document.getElementById('summary-pill');
+<div class="add-scorer-form no-print">
+<h3>Přidat střelce ručně</h3>
+<div>
+<div>
+<span class="field-label">Tým</span>
+<select id="manual-team"></select>
+</div>
+<div>
+<span class="field-label">Jméno hráče</span>
+<input type="text" id="manual-player" placeholder="Jméno hráče">
+</div>
+<div>
+<span class="field-label">Počet gólů</span>
+<input type="number" id="manual-goals" value="1" min="1">
+</div>
+<div>
+<button class="success" onclick="addManualScorer()">Přidat střelce</button>
+</div>
+</div>
+</div>
 
-    const state = {
-      settings: {
-        pitchCount: 2,
-        matchDuration: 15,
-        breakDuration: 5,
-        startTime: '09:00'
-      },
-      teams: [],
-      rounds: [],
-      scorers: []
-    };
+<h3>Tabulka střelců</h3>
+<div id="scorers-wrap">
+<table id="scorers-table">
+<thead><tr><th>Poř.</th><th>Jméno</th><th>Tým</th><th>Góly</th><th class="no-print">Akce</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+<div class="print-section no-print">
+<button onclick="printSection('scorers-wrap',false)">Tisknout střelce</button>
+</div>
+</div>
 
-    function setStatus(msg, kind){
-      elStatus.textContent = msg || '';
-      elStatus.className = 'status' + (kind ? ' ' + kind : '');
-    }
+<div id="export" class="section">
+<h2>QR / Export</h2>
+<div class="qr-notice">
+<strong>Zde můžete sledovat online stav</strong>
+</div>
+<span class="field-label">URL pro QR kód:</span>
+<input type="text" id="qr-url" value="https://tjsrepy1718.github.io/turnaj/" placeholder="https://...">
+<div style="margin:20px 0"><img id="qr-img" src="" alt="QR" style="border:1px solid #ddd;max-width:200px"></div>
+<button onclick="updateQR()">Aktualizovat QR</button>
+<button onclick="printQROnly()">Tisknout QR kód</button>
+<button class="success" onclick="exportHTML()">Export HTML (index.html)</button>
+</div>
+</div>
 
-    function escapeHtml(str){
-      return String(str ?? '').replace(/[&<>"']/g, function(c){
-        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c];
-      });
-    }
-
-    function timeToMinutes(t){
-      var m = String(t || '').match(/^(\d{1,2}):(\d{2})$/);
-      if(!m) return 9*60;
-      var h = parseInt(m[1],10), mi = parseInt(m[2],10);
-      if(!Number.isFinite(h) || !Number.isFinite(mi)) return 9*60;
-      return h*60 + mi;
-    }
-
-    function minutesToTime(min){
-      var h = Math.floor(min/60);
-      var m = min%60;
-      return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
-    }
-
-    function readSettingsFromInputs(){
-      var teamsRaw = elTeamsInput.value.split(/\r?\n/).map(function(x){return x.trim();}).filter(function(x){return x;});
-      state.teams = teamsRaw;
-      state.settings.pitchCount = Math.max(1, parseInt(elPitchCount.value, 10) || 1);
-      state.settings.matchDuration = Math.max(5, parseInt(elMatchDuration.value, 10) || 15);
-      state.settings.breakDuration = Math.max(0, parseInt(elBreakDuration.value, 10) || 5);
-      state.settings.startTime = elStartTime.value || '09:00';
-    }
-
-    function updateSummary(){
-      var totalMatches = state.rounds.reduce(function(acc,r){ return acc + ((r.matches && r.matches.length) || 0); }, 0);
-      elSummaryPill.textContent = 'Týmy: ' + state.teams.length + ' · Zápasů: ' + totalMatches + ' · Hřiště: ' + state.settings.pitchCount;
-    }
-
-    function generateRoundRobinPairs(teams){
-      var list = teams.slice();
-      if(list.length % 2 === 1) list.push('BYE');
-      var n = list.length;
-      var rounds = [];
-      for(var r = 0; r < n - 1; r++){
-        var round = [];
-        for(var i = 0; i < n / 2; i++){
-          var home = list[i];
-          var away = list[n - 1 - i];
-          if(home !== 'BYE' && away !== 'BYE'){
-            round.push({ home: home, away: away });
-          }
-        }
-        rounds.push(round);
-        var fixed = list[0];
-        var rest = list.slice(1);
-        rest.unshift(rest.pop());
-        list = [fixed].concat(rest);
-      }
-      return rounds;
-    }
-
-    function buildSlots(rrRounds, pitchCount){
-      var slots = [];
-      var slotIndex = 1;
-      var queue = [];
-      rrRounds.forEach(function(round, rIdx){
-        round.forEach(function(m, mIdx){
-          queue.push({ roundIndex: rIdx, matchIndex: mIdx, home: m.home, away: m.away });
-        });
-      });
-      var consecutive = new Map();
-      function canPlace(match, slot){
-        for(var i=0;i<slot.matches.length;i++){
-          var other = slot.matches[i];
-          if(other.home === match.home || other.away === match.home ||
-             other.home === match.away || other.away === match.away){
-            return false;
-          }
-        }
-        var ch = consecutive.get(match.home) || 0;
-        var ca = consecutive.get(match.away) || 0;
-        if(ch >= 2 || ca >= 2) return false;
-        return true;
-      }
-      while(queue.length){
-        if(!slots[slotIndex - 1]){
-          slots.push({ slotIndex: slotIndex, matches: [] });
-        }
-        var slot = slots[slotIndex - 1];
-        var placedInThisLoop = false;
-        for(var i = 0; i < queue.length; i++){
-          var m = queue[i];
-          if(slot.matches.length >= pitchCount) break;
-          if(canPlace(m, slot)){
-            slot.matches.push(m);
-            queue.splice(i, 1);
-            consecutive.set(m.home, (consecutive.get(m.home) || 0) + 1);
-            consecutive.set(m.away, (consecutive.get(m.away) || 0) + 1);
-            placedInThisLoop = true;
-            break;
-          }
-        }
-        if(slot.matches.length >= pitchCount || !placedInThisLoop){
-          consecutive.forEach(function(v, t){
-            consecutive.set(t, Math.max(0, v - 1));
-          });
-          slotIndex++;
-        }
-      }
-      return slots;
-    }
-
-    function generateSchedule(){
-      readSettingsFromInputs();
-      if(state.teams.length < 2){
-        setStatus('Zadejte alespoň 2 týmy.', 'warn');
-        return;
-      }
-      var rr = generateRoundRobinPairs(state.teams);
-      var slots = buildSlots(rr, state.settings.pitchCount);
-      var startMinutes = timeToMinutes(state.settings.startTime);
-      var md = state.settings.matchDuration;
-      var bd = state.settings.breakDuration;
-      var order = 1;
-      state.rounds = rr.map(function(round, rIdx){
-        return {
-          name: 'Kolo ' + (rIdx+1),
-          matches: round.map(function(m, mIdx){
-            return {
-              id: 'r' + (rIdx+1) + 'm' + (mIdx+1),
-              home: m.home,
-              away: m.away,
-              pitch: 1,
-              order: 0,
-              slot: 0,
-              slotStart: '',
-              slotEnd: '',
-              hs: '',
-              as: ''
-            };
-          })
-        };
-      });
-      slots.forEach(function(slot, sIdx){
-        var slotStart = startMinutes + sIdx * (md + bd);
-        var slotEnd = slotStart + md;
-        slot.matches.forEach(function(m, pi){
-          var round = state.rounds[m.roundIndex];
-          var match = round.matches[m.matchIndex];
-          match.order = order++;
-          match.pitch = pi + 1;
-          match.slot = slot.slotIndex;
-          match.slotStart = minutesToTime(slotStart);
-          match.slotEnd = minutesToTime(slotEnd);
-        });
-      });
-      state.scorers = [];
-      setStatus('Zápasy byly vygenerovány.', 'ok');
-      renderAll();
-    }
-
-    function getFlatMatches(){
-      var flat = [];
-      state.rounds.forEach(function(round, roundIndex){
-        if(!round || !Array.isArray(round.matches)) return;
-        round.matches.forEach(function(m, matchIndex){
-          if(!m) return;
-          var copy = Object.assign({}, m);
-          copy.roundIndex = roundIndex;
-          copy.matchIndex = matchIndex;
-          flat.push(copy);
-        });
-      });
-      flat.sort(function(a,b){ return (a.order || 0) - (b.order || 0); });
-      return flat;
-    }
-
-    function moveMatchByOne(id, dir){
-      var flat = getFlatMatches();
-      var idx = flat.findIndex(function(m){ return m.id === id; });
-      if(idx === -1) return;
-      var target = dir === 'up' ? idx - 1 : idx + 1;
-      if(target < 0 || target >= flat.length) return;
-      var a = flat[idx];
-      var b = flat[target];
-      var tmp = a.order;
-      a.order = b.order;
-      b.order = tmp;
-      state.rounds.forEach(function(round){
-        round.matches.forEach(function(m){
-          var fm = flat.find(function(x){return x.id === m.id;});
-          if(fm) m.order = fm.order;
-        });
-      });
-      renderAll();
-      setStatus('Pořadí zápasů bylo upraveno.', 'ok');
-    }
-
-    function recalcMatchTimesForMultiPitch(){
-      if(!state.rounds.length) return;
-      var flat = getFlatMatches();
-      var pitchCount = state.settings.pitchCount;
-      var md = state.settings.matchDuration;
-      var bd = state.settings.breakDuration;
-      var startMinutes = timeToMinutes(state.settings.startTime);
-      flat.forEach(function(m, i){
-        var slot = Math.floor(i / pitchCount) + 1;
-        var slotStart = startMinutes + (slot - 1) * (md + bd);
-        var slotEnd = slotStart + md;
-        var real = state.rounds[m.roundIndex].matches[m.matchIndex];
-        real.slot = slot;
-        real.slotStart = minutesToTime(slotStart);
-        real.slotEnd = minutesToTime(slotEnd);
-      });
-      setStatus('Časy zápasů byly přepočítány.', 'ok');
-      renderAll();
-    }
-
-    function findMatchById(id){
-      for(var i=0;i<state.rounds.length;i++){
-        var r = state.rounds[i];
-        for(var j=0;j<r.matches.length;j++){
-          var m = r.matches[j];
-          if(m.id === id) return m;
-        }
-      }
-      return null;
-    }
-
-    function sumGoalsForMatch(matchId, teamName){
-      if(!Array.isArray(state.scorers)) return 0;
-      return state.scorers
-        .filter(function(s){ return s.matchId === matchId && s.team === teamName; })
-        .reduce(function(acc,s){ return acc + s.goals; }, 0);
-    }
-
-    function updateScorer(deltaSign, matchId, teamsForMatch, name, team, goals){
-      var nm = String(name || '').trim();
-      var tm = String(team || '').trim();
-      var g = parseInt(goals, 10);
-      if(!nm || !tm || !Number.isFinite(g) || g <= 0) return;
-      if(!Array.isArray(state.scorers)) state.scorers = [];
-      var list = state.scorers;
-      var idx = list.findIndex(function(s){
-        return s.matchId === matchId && s.name.toLowerCase() === nm.toLowerCase() && s.team === tm;
-      });
-      if(idx === -1 && deltaSign > 0){
-        list.push({ matchId: matchId, name: nm, team: tm, goals: g });
-      } else if(idx !== -1){
-        list[idx].goals += deltaSign * g;
-        if(list[idx].goals <= 0) list.splice(idx, 1);
-      }
-      var match = findMatchById(matchId);
-      if(match){
-        match.hs = String(sumGoalsForMatch(matchId, match.home));
-        match.as = String(sumGoalsForMatch(matchId, match.away));
-      }
-      renderAll();
-    }
-
-    function renderInlineScorerChips(container, matchId){
-      if(!container) return;
-      container.innerHTML = '';
-      if(!Array.isArray(state.scorers)) return;
-      state.scorers.filter(function(s){ return s.matchId === matchId; }).forEach(function(s){
-        var span = document.createElement('span');
-        span.className = 'scorer-chip';
-        span.textContent = s.name + ' (' + s.team + ') ' + s.goals + 'G';
-        container.appendChild(span);
-      });
-    }
-
-    function renderMatches(){
-      elMatches.innerHTML = '';
-      var flat = getFlatMatches();
-      flat.forEach(function(item, idx){
-        var row = document.createElement('div');
-        row.className = 'match-row';
-        var matchIndex = item.matchIndex;
-        var teamsForMatch = [item.home, item.away];
-
-        row.innerHTML =
-          '<div class="order">' + String(item.order || (idx+1)).padStart(2,'0') + '</div>' +
-          '<div class="move">' +
-            '<button type="button" class="btn tiny secondary" data-move="up">↑</button>' +
-            '<button type="button" class="btn tiny secondary" data-move="down">↓</button>' +
-          '</div>' +
-          '<div class="time">' + (item.slotStart || '--:--') + '–' + (item.slotEnd || '--:--') + '</div>' +
-          '<div class="pitch">Hřiště ' + (item.pitch || 1) + '</div>' +
-          '<div class="team">' + escapeHtml(item.home) + '</div>' +
-          '<div style="text-align:center;">vs</div>' +
-          '<div class="team">' + escapeHtml(item.away) + '</div>' +
-          '<input class="score-input" inputmode="numeric" pattern="[0-9]*" placeholder="D" value="' + (item.hs || '') + '" data-r="' + item.roundIndex + '" data-m="' + matchIndex + '" data-side="hs" />' +
-          '<input class="score-input" inputmode="numeric" pattern="[0-9]*" placeholder="H" value="' + (item.as || '') + '" data-r="' + item.roundIndex + '" data-m="' + matchIndex + '" data-side="as" />' +
-          '<button type="button" class="btn tiny secondary scorer-toggle" data-match-scorers="' + item.id + '">Střelci</button>' +
-          '<div class="inline-editor" id="editor-' + item.id + '">' +
-            '<div class="inline-form">' +
-              '<label>Jméno<input data-inline-name="' + item.id + '" placeholder="Jméno hráče" /></label>' +
-              '<label>Tým<select data-inline-team="' + item.id + '"><option value="' + escapeHtml(item.home) + '">' + escapeHtml(item.home) + '</option><option value="' + escapeHtml(item.away) + '">' + escapeHtml(item.away) + '</option></select></label>' +
-              '<label>Góly<input data-inline-goals="' + item.id + '" type="number" min="1" max="99" step="1" value="1" /></label>' +
-              '<button type="button" class="btn tiny" data-inline-add="' + item.id + '">Přidat</button>' +
-              '<button type="button" class="btn tiny danger" data-inline-remove="' + item.id + '">Odebrat</button>' +
-            '</div>' +
-            '<div class="inline-list" id="chips-' + item.id + '"></div>' +
-          '</div>';
-
-        elMatches.appendChild(row);
-
-        var chipsEl = row.querySelector('#chips-' + CSS.escape(item.id));
-        renderInlineScorerChips(chipsEl, item.id);
-
-        var editor = row.querySelector('#editor-' + CSS.escape(item.id));
-        var toggleBtn = row.querySelector('[data-match-scorers="' + item.id + '"]');
-        toggleBtn.addEventListener('click', function(){ editor.classList.toggle('open'); });
-
-        row.querySelector('[data-inline-add="' + item.id + '"]').addEventListener('click', function(){
-          var name = row.querySelector('[data-inline-name="' + item.id + '"]').value;
-          var team = row.querySelector('[data-inline-team="' + item.id + '"]').value;
-          var goals = row.querySelector('[data-inline-goals="' + item.id + '"]').value;
-          updateScorer(1, item.id, teamsForMatch, name, team, goals);
-        });
-
-        row.querySelector('[data-inline-remove="' + item.id + '"]').addEventListener('click', function(){
-          var name = row.querySelector('[data-inline-name="' + item.id + '"]').value;
-          var team = row.querySelector('[data-inline-team="' + item.id + '"]').value;
-          var goals = row.querySelector('[data-inline-goals="' + item.id + '"]').value;
-          updateScorer(-1, item.id, teamsForMatch, name, team, goals);
-        });
-
-        row.querySelector('[data-move="up"]').addEventListener('click', function(){ moveMatchByOne(item.id, 'up'); });
-        row.querySelector('[data-move="down"]').addEventListener('click', function(){ moveMatchByOne(item.id, 'down'); });
-      });
-
-      if(!elMatches._scoreListenerInited){
-        elMatches._scoreListenerInited = true;
-        elMatches.addEventListener('input', function(e){
-          var t = e.target;
-          if(!t.classList.contains('score-input')) return;
-          var r = parseInt(t.dataset.r, 10);
-          var m = parseInt(t.dataset.m, 10);
-          var side = t.dataset.side;
-          if(!Number.isFinite(r) || !Number.isFinite(m)) return;
-          var round = state.rounds[r];
-          if(!round || !round.matches[m]) return;
-          var v = String(t.value || '').trim();
-          if(v === ''){
-            round.matches[m][side] = '';
-          } else {
-            var n = parseInt(v, 10);
-            if(!Number.isFinite(n) || n < 0) n = 0;
-            round.matches[m][side] = String(n);
-            t.value = String(n);
-          }
-          renderStandings();
-        });
-      }
-    }
-
-    function computeStandings(teams, rounds){
-      var table = new Map();
-      teams.forEach(function(name){
-        var t = String(name || '').trim();
-        if(!t) return;
-        table.set(t, { team: t, Z:0,V:0,R:0,P:0,VG:0,OG:0,RG:0,Body:0 });
-      });
-      rounds.forEach(function(r){
-        if(!r || !Array.isArray(r.matches)) return;
-        r.matches.forEach(function(m){
-          if(!m) return;
-          var home = String(m.home || '').trim();
-          var away = String(m.away || '').trim();
-          if(!home || !away) return;
-          var H = table.get(home), A = table.get(away);
-          if(!H || !A) return;
-          var hs = m.hs === '' ? null : parseInt(m.hs,10);
-          var as = m.as === '' ? null : parseInt(m.as,10);
-          if(hs == null || as == null || !Number.isFinite(hs) || !Number.isFinite(as)) return;
-          H.Z++; A.Z++;
-          H.VG += hs; H.OG += as;
-          A.VG += as; A.OG += hs;
-          H.RG = H.VG - H.OG;
-          A.RG = A.VG - A.OG;
-          if(hs > as){ H.V++; H.Body += 3; A.P++; }
-          else if(hs < as){ A.V++; A.Body += 3; H.P++; }
-          else { H.R++; A.R++; H.Body++; A.Body++; }
-        });
-      });
-      var list = Array.from(table.values());
-      list.sort(function(a,b){
-        if(b.Body !== a.Body) return b.Body - a.Body;
-        if(b.RG !== a.RG) return b.RG - a.RG;
-        if(b.VG !== a.VG) return b.VG - a.VG;
-        return a.team.localeCompare(b.team, 'cs');
-      });
-      return list;
-    }
-
-    function renderStandings(){
-      var standings = computeStandings(state.teams, state.rounds);
-      elStandingsBody.innerHTML = '';
-      standings.forEach(function(r, idx){
-        var tr = document.createElement('tr');
-        if(idx === 0) tr.classList.add('pos1');
-        if(idx === 1) tr.classList.add('pos2');
-        if(idx === 2) tr.classList.add('pos3');
-        tr.innerHTML =
-          '<td>' + (idx+1) + '</td>' +
-          '<td class="team">' + escapeHtml(r.team) + '</td>' +
-          '<td>' + r.Z + '</td>' +
-          '<td>' + r.V + '</td>' +
-          '<td>' + r.R + '</td>' +
-          '<td>' + r.P + '</td>' +
-          '<td>' + r.VG + '</td>' +
-          '<td>' + r.OG + '</td>' +
-          '<td>' + r.RG + '</td>' +
-          '<td><strong>' + r.Body + '</strong></td>';
-        elStandingsBody.appendChild(tr);
-      });
-    }
-
-    function renderAll(){
-      updateSummary();
-      renderMatches();
-      renderStandings();
-    }
-
-    function exportHtml(){
-      var standings = computeStandings(state.teams, state.rounds);
-      var flat = getFlatMatches();
-
-      var htmlOut = '';
-      htmlOut += '<h2>Tabulka</h2>\n';
-      htmlOut += '<table>\n<thead><tr><th>Poř.</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead>\n<tbody>\n';
-      standings.forEach(function(r, idx){
-        var cls = '';
-        if(idx === 0) cls = 'pos1';
-        else if(idx === 1) cls = 'pos2';
-        else if(idx === 2) cls = 'pos3';
-
-        htmlOut += '<tr class="' + cls + '">' +
-          '<td>' + (idx+1) + '</td>' +
-          '<td>' + r.team + '</td>' +
-          '<td>' + r.Z + '</td>' +
-          '<td>' + r.V + '</td>' +
-          '<td>' + r.R + '</td>' +
-          '<td>' + r.P + '</td>' +
-          '<td>' + r.VG + '</td>' +
-          '<td>' + r.OG + '</td>' +
-          '<td>' + r.RG + '</td>' +
-          '<td>' + r.Body + '</td>' +
-          '</tr>\n';
-      });
-      htmlOut += '</tbody></table>\n\n';
-
-      htmlOut += '<h2>Zápasy</h2>\n';
-      htmlOut += '<table>\n<thead><tr><th>#</th><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th><th>Skóre</th></tr></thead>\n<tbody>\n';
-      flat.forEach(function(m, idx){
-        var score = (m.hs === '' && m.as === '') ? '' : (m.hs + ':' + m.as);
-        htmlOut += '<tr>' +
-          '<td>' + (idx+1) + '</td>' +
-          '<td>' + (m.slotStart || '') + '-' + (m.slotEnd || '') + '</td>' +
-          '<td>' + (m.pitch || '') + '</td>' +
-          '<td>' + m.home + '</td>' +
-          '<td>' + m.away + '</td>' +
-          '<td>' + score + '</td>' +
-          '</tr>\n';
-      });
-      htmlOut += '</tbody></table>\n';
-
-      var doc =
-        '<!DOCTYPE html>\n' +
-        '<html lang="cs">\n' +
-        '<head>\n' +
-        '<meta charset="UTF-8" />\n' +
-        '<title>Export turnaj</title>\n' +
-        '<style>\n' +
-        'body{font-family:system-ui,Arial,sans-serif;font-size:13px;color:#111;padding:16px;}\n' +
-        'table{border-collapse:collapse;width:100%;margin-bottom:16px;}\n' +
-        'th,td{border:1px solid #ccc;padding:4px 6px;text-align:center;}\n' +
-        'td:nth-child(2),td:nth-child(4),td:nth-child(5){text-align:left;}\n' +
-        'h2{margin:8px 0;}\n' +
-        'tr.pos1{background:rgba(40,167,69,0.12);font-weight:700;}\n' +
-        'tr.pos2{background:rgba(255,216,0,0.12);font-weight:600;}\n' +
-        'tr.pos3{background:rgba(80,160,255,0.12);font-weight:600;}\n' +
-        '</style>\n' +
-        '</head>\n' +
-        '<body>\n' +
-        htmlOut +
-        '\n</body>\n</html>';
-
-      var blob = new Blob([doc], {type:'text/html'});
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'index.html';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function exportJson(){
-      var blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'turnaj-state.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function importJsonFromFile(file){
-      var reader = new FileReader();
-      reader.onload = function(ev){
-        try{
-          var data = JSON.parse(ev.target.result);
-          if(!data || typeof data !== 'object') throw new Error('Neplatný formát JSON.');
-          if(!Array.isArray(data.teams) || !Array.isArray(data.rounds)) throw new Error('JSON neobsahuje potřebná pole.');
-          state.teams = data.teams || [];
-          state.rounds = data.rounds || [];
-          state.scorers = data.scorers || [];
-          if(data.settings){
-            state.settings.pitchCount = data.settings.pitchCount || state.settings.pitchCount;
-            state.settings.matchDuration = data.settings.matchDuration || state.settings.matchDuration;
-            state.settings.breakDuration = data.settings.breakDuration || state.settings.breakDuration;
-            state.settings.startTime = data.settings.startTime || state.settings.startTime;
-          }
-          elTeamsInput.value = state.teams.join('\n');
-          elPitchCount.value = state.settings.pitchCount;
-          elMatchDuration.value = state.settings.matchDuration;
-          elBreakDuration.value = state.settings.breakDuration;
-          elStartTime.value = state.settings.startTime;
-          renderAll();
-          setStatus('JSON byl úspěšně načten.', 'ok');
-        } catch(e){
-          console.error(e);
-          setStatus('Chyba při načítání JSON: ' + e.message, 'err');
-        }
-      };
-      reader.onerror = function(){
-        setStatus('Chyba při čtení souboru JSON.', 'err');
-      };
-      reader.readAsText(file, 'utf-8');
-    }
-
-    function exportH2H(){
-      var teams = state.teams;
-      var standings = computeStandings(teams, state.rounds);
-      var order = standings.map(function(s){ return s.team; });
-      var n = order.length;
-      var html = '<table class="h2h-table">\n<tr><th></th>';
-      order.forEach(function(t){ html += '<th>' + escapeHtml(t) + '</th>'; });
-      html += '</tr>\n';
-      for(var i=0;i<n;i++){
-        html += '<tr><th>' + escapeHtml(order[i]) + '</th>';
-        for(var j=0;j<n;j++){
-          if(i===j){ html += '<td class="h2h-diag">–</td>'; }
-          else { html += '<td></td>'; }
-        }
-        html += '</tr>\n';
-      }
-      html += '</table>';
-      var panel = document.getElementById('h2h-panel');
-      var c = document.getElementById('h2h-container');
-      c.innerHTML = html;
-      panel.hidden = false;
-      setStatus('Ruční tabulka (H2H) byla vygenerována dole na stránce.', 'ok');
-    }
-
-    function printH2H(){
-      var panel = document.getElementById('h2h-panel');
-      if (!panel || panel.hidden) {
-        setStatus('Nejprve vygenerujte H2H tabulku (tlačítkem Ruční tabulka).', 'warn');
-        return;
-      }
-      document.body.classList.add('print-single');
-      panel.classList.add('print-only');
-      window.print();
-      setTimeout(function(){
-        panel.classList.remove('print-only');
-        document.body.classList.remove('print-single');
-      }, 0);
-    }
-
-    function printMatches(){
-      var flat = getFlatMatches();
-      if (!flat.length) {
-        setStatus('Nejsou žádné zápasy k tisku. Nejdříve je vygenerujte.', 'warn');
-        return;
-      }
-
-      var html = '';
-      html += '<h2>Zápasy</h2>\n';
-      html += '<table>\n';
-      html += '<thead><tr><th>#</th><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th></tr></thead>\n';
-      html += '<tbody>\n';
-
-      flat.forEach(function(m, idx){
-        html += '<tr>' +
-          '<td>' + (idx + 1) + '</td>' +
-          '<td>' + (m.slotStart || '') + ' - ' + (m.slotEnd || '') + '</td>' +
-          '<td>' + (m.pitch || '') + '</td>' +
-          '<td>' + escapeHtml(m.home) + '</td>' +
-          '<td>' + escapeHtml(m.away) + '</td>' +
-          '</tr>\n';
-      });
-
-      html += '</tbody>\n</table>\n';
-
-      var doc =
-        '<!DOCTYPE html>\n' +
-        '<html lang="cs">\n' +
-        '<head>\n' +
-        '<meta charset="UTF-8" />\n' +
-        '<title>Zápasy – tisk</title>\n' +
-        '<style>\n' +
-        'body{font-family:system-ui,Arial,sans-serif;font-size:13px;color:#111;padding:16px;}\n' +
-        'table{border-collapse:collapse;width:100%;margin-bottom:16px;}\n' +
-        'th,td{border:1px solid #ccc;padding:4px 6px;text-align:center;}\n' +
-        'td:nth-child(4),td:nth-child(5){text-align:left;}\n' +
-        'h2{margin:8px 0;}\n' +
-        '</style>\n' +
-        '</head>\n' +
-        '<body>\n' +
-        html +
-        '\n<script>window.onload = function(){ window.print(); }<\/script>\n' +
-        '</body>\n</html>';
-
-      var win = window.open('', '_blank');
-      if (!win) {
-        setStatus('Prohlížeč blokuje vyskakovací okna. Povolte je pro tuto stránku.', 'warn');
-        return;
-      }
-      win.document.open();
-      win.document.write(doc);
-      win.document.close();
-    }
-
-    function printStandings(){
-      var panel = document.getElementById('standings-panel');
-      if(!panel){
-        window.print();
-        return;
-      }
-      document.body.classList.add('print-single');
-      panel.classList.add('print-only');
-      window.print();
-      setTimeout(function(){
-        panel.classList.remove('print-only');
-        document.body.classList.remove('print-single');
-      }, 0);
-    }
-
-    document.getElementById('btn-generate').addEventListener('click', generateSchedule);
-    document.getElementById('btn-recalc').addEventListener('click', recalcMatchTimesForMultiPitch);
-    document.getElementById('btn-print').addEventListener('click', function(){ window.print(); });
-    document.getElementById('btn-print-h2h').addEventListener('click', printH2H);
-    document.getElementById('btn-print-matches').addEventListener('click', printMatches);
-    document.getElementById('btn-print-standings').addEventListener('click', printStandings);
-    document.getElementById('btn-export-html').addEventListener('click', exportHtml);
-    document.getElementById('btn-export-json').addEventListener('click', exportJson);
-    document.getElementById('btn-export-h2h').addEventListener('click', exportH2H);
-
-    const fileInput = document.getElementById('file-import-json');
-    document.getElementById('btn-import-json').addEventListener('click', function(){
-      fileInput.click();
-    });
-    fileInput.addEventListener('change', function(e){
-      var file = e.target.files[0];
-      if(!file){
-        setStatus('Nebyl vybrán žádný soubor.', 'warn');
-        return;
-      }
-      importJsonFromFile(file);
-      fileInput.value = '';
-    });
-
-    readSettingsFromInputs();
-    updateSummary();
-  </script>
+<script>
+let data={teams:[],matches:[],scorers:[]};
+function save(){localStorage.setItem('turnajData',JSON.stringify(data));}
+function load(){const s=localStorage.getItem('turnajData');if(s){data=JSON.parse(s);}}
+function loadTeamsIntoTextarea(){if(data.teams.length>0){const lines=data.teams.map(t=>t.name+'|'+t.bg+'|'+t.fg);document.getElementById('tm-list').value=lines.join('\n');}}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function fmtDate(d){if(!d)return'';const p=d.split(/[-./]/);if(p.length===3)return p[0]+'.'+p[1]+'.'+p[2];return d;}
+function fmtTimeFromMin(min){const h=Math.floor(min/60);const m=min%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
+function parseTime(t){if(!t)return 0;const p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
+function showSection(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');}
+function readTeamsFromUI(){const lines=document.getElementById('tm-list').value.trim().split('\n').filter(l=>l.trim());return lines.map((l,i)=>{const parts=l.split('|');return{id:i+1,name:parts[0].trim(),bg:parts[1]?parts[1].trim():'#ffffff',fg:parts[2]?parts[2].trim():'#000000'};});}
+function loadTeams(){const teams=readTeamsFromUI();if(teams.length===0){alert('Žádné týmy k načtení.');return;}data.teams=teams;save();renderTeamColors();renderMatrix();updateManualTeamSelect();alert('Týmy načteny ('+teams.length+')');}
+function updateManualTeamSelect(){const sel=document.getElementById('manual-team');sel.innerHTML='<option value="">Vyber tým</option>';data.teams.forEach(t=>{sel.innerHTML+='<option value="'+t.id+'">'+esc(t.name)+'</option>';});}
+function renderTeamColors(){const wrap=document.getElementById('matches-wrap');let html='<h3>Týmy</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">';data.teams.forEach(t=>{html+='<div style="padding:10px;background:'+t.bg+';color:'+t.fg+';border:1px solid #ccc">'+esc(t.name)+'</div>';});html+='</div>';wrap.innerHTML=html;}
+function getTeamById(id){return data.teams.find(t=>t.id===id);}
+function getTeamName(id){const t=getTeamById(id);return t?t.name:'';}
+function generateMatches(){const teams=readTeamsFromUI();if(teams.length<2){alert('Přidej alespoň 2 týmy.');return;}data.teams=teams;const pitches=parseInt(document.getElementById('s-pitches').value)||1;const duration=parseInt(document.getElementById('s-duration').value)||20;const breakTime=parseInt(document.getElementById('s-break').value)||5;const ceremony=parseInt(document.getElementById('s-ceremony').value)||15;const startTime=document.getElementById('s-starttime').value||'09:00';const s={pitches,duration,breakTime,ceremony,startMin:parseTime(startTime)};const n=teams.length;const pairs=[];for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)pairs.push([teams[i].id,teams[j].id]);pairs.sort(()=>Math.random()-0.5);const schedule=[];const lastPlay={};teams.forEach(t=>lastPlay[t.id]=-999);let slotIdx=0;pairs.forEach(([h,a])=>{let delay=0;while(true){const slot=slotIdx+delay;const idleH=slot-lastPlay[h];const idleA=slot-lastPlay[a];if(idleH>=1&&idleA>=1){schedule.push({slot,home:h,away:a});lastPlay[h]=slot;lastPlay[a]=slot;slotIdx=slot+1;break;}delay++;}});const matches=schedule.map((sc,idx)=>{const slotIdx=Math.floor(sc.slot/pitches);const pitch=(sc.slot%pitches)+1;const startMin=s.startMin+slotIdx*(duration+breakTime);return{homeTeamId:sc.home,awayTeamId:sc.away,pitch,startMin,scoreHome:null,scoreAway:null};});const lastM=matches[matches.length-1];matches.push({isCeremony:true,pitch:1,startMin:lastM.startMin+duration+ceremony});data.matches=matches;save();renderMatches();alert('Zápasy vygenerovány ('+pairs.length+')');}
+function clearMatches(){if(!confirm('Opravdu smazat všechny zápasy?'))return;data.matches=[];save();renderMatches();alert('Zápasy smazány.');}
+function renderMatches(){const wrap=document.getElementById('matches-wrap');if(data.matches.length===0){wrap.innerHTML='<p>Zatím žádné zápasy. Vygeneruj je v sekci Zadání.</p>';return;}let html='<h3>Rozpis zápasů</h3><table><thead><tr><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th><th>Dom.</th><th>Host.</th><th class="no-print">Akce</th></tr></thead><tbody>';data.matches.forEach((m,idx)=>{if(m.isCeremony){html+='<tr><td>'+fmtTimeFromMin(m.startMin)+'</td><td>'+m.pitch+'</td><td colspan="4" class="center"><strong>** VYHLÁŠENÍ VÝSLEDKŮ **</strong></td><td class="no-print">-</td></tr>';return;}const homeT=getTeamById(m.homeTeamId);const awayT=getTeamById(m.awayTeamId);html+='<tr style="background:linear-gradient(90deg,'+homeT.bg+' 50%,'+awayT.bg+' 50%)"><td>'+fmtTimeFromMin(m.startMin)+'</td><td class="center">'+m.pitch+'</td><td style="color:'+homeT.fg+'">'+esc(homeT.name)+'</td><td style="color:'+awayT.fg+'">'+esc(awayT.name)+'</td><td><input type="number" min="0" value="'+(m.scoreHome!==null?m.scoreHome:'')+'" data-idx="'+idx+'" data-side="home" class="no-print"></td><td><input type="number" min="0" value="'+(m.scoreAway!==null?m.scoreAway:'')+'" data-idx="'+idx+'" data-side="away" class="no-print"></td><td class="no-print center"><button class="small" onclick="moveMatch('+idx+',-1)">▲</button><button class="small" onclick="moveMatch('+idx+',1)">▼</button></td></tr>';html+='<tr class="scorer-row no-print"><td colspan="7"><div class="scorer-inputs"><strong>Střelci:</strong><input type="text" placeholder="Jméno hráče (domácí)" id="sp-home-'+idx+'"><button class="small" onclick="addScorerQuick('+idx+',\'home\')">+ Gól domácí</button><input type="text" placeholder="Jméno hráče (hosté)" id="sp-away-'+idx+'"><button class="small" onclick="addScorerQuick('+idx+',\'away\')">+ Gól hosté</button></div></td></tr>';});html+='</tbody></table>';wrap.innerHTML=html;wrap.querySelectorAll('input[data-side]').forEach(inp=>{inp.addEventListener('input',e=>{const idx=parseInt(e.target.dataset.idx);const side=e.target.dataset.side;const val=e.target.value===''?null:parseInt(e.target.value);if(side==='home')data.matches[idx].scoreHome=val;else data.matches[idx].scoreAway=val;save();renderStandings();renderScorers();});});}
+function addScorerQuick(mIdx,side){const player=document.getElementById('sp-'+side+'-'+mIdx).value.trim();if(!player){alert('Zadej jméno hráče.');return;}const m=data.matches[mIdx];if(!m||m.isCeremony){alert('Neplatný zápas.');return;}const teamId=side==='home'?m.homeTeamId:m.awayTeamId;const existing=data.scorers.find(s=>s.player===player&&s.teamId===teamId&&s.matchId===mIdx);if(existing){existing.goals++;}else{data.scorers.push({player,teamId,matchId:mIdx,goals:1});}if(m.scoreHome===null)m.scoreHome=0;if(m.scoreAway===null)m.scoreAway=0;if(side==='home')m.scoreHome++;else m.scoreAway++;save();renderMatches();renderStandings();renderScorers();document.getElementById('sp-'+side+'-'+mIdx).value='';alert('Gól přidán: '+player);}
+function addManualScorer(){const teamId=parseInt(document.getElementById('manual-team').value);const player=document.getElementById('manual-player').value.trim();const goals=parseInt(document.getElementById('manual-goals').value)||1;if(!teamId){alert('Vyber tým.');return;}if(!player){alert('Zadej jméno hráče.');return;}data.scorers.push({player,teamId,matchId:null,goals});save();renderScorers();document.getElementById('manual-player').value='';document.getElementById('manual-goals').value='1';alert('Střelec přidán: '+player+' ('+goals+' gólů)');}
+function incScorerGoals(player,teamId){const items=data.scorers.filter(s=>s.player===player&&s.teamId===teamId);if(items.length>0){items[0].goals++;}save();renderScorers();renderMatches();renderStandings();}
+function decScorerGoals(player,teamId){const items=data.scorers.filter(s=>s.player===player&&s.teamId===teamId);if(items.length>0){items[0].goals--;if(items[0].goals<=0){data.scorers=data.scorers.filter(s=>!(s.player===player&&s.teamId===teamId));}}save();renderScorers();renderMatches();renderStandings();}
+function deleteScorer(player,teamId){if(!confirm('Smazat střelce: '+player+'?'))return;data.scorers=data.scorers.filter(s=>!(s.player===player&&s.teamId===teamId));save();renderScorers();renderMatches();renderStandings();}
+function moveMatch(idx,dir){if(data.matches[idx].isCeremony)return;const newIdx=idx+dir;if(newIdx<0||newIdx>=data.matches.length)return;if(data.matches[newIdx].isCeremony)return;[data.matches[idx],data.matches[newIdx]]=[data.matches[newIdx],data.matches[idx]];recalcTimes();save();renderMatches();}
+function recalcTimes(){const pitches=parseInt(document.getElementById('s-pitches').value)||1;const duration=parseInt(document.getElementById('s-duration').value)||20;const breakTime=parseInt(document.getElementById('s-break').value)||5;const ceremony=parseInt(document.getElementById('s-ceremony').value)||15;const startMin=parseTime(document.getElementById('s-starttime').value||'09:00');let slotIdx=0;data.matches.forEach((m,i)=>{if(m.isCeremony){if(i>0){const prev=data.matches[i-1];m.startMin=prev.startMin+duration+ceremony;}return;}const pitch=(slotIdx%pitches)+1;const slot=Math.floor(slotIdx/pitches);m.pitch=pitch;m.startMin=startMin+slot*(duration+breakTime);slotIdx++;});}
+function renderStandings(){const tbody=document.getElementById('standings-table').querySelector('tbody');if(data.teams.length===0){tbody.innerHTML='<tr><td colspan="10">Zatím žádné týmy.</td></tr>';return;}const st=data.teams.map(t=>({id:t.id,name:t.name,bg:t.bg,fg:t.fg,z:0,v:0,r:0,p:0,vg:0,og:0,rg:0,body:0}));data.matches.forEach(m=>{if(m.isCeremony||m.scoreHome===null||m.scoreAway===null)return;const ht=st.find(t=>t.id===m.homeTeamId);const at=st.find(t=>t.id===m.awayTeamId);if(!ht||!at)return;ht.z++;at.z++;ht.vg+=m.scoreHome;ht.og+=m.scoreAway;at.vg+=m.scoreAway;at.og+=m.scoreHome;const ptwin=parseInt(document.getElementById('s-ptwin').value)||3;const ptdraw=parseInt(document.getElementById('s-ptdraw').value)||1;const ptloss=parseInt(document.getElementById('s-ptloss').value)||0;if(m.scoreHome>m.scoreAway){ht.v++;at.p++;ht.body+=ptwin;at.body+=ptloss;}else if(m.scoreHome<m.scoreAway){at.v++;ht.p++;at.body+=ptwin;ht.body+=ptloss;}else{ht.r++;at.r++;ht.body+=ptdraw;at.body+=ptdraw;}});st.forEach(t=>t.rg=t.vg-t.og);st.sort((a,b)=>{if(b.body!==a.body)return b.body-a.body;const ab=data.matches.find(m=>!m.isCeremony&&((m.homeTeamId===a.id&&m.awayTeamId===b.id)||(m.homeTeamId===b.id&&m.awayTeamId===a.id))&&m.scoreHome!==null);if(ab){let aScore,bScore;if(ab.homeTeamId===a.id){aScore=ab.scoreHome;bScore=ab.scoreAway;}else{aScore=ab.scoreAway;bScore=ab.scoreHome;}if(aScore!==bScore)return bScore-aScore;}if(b.rg!==a.rg)return b.rg-a.rg;return a.name.localeCompare(b.name,'cs');});let html='';st.forEach((t,i)=>{html+='<tr style="background:'+t.bg+';color:'+t.fg+'"><td class="center">'+(i+1)+'</td><td>'+esc(t.name)+'</td><td class="center">'+t.z+'</td><td class="center">'+t.v+'</td><td class="center">'+t.r+'</td><td class="center">'+t.p+'</td><td class="center">'+t.vg+'</td><td class="center">'+t.og+'</td><td class="center">'+t.rg+'</td><td class="center"><strong>'+t.body+'</strong></td></tr>';});tbody.innerHTML=html;}
+function renderMatrix(){const wrap=document.getElementById('matrix-wrap');if(data.teams.length===0){wrap.innerHTML='<p>Zatím žádné týmy.</p>';return;}const teams=data.teams;let html='<table><thead><tr><th></th>';teams.forEach(t=>html+='<th>'+esc(t.name.substr(0,20))+'</th>');html+='</tr></thead><tbody>';teams.forEach(rt=>{html+='<tr><th>'+esc(rt.name.substr(0,20))+'</th>';teams.forEach(ct=>{if(rt.id===ct.id){html+='<td class="diagonal center">–</td>';}else{const m=data.matches.find(m=>!m.isCeremony&&((m.homeTeamId===rt.id&&m.awayTeamId===ct.id)||(m.homeTeamId===ct.id&&m.awayTeamId===rt.id)));let val='';if(m){if(m.homeTeamId===rt.id&&m.scoreHome!==null&&m.scoreAway!==null)val=m.scoreHome+':'+m.scoreAway;else if(m.awayTeamId===rt.id&&m.scoreHome!==null&&m.scoreAway!==null)val=m.scoreAway+':'+m.scoreHome;}html+='<td class="center"><input type="text" style="width:60px;text-align:center" value="'+val+'" placeholder="0:0" data-s="'+rt.id+'-'+ct.id+'"></td>';}});html+='</tr>';});html+='</tbody></table>';wrap.innerHTML=html;wrap.querySelectorAll('input[data-s]').forEach(inp=>{inp.addEventListener('input',e=>{const parts=e.target.dataset.s.split('-');const rowId=parseInt(parts[0]);const colId=parseInt(parts[1]);const val=e.target.value.trim();if(!val||!val.includes(':')){return;}const sc=val.split(':');const s1=parseInt(sc[0])||0;const s2=parseInt(sc[1])||0;const m=data.matches.find(m=>!m.isCeremony&&((m.homeTeamId===rowId&&m.awayTeamId===colId)||(m.homeTeamId===colId&&m.awayTeamId===rowId)));if(m){if(m.homeTeamId===rowId){m.scoreHome=s1;m.scoreAway=s2;}else{m.scoreHome=s2;m.scoreAway=s1;}save();renderMatches();renderStandings();renderScorers();}});});}
+function renderScorers(){const tbody=document.getElementById('scorers-table').querySelector('tbody');const aggregated={};data.scorers.forEach(s=>{const key=s.player+'_'+s.teamId;if(!aggregated[key]){aggregated[key]={player:s.player,teamId:s.teamId,goals:0};}aggregated[key].goals+=s.goals;});const sc=Object.values(aggregated).sort((a,b)=>b.goals-a.goals);let html='';sc.forEach((s,i)=>{html+='<tr><td class="center">'+(i+1)+'</td><td>'+esc(s.player)+'</td><td>'+esc(getTeamName(s.teamId))+'</td><td class="center">'+s.goals+'</td><td class="no-print center"><button class="small" onclick="incScorerGoals(\''+s.player.replace(/'/g,"\\'")+ '\','+s.teamId+')">+1</button><button class="small" onclick="decScorerGoals(\''+s.player.replace(/'/g,"\\'")+ '\','+s.teamId+')">-1</button><button class="small danger" onclick="deleteScorer(\''+s.player.replace(/'/g,"\\'")+ '\','+s.teamId+')">Smazat</button></td></tr>';});if(sc.length===0)html='<tr><td colspan="5">Zatím žádní střelci.</td></tr>';tbody.innerHTML=html;}
+function updateQR(){const url=document.getElementById('qr-url').value||'https://tjsrepy1718.github.io/turnaj/';document.getElementById('qr-img').src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(url);}
+function printQROnly(){const qrUrl=document.getElementById('qr-url').value||'https://tjsrepy1718.github.io/turnaj/';const win=window.open('','_blank');win.document.write('<html><head><title>QR kód</title><style>body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;font-family:Arial,sans-serif;background:#f5f5f5}h1{color:#1e8449;margin-bottom:40px}img{display:block}</style></head><body><h1>Zde můžete sledovat online stav</h1><img src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data='+encodeURIComponent(qrUrl)+'" alt="QR kód" style="border:3px solid #1e8449;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.15)"><p style="margin-top:30px;font-size:16px;color:#666">'+qrUrl+'</p></body></html>');win.document.close();setTimeout(()=>win.print(),500);}
+function printSection(sectionId,includeQR){const section=document.getElementById(sectionId);if(!section)return;let qrCode='';if(includeQR){const qrUrl=document.getElementById('qr-url').value||'https://tjsrepy1718.github.io/turnaj/';qrCode='<div style="margin-top:40px;text-align:center;page-break-inside:avoid;padding:30px;border-top:3px solid #27ae60;background:#f8f9fa"><h2 style="color:#1e8449;margin-bottom:20px;font-size:24px">Zde můžete sledovat online stav</h2><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(qrUrl)+'" alt="QR kód" style="border:2px solid #1e8449;border-radius:8px"></div>';}const originalContent=document.body.innerHTML;const printContent='<style>@page{margin:20mm}body{font-family:Arial,sans-serif;color:#000}h3{color:#1e8449;font-size:22px;margin:0 0 20px;padding-bottom:10px;border-bottom:3px solid #27ae60}table{width:100%;border-collapse:collapse;margin:20px 0;box-shadow:0 2px 8px rgba(0,0,0,0.1)}table th{background:#1e8449;color:#fff;padding:12px;text-align:left;font-weight:600;font-size:14px}table td{padding:12px;border:1px solid #ddd;font-size:14px}table tbody tr:nth-child(odd){background:#fff!important}table tbody tr:nth-child(even){background:#f5f5f5!important}.center{text-align:center}.diagonal{background:repeating-linear-gradient(45deg,#e0e0e0,#e0e0e0 10px,#fff 10px,#fff 20px)!important}.legend-text{margin-top:15px;font-size:13px;color:#555}</style>'+section.innerHTML+qrCode;document.body.innerHTML='<div style="padding:20px">'+printContent+'</div>';window.print();document.body.innerHTML=originalContent;location.reload();}
+function exportHTML(){const tName=document.getElementById('t-name').value||'Turnaj';const tOrg=document.getElementById('t-organizer').value;const tLoc=document.getElementById('t-location').value;const tStart=document.getElementById('t-start').value;const tEnd=document.getElementById('t-end').value;const tDesc=document.getElementById('t-desc').value;const st=[];data.teams.forEach(t=>{const s={id:t.id,name:t.name,bg:t.bg,fg:t.fg,z:0,v:0,r:0,p:0,vg:0,og:0,rg:0,body:0};st.push(s);});data.matches.forEach(m=>{if(m.isCeremony||m.scoreHome===null||m.scoreAway===null)return;const ht=st.find(t=>t.id===m.homeTeamId);const at=st.find(t=>t.id===m.awayTeamId);if(!ht||!at)return;ht.z++;at.z++;ht.vg+=m.scoreHome;ht.og+=m.scoreAway;at.vg+=m.scoreAway;at.og+=m.scoreHome;const ptwin=parseInt(document.getElementById('s-ptwin').value)||3;const ptdraw=parseInt(document.getElementById('s-ptdraw').value)||1;const ptloss=parseInt(document.getElementById('s-ptloss').value)||0;if(m.scoreHome>m.scoreAway){ht.v++;at.p++;ht.body+=ptwin;at.body+=ptloss;}else if(m.scoreHome<m.scoreAway){at.v++;ht.p++;at.body+=ptwin;ht.body+=ptloss;}else{ht.r++;at.r++;ht.body+=ptdraw;at.body+=ptdraw;}});st.forEach(t=>t.rg=t.vg-t.og);st.sort((a,b)=>{if(b.body!==a.body)return b.body-a.body;const ab=data.matches.find(m=>!m.isCeremony&&((m.homeTeamId===a.id&&m.awayTeamId===b.id)||(m.homeTeamId===b.id&&m.awayTeamId===a.id))&&m.scoreHome!==null);if(ab){let aScore,bScore;if(ab.homeTeamId===a.id){aScore=ab.scoreHome;bScore=ab.scoreAway;}else{aScore=ab.scoreAway;bScore=ab.scoreHome;}if(aScore!==bScore)return bScore-aScore;}if(b.rg!==a.rg)return b.rg-a.rg;return a.name.localeCompare(b.name,'cs');});const standings=st;const aggregated={};data.scorers.forEach(s=>{const key=s.player+'_'+s.teamId;if(!aggregated[key]){aggregated[key]={player:s.player,teamId:s.teamId,goals:0};}aggregated[key].goals+=s.goals;});const scorers=Object.values(aggregated).sort((a,b)=>b.goals-a.goals);let html='<!DOCTYPE html><html lang="cs"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(tName)+'</title><style>body{font-family:Arial,sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5}h1,h2{color:#1e8449;border-bottom:2px solid #27ae60;padding-bottom:10px;margin:20px 0}table{width:100%;border-collapse:collapse;margin:20px 0;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.1)}table th,table td{border:1px solid #ddd;padding:12px;text-align:left}table th{background:#1e8449;color:#fff;font-weight:600}table tr:nth-child(even){background:#f9f9f9}.center{text-align:center}@media print{body{background:#fff}table{box-shadow:none}}</style></head><body>';html+='<h1>'+esc(tName)+'</h1>';if(tOrg)html+='<p><strong>Organizátor:</strong> '+esc(tOrg)+'</p>';if(tLoc)html+='<p><strong>Místo:</strong> '+esc(tLoc)+'</p>';if(tStart)html+='<p><strong>Datum:</strong> '+fmtDate(tStart)+(tEnd?' - '+fmtDate(tEnd):'')+'</p>';if(tDesc)html+='<p>'+esc(tDesc)+'</p>';if(standings.length>0){html+='<h2>Výsledková tabulka</h2><table><thead><tr><th>Poř.</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead><tbody>';standings.forEach((t,i)=>{html+='<tr style="background:'+t.bg+';color:'+t.fg+'"><td class="center">'+(i+1)+'</td><td>'+esc(t.name)+'</td><td class="center">'+t.z+'</td><td class="center">'+t.v+'</td><td class="center">'+t.r+'</td><td class="center">'+t.p+'</td><td class="center">'+t.vg+'</td><td class="center">'+t.og+'</td><td class="center">'+t.rg+'</td><td class="center"><strong>'+t.body+'</strong></td></tr>';});html+='</tbody></table>';}const matches=data.matches.filter(m=>!m.isCeremony&&(m.scoreHome!==null||m.scoreAway!==null));if(matches.length>0){html+='<h2>Výsledky zápasů</h2><table><thead><tr><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th><th>Skóre</th></tr></thead><tbody>';matches.forEach(m=>{html+='<tr><td>'+fmtTimeFromMin(m.startMin)+'</td><td class="center">'+m.pitch+'</td><td>'+esc(getTeamName(m.homeTeamId))+'</td><td>'+esc(getTeamName(m.awayTeamId))+'</td><td class="center"><strong>'+(m.scoreHome||0)+':'+(m.scoreAway||0)+'</strong></td></tr>';});html+='</tbody></table>';}if(scorers.length>0){html+='<h2>Tabulka střelců</h2><table><thead><tr><th>Poř.</th><th>Jméno</th><th>Tým</th><th>Góly</th></tr></thead><tbody>';scorers.forEach((sc,i)=>{html+='<tr><td class="center">'+(i+1)+'</td><td>'+esc(sc.player)+'</td><td>'+esc(getTeamName(sc.teamId))+'</td><td class="center">'+sc.goals+'</td></tr>';});html+='</tbody></table>';}html+='</body></html>';const b=new Blob([html],{type:'text/html'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='index.html';a.click();alert('index.html stažen!');}
+function downloadBackup(){const json=JSON.stringify(data,null,2);const b=new Blob([json],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='turnaj_zaloha.json';a.click();}
+function restoreBackup(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(ev){try{data=JSON.parse(ev.target.result);save();renderAll();alert('Data obnovena!');}catch(err){alert('Chyba při načítání: '+err.message);}};reader.readAsText(file);}
+function renderAll(){loadTeamsIntoTextarea();renderTeamColors();renderMatches();renderStandings();renderMatrix();renderScorers();updateQR();updateManualTeamSelect();}
+function init(){load();renderAll();document.querySelectorAll('.nav-btn').forEach(btn=>{btn.addEventListener('click',function(){document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');});});document.querySelectorAll('#setup input,#setup textarea').forEach(inp=>{inp.addEventListener('change',()=>{save();if(data.matches.length>0){recalcTimes();renderMatches();}});});}
+init();
+</script>
 </body>
 </html>
