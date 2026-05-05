@@ -167,7 +167,7 @@ body.black-white-mode table tr:nth-child(even){background:#e0e0e0}
 <div id="team-color-editor" class="no-print" style="margin-top:15px"></div>
 <button id="btn-load-teams" onclick="loadTeams()">Načíst týmy</button>
 <button class="success" id="btn-gen-matches" onclick="generateMatches()">Vygenerovat zápasy</button>
-<button class="danger" id="btn-clear-matches" onclick="clearMatches()">Vyčistit zápasy</button>
+<button class="danger" id="btn-reset-all" onclick="resetAllData()">Vyresetovat všechna data</button>
 
 <h3>Záloha dat</h3>
 <button onclick="downloadBackup()">Stáhnout zálohu (JSON)</button>
@@ -267,9 +267,10 @@ body.black-white-mode table tr:nth-child(even){background:#e0e0e0}
 </div>
 
 <script>
-let data={meta:{name:'',organizer:'',location:'',start:'',end:'',desc:''},teams:[],matches:[],scorers:[]};
-function save(){try{readMetaFromUI();}catch(e){}localStorage.setItem('turnajData',JSON.stringify(data));}
-function load(){const s=localStorage.getItem('turnajData');if(s){data=JSON.parse(s);}if(!data.meta){data.meta={name:'',organizer:'',location:'',start:'',end:'',desc:''};}}
+let data={meta:{name:'',organizer:'',location:'',start:'',end:'',desc:''},settings:{pitches:2,duration:20,break:5,ceremony:15,ptwin:3,ptdraw:1,ptloss:0,starttime:'09:00'},teams:[],matches:[],scorers:[]};
+function save(){try{readMetaFromUI();}catch(e){}try{readSettingsFromUI();}catch(e){}localStorage.setItem('turnajData',JSON.stringify(data));}
+function saveRaw(){localStorage.setItem('turnajData',JSON.stringify(data));}
+function load(){const s=localStorage.getItem('turnajData');if(s){data=JSON.parse(s);}if(!data.meta){data.meta={name:'',organizer:'',location:'',start:'',end:'',desc:''};}if(!data.settings){data.settings={pitches:2,duration:20,break:5,ceremony:15,ptwin:3,ptdraw:1,ptloss:0,starttime:'09:00'};}}
 function readMetaFromUI(){
   if(!data.meta) data.meta={};
   data.meta.name=document.getElementById('t-name').value||'';
@@ -289,6 +290,32 @@ function applyMetaToUI(){
   document.getElementById('t-desc').value=data.meta.desc||'';
 }
 
+
+function readSettingsFromUI(){
+  if(!data.settings) data.settings={};
+  const g=(id,def)=>{const el=document.getElementById(id); if(!el) return def; const v=el.value; return v===''||v===null||v===undefined?def:v;};
+  data.settings.pitches=parseInt(g('s-pitches',2))||2;
+  data.settings.duration=parseInt(g('s-duration',20))||20;
+  data.settings.break=parseInt(g('s-break',5))||5;
+  data.settings.ceremony=parseInt(g('s-ceremony',15))||15;
+  data.settings.ptwin=parseInt(g('s-ptwin',3))||3;
+  data.settings.ptdraw=parseInt(g('s-ptdraw',1))||1;
+  data.settings.ptloss=parseInt(g('s-ptloss',0))||0;
+  data.settings.starttime=g('s-starttime','09:00')||'09:00';
+}
+function applySettingsToUI(){
+  if(!data.settings) return;
+  const s=data.settings;
+  const setVal=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;};
+  if(s.pitches!=null) setVal('s-pitches',s.pitches);
+  if(s.duration!=null) setVal('s-duration',s.duration);
+  if(s.break!=null) setVal('s-break',s.break);
+  if(s.ceremony!=null) setVal('s-ceremony',s.ceremony);
+  if(s.ptwin!=null) setVal('s-ptwin',s.ptwin);
+  if(s.ptdraw!=null) setVal('s-ptdraw',s.ptdraw);
+  if(s.ptloss!=null) setVal('s-ptloss',s.ptloss);
+  if(s.starttime) setVal('s-starttime',s.starttime);
+}
 function loadTeamsIntoTextarea(){if(data.teams.length>0){document.getElementById('tm-list').value=data.teams.map(t=>t.name).join('\n');}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function fmtDate(d){if(!d)return'';const p=d.split(/[-./]/);if(p.length===3)return p[0]+'.'+p[1]+'.'+p[2];return d;}
@@ -356,7 +383,42 @@ function renderTeamColors(){const wrap=document.getElementById('matches-wrap');l
 function getTeamById(id){return data.teams.find(t=>t.id===id);}
 function getTeamName(id){const t=getTeamById(id);return t?t.name:'';}
 function generateMatches(){const teams=readTeamsFromUI();if(teams.length<2){alert('Přidej alespoň 2 týmy.');return;}data.teams=teams;const pitches=parseInt(document.getElementById('s-pitches').value)||1;const duration=parseInt(document.getElementById('s-duration').value)||20;const breakTime=parseInt(document.getElementById('s-break').value)||5;const ceremony=parseInt(document.getElementById('s-ceremony').value)||15;const startTime=document.getElementById('s-starttime').value||'09:00';const s={pitches,duration,breakTime,ceremony,startMin:parseTime(startTime)};const n=teams.length;const pairs=[];for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)pairs.push([teams[i].id,teams[j].id]);pairs.sort(()=>Math.random()-0.5);const schedule=[];const lastPlay={};teams.forEach(t=>lastPlay[t.id]=-999);let slotIdx=0;pairs.forEach(([h,a])=>{let delay=0;while(true){const slot=slotIdx+delay;const idleH=slot-lastPlay[h];const idleA=slot-lastPlay[a];if(idleH>=1&&idleA>=1){schedule.push({slot,home:h,away:a});lastPlay[h]=slot;lastPlay[a]=slot;slotIdx=slot+1;break;}delay++;}});const matches=schedule.map((sc,idx)=>{const slotIdx=Math.floor(sc.slot/pitches);const pitch=(sc.slot%pitches)+1;const startMin=s.startMin+slotIdx*(duration+breakTime);return{homeTeamId:sc.home,awayTeamId:sc.away,pitch,startMin,scoreHome:null,scoreAway:null};});const lastM=matches[matches.length-1];matches.push({isCeremony:true,pitch:1,startMin:lastM.startMin+duration+ceremony});data.matches=matches;save();renderMatches();alert('Zápasy vygenerovány ('+pairs.length+')');}
-function clearMatches(){if(!confirm('Opravdu smazat všechny zápasy?'))return;data.matches=[];save();renderMatches();alert('Zápasy smazány.');}
+function clearMatches(){resetAllData(true);}
+
+function resetAllData(onlyMatches){
+  const msg = onlyMatches
+    ? 'Opravdu smazat všechny zápasy a střelce?'
+    : 'Opravdu vyresetovat VŠECHNA data (turnaj, nastavení, týmy, zápasy, střelce i uložená data v prohlížeči)?';
+  if(!confirm(msg)) return;
+
+  if(onlyMatches){
+    data.matches=[];
+    data.scorers=[];
+    save();
+    renderMatches();
+    renderStandings();
+    renderMatrix();
+    renderScorers();
+    showToast('Zápasy a střelci smazáni');
+    return;
+  }
+
+  try{ localStorage.removeItem('turnajData'); }catch(e){}
+
+  data = {meta:{name:'',organizer:'',location:'',start:'',end:'',desc:''},settings:{pitches:2,duration:20,break:5,ceremony:15,ptwin:3,ptdraw:1,ptloss:0,starttime:'09:00'},teams:[],matches:[],scorers:[]};
+
+  ['t-name','t-organizer','t-location','t-start','t-end','t-desc'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+  applySettingsToUI();
+  const tm=document.getElementById('tm-list'); if(tm) tm.value='';
+  const mt=document.getElementById('manual-team'); if(mt) mt.innerHTML='<option value="">Vyber tým</option>';
+  const mp=document.getElementById('manual-player'); if(mp) mp.value='';
+  const mg=document.getElementById('manual-goals'); if(mg) mg.value='1';
+
+  save();
+  renderAll();
+  showToast('Všechna data vyresetována');
+}
+
 function renderMatches(){const wrap=document.getElementById('matches-wrap');const duration=parseInt(document.getElementById('s-duration').value)||20;if(data.matches.length===0){wrap.innerHTML='<p>Zatím žádné zápasy. Vygeneruj je v sekci Zadání.</p>';return;}let html='<h3>Rozpis zápasů</h3><table><thead><tr><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th><th>Dom.</th><th>Host.</th><th class="no-print">Akce</th></tr></thead><tbody>';data.matches.forEach((m,idx)=>{if(m.isCeremony){html+='<tr><td>'+fmtTimeFromMin(m.startMin)+'</td><td>'+m.pitch+'</td><td colspan="4" class="center"><strong>** VYHLÁŠENÍ VÝSLEDKŮ **</strong></td><td class="no-print">-</td></tr>';return;}const homeT=getTeamById(m.homeTeamId);const awayT=getTeamById(m.awayTeamId);html+='<tr><td>'+fmtTimeFromMin(m.startMin)+'–'+fmtTimeFromMin(m.startMin+duration)+'</td><td class="center">'+m.pitch+'</td><td style="background:'+homeT.bg+';color:'+homeT.fg+';font-weight:700">'+esc(homeT.name)+'</td><td style="background:'+awayT.bg+';color:'+awayT.fg+';font-weight:700">'+esc(awayT.name)+'</td><td><input type="number" min="0" value="'+(m.scoreHome!==null?m.scoreHome:'')+'" data-idx="'+idx+'" data-side="home" class="no-print"></td><td><input type="number" min="0" value="'+(m.scoreAway!==null?m.scoreAway:'')+'" data-idx="'+idx+'" data-side="away" class="no-print"></td><td class="no-print center"><button class="small" onclick="moveMatch('+idx+',-1)">▲</button><button class="small" onclick="moveMatch('+idx+',1)">▼</button></td></tr>';html+='<tr class="scorer-row no-print"><td colspan="7"><div class="scorer-inputs"><strong>Střelci:</strong><input type="text" placeholder="Jméno hráče (domácí)" id="sp-home-'+idx+'"><button class="small" onclick="addScorerQuick('+idx+',\'home\')">+ Gól domácí</button><input type="text" placeholder="Jméno hráče (hosté)" id="sp-away-'+idx+'"><button class="small" onclick="addScorerQuick('+idx+',\'away\')">+ Gól hosté</button></div></td></tr>';});html+='</tbody></table>';wrap.innerHTML=html;wrap.querySelectorAll('input[data-side]').forEach(inp=>{inp.addEventListener('input',e=>{const idx=parseInt(e.target.dataset.idx);const side=e.target.dataset.side;const val=e.target.value===''?null:parseInt(e.target.value);if(side==='home')data.matches[idx].scoreHome=val;else data.matches[idx].scoreAway=val;save();renderStandings();renderScorers();});});}
 function addScorerQuick(mIdx,side){const player=document.getElementById('sp-'+side+'-'+mIdx).value.trim();if(!player){alert('Zadej jméno hráče.');return;}const m=data.matches[mIdx];if(!m||m.isCeremony){alert('Neplatný zápas.');return;}const teamId=side==='home'?m.homeTeamId:m.awayTeamId;const existing=data.scorers.find(s=>s.player===player&&s.teamId===teamId&&s.matchId===mIdx);if(existing){existing.goals++;}else{data.scorers.push({player,teamId,matchId:mIdx,goals:1});}if(m.scoreHome===null)m.scoreHome=0;if(m.scoreAway===null)m.scoreAway=0;if(side==='home')m.scoreHome++;else m.scoreAway++;save();renderMatches();renderStandings();renderScorers();document.getElementById('sp-'+side+'-'+mIdx).value='';alert('Gól přidán: '+player);}
 function addManualScorer(){const teamId=parseInt(document.getElementById('manual-team').value);const player=document.getElementById('manual-player').value.trim();const goals=parseInt(document.getElementById('manual-goals').value)||1;if(!teamId){alert('Vyber tým.');return;}if(!player){alert('Zadej jméno hráče.');return;}data.scorers.push({player,teamId,matchId:null,goals});save();renderScorers();document.getElementById('manual-player').value='';document.getElementById('manual-goals').value='1';alert('Střelec přidán: '+player+' ('+goals+' gólů)');}
@@ -463,8 +525,8 @@ function printSection(sectionId,modeOrIncludeQR,includeQROverride){
 }
 function exportHTML(){const duration=parseInt(document.getElementById('s-duration').value)||20;const tName=document.getElementById('t-name').value||'Turnaj';const tOrg=document.getElementById('t-organizer').value;const tLoc=document.getElementById('t-location').value;const tStart=document.getElementById('t-start').value;const tEnd=document.getElementById('t-end').value;const tDesc=document.getElementById('t-desc').value;const st=[];data.teams.forEach(t=>{const s={id:t.id,name:t.name,bg:t.bg,fg:t.fg,z:0,v:0,r:0,p:0,vg:0,og:0,rg:0,body:0};st.push(s);});data.matches.forEach(m=>{if(m.isCeremony||m.scoreHome===null||m.scoreAway===null)return;const ht=st.find(t=>t.id===m.homeTeamId);const at=st.find(t=>t.id===m.awayTeamId);if(!ht||!at)return;ht.z++;at.z++;ht.vg+=m.scoreHome;ht.og+=m.scoreAway;at.vg+=m.scoreAway;at.og+=m.scoreHome;const ptwin=parseInt(document.getElementById('s-ptwin').value)||3;const ptdraw=parseInt(document.getElementById('s-ptdraw').value)||1;const ptloss=parseInt(document.getElementById('s-ptloss').value)||0;if(m.scoreHome>m.scoreAway){ht.v++;at.p++;ht.body+=ptwin;at.body+=ptloss;}else if(m.scoreHome<m.scoreAway){at.v++;ht.p++;at.body+=ptwin;ht.body+=ptloss;}else{ht.r++;at.r++;ht.body+=ptdraw;at.body+=ptdraw;}});st.forEach(t=>t.rg=t.vg-t.og);st.sort((a,b)=>{if(b.body!==a.body)return b.body-a.body;const ab=data.matches.find(m=>!m.isCeremony&&((m.homeTeamId===a.id&&m.awayTeamId===b.id)||(m.homeTeamId===b.id&&m.awayTeamId===a.id))&&m.scoreHome!==null);if(ab){let aScore,bScore;if(ab.homeTeamId===a.id){aScore=ab.scoreHome;bScore=ab.scoreAway;}else{aScore=ab.scoreAway;bScore=ab.scoreHome;}if(aScore!==bScore)return bScore-aScore;}if(b.rg!==a.rg)return b.rg-a.rg;return a.name.localeCompare(b.name,'cs');});const standings=st;const aggregated={};data.scorers.forEach(s=>{const key=s.player+'_'+s.teamId;if(!aggregated[key]){aggregated[key]={player:s.player,teamId:s.teamId,goals:0};}aggregated[key].goals+=s.goals;});const scorers=Object.values(aggregated).sort((a,b)=>b.goals-a.goals);let html='<!DOCTYPE html><html lang="cs"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(tName)+'</title><style>body{font-family:Arial,sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5}h1,h2{color:#1e8449;border-bottom:2px solid #27ae60;padding-bottom:10px;margin:20px 0}table{width:100%;border-collapse:collapse;margin:20px 0;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.1)}table th,table td{border:1px solid #ddd;padding:12px;text-align:left}table th{background:#1e8449;color:#fff;font-weight:600}table tr:nth-child(even){background:#f9f9f9}.center{text-align:center}@media print{body{background:#fff}table{box-shadow:none}}</style></head><body>';html+='<h1>'+esc(tName)+'</h1>';if(tOrg)html+='<p><strong>Organizátor:</strong> '+esc(tOrg)+'</p>';if(tLoc)html+='<p><strong>Místo:</strong> '+esc(tLoc)+'</p>';if(tStart)html+='<p><strong>Datum:</strong> '+fmtDate(tStart)+(tEnd?' - '+fmtDate(tEnd):'')+'</p>';if(tDesc)html+='<p>'+esc(tDesc)+'</p>';if(standings.length>0){html+='<h2>Výsledková tabulka</h2><table><thead><tr><th>Poř.</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>VG</th><th>OG</th><th>RG</th><th>Body</th></tr></thead><tbody>';standings.forEach((t,i)=>{html+='<tr style="background:'+t.bg+';color:'+t.fg+'"><td class="center">'+(i+1)+'</td><td>'+esc(t.name)+'</td><td class="center">'+t.z+'</td><td class="center">'+t.v+'</td><td class="center">'+t.r+'</td><td class="center">'+t.p+'</td><td class="center">'+t.vg+'</td><td class="center">'+t.og+'</td><td class="center">'+t.rg+'</td><td class="center"><strong>'+t.body+'</strong></td></tr>';});html+='</tbody></table>';}const matches=data.matches.filter(m=>!m.isCeremony&&(m.scoreHome!==null||m.scoreAway!==null));if(matches.length>0){html+='<h2>Výsledky zápasů</h2><table><thead><tr><th>Čas</th><th>Hřiště</th><th>Domácí</th><th>Hosté</th><th>Skóre</th></tr></thead><tbody>';matches.forEach(m=>{html+='<tr><td>'+fmtTimeFromMin(m.startMin)+'–'+fmtTimeFromMin(m.startMin+duration)+'</td><td class="center">'+m.pitch+'</td><td>'+esc(getTeamName(m.homeTeamId))+'</td><td>'+esc(getTeamName(m.awayTeamId))+'</td><td class="center"><strong>'+(m.scoreHome||0)+':'+(m.scoreAway||0)+'</strong></td></tr>';});html+='</tbody></table>';}if(scorers.length>0){html+='<h2>Tabulka střelců</h2><table><thead><tr><th>Poř.</th><th>Jméno</th><th>Tým</th><th>Góly</th></tr></thead><tbody>';scorers.forEach((sc,i)=>{html+='<tr><td class="center">'+(i+1)+'</td><td>'+esc(sc.player)+'</td><td>'+esc(getTeamName(sc.teamId))+'</td><td class="center">'+sc.goals+'</td></tr>';});html+='</tbody></table>';}html+='</body></html>';const b=new Blob([html],{type:'text/html'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='index.html';a.click();alert('index.html stažen!');}
 function downloadBackup(){save();const json=JSON.stringify(data,null,2);const b=new Blob([json],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='turnaj_zaloha.json';a.click();}
-function restoreBackup(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(ev){try{data=JSON.parse(ev.target.result);if(!data.meta){data.meta={name:'',organizer:'',location:'',start:'',end:'',desc:''};}save();renderAll();alert('Data obnovena!');}catch(err){alert('Chyba při načítání: '+err.message);}};reader.readAsText(file);}
-function renderAll(){applyMetaToUI();loadTeamsIntoTextarea();renderTeamColorEditor();renderTeamColors();renderMatches();renderStandings();renderMatrix();renderScorers();updateQR();updateManualTeamSelect();}
+function restoreBackup(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(ev){try{data=JSON.parse(ev.target.result);if(!data.meta){data.meta={name:'',organizer:'',location:'',start:'',end:'',desc:''};}if(!data.settings){data.settings={pitches:2,duration:20,break:5,ceremony:15,ptwin:3,ptdraw:1,ptloss:0,starttime:'09:00'};}saveRaw();renderAll();alert('Data obnovena!');}catch(err){alert('Chyba při načítání: '+err.message);}};reader.readAsText(file);}
+function renderAll(){applyMetaToUI();applySettingsToUI();loadTeamsIntoTextarea();renderTeamColorEditor();renderTeamColors();renderMatches();renderStandings();renderMatrix();renderScorers();updateQR();updateManualTeamSelect();}
 function showToast(msg){
   let el=document.getElementById('toast-msg');
   if(!el){
