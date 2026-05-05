@@ -5,43 +5,30 @@ Jednoduchý webový nástroj (⏱️ 1 HTML soubor) pro organizaci sportovních 
 ✅ Hlavní vlastnosti
 
 ✅ Správa turnaje (název, organizátor, místo, datum)
-
 ✅ Zápisy týmů + barevné označení (color picker)
-
 ✅ Automatické generování rozpisu zápasů
-
 ✅ Ruční úpravy výsledků
-
 ✅ Výsledková tabulka (automatický výpočet)
-
 ✅ Ruční matice (domácí × hosté)
-
 ✅ Správa střelců
-
 ✅ Export veřejné webové stránky (HTML)
-
 ✅ QR kód pro sdílení výsledků
-
 ✅ Lokální zálohy (JSON)
-
 ✅ Tisk (barevný i černobílý – optimalizovaný)
+
 
 
 
 🚀 Použití
 
-Stáhni soubor admin.html nebo admin_final.html
+Stáhni soubor admin.html nebo otevři https://tjsrepy1718.github.io/turnaj/admin.html
 Otevři ho v prohlížeči
 Vyplň údaje o turnaji
 Zadej týmy
 Klikni:
-
 Načíst týmy
 Vygenerovat zápasy
-
-
 Zapisuj výsledky a tiskni přehledy
-
 ✅ Funguje kompletně offline
 
 🎨 Barvy týmů
@@ -122,23 +109,18 @@ Zapnout „Background graphics“ v nastavení tisku
 
 Vytvoření QR kódu pro sdílení
 Export:
-
 Plain Textindex.htmlZobrazit více řádků
 ➡️ pro publikaci (např. GitHub Pages)
 
 💾 Zálohování
 Export:
-
 JSON soubor (kompletní stav turnaje)
 
 Import:
-
 obnova dat kdykoliv
-
 ✅ Doporučeno zálohovat před většími změnami
 
 📦 Nasazení (GitHub Pages)
-
 Nahraj index.html (exportovaný soubor)
 Zapni GitHub Pages
 Sdílej odkaz nebo QR kód
