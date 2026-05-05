@@ -5,16 +5,27 @@ Jednoduchý webový nástroj (⏱️ 1 HTML soubor) pro organizaci sportovních 
 ✅ Hlavní vlastnosti
 
 ✅ Správa turnaje (název, organizátor, místo, datum)
+
 ✅ Zápisy týmů + barevné označení (color picker)
+
 ✅ Automatické generování rozpisu zápasů
+
 ✅ Ruční úpravy výsledků
+
 ✅ Výsledková tabulka (automatický výpočet)
+
 ✅ Ruční matice (domácí × hosté)
+
 ✅ Správa střelců
+
 ✅ Export veřejné webové stránky (HTML)
+
 ✅ QR kód pro sdílení výsledků
+
 ✅ Lokální zálohy (JSON)
+
 ✅ Tisk (barevný i černobílý – optimalizovaný)
+
 
 
 🚀 Použití
