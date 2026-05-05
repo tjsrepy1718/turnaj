@@ -1,54 +1,169 @@
-# turnaj
-automatické výpočty pro fotbalový turnaj
-zadej týmy
-vyplň skore
-vše se dopočítá samo
+🏆 Turnaj Admin
+Jednoduchý webový nástroj (⏱️ 1 HTML soubor) pro organizaci sportovních turnajů – bez instalace, bez serveru, plně funkční offline v prohlížeči.
+👉 Ideální pro: malé turnaje, školní akce, amatérský fotbal, volejbal apod.
+
+✅ Hlavní vlastnosti
+
+✅ Správa turnaje (název, organizátor, místo, datum)
+✅ Zápisy týmů + barevné označení (color picker)
+✅ Automatické generování rozpisu zápasů
+✅ Ruční úpravy výsledků
+✅ Výsledková tabulka (automatický výpočet)
+✅ Ruční matice (domácí × hosté)
+✅ Správa střelců
+✅ Export veřejné webové stránky (HTML)
+✅ QR kód pro sdílení výsledků
+✅ Lokální zálohy (JSON)
+✅ Tisk (barevný i černobílý – optimalizovaný)
 
 
+🚀 Použití
 
-Single round
+Stáhni soubor admin.html nebo admin_final.html
+Otevři ho v prohlížeči
+Vyplň údaje o turnaji
+Zadej týmy
+Klikni:
 
-Generates each pairing only once, no duplicates.
-
-✅ Head-to-head tie-breaker
-When teams are tied on points, it ranks them by:
-
-Head-to-head points (mini-table among tied teams)
-Head-to-head goal difference
-Head-to-head goals for
-Overall goal difference
-Overall goals for
-Team name
-
-Postup
-Otevři https://tjsrepy1718.github.io/turnaj/admin.html a vyplň/změň data, která chceš v turnaji aktualizovat.
-
-Klikni na Vygenerovat zápasy, pokud jsi měnil týmy nebo plán turnaje.
-
-vyplň skóre/střelce
-
-Klikni na export pro GIT — stáhne se soubor public_data.json.
-
-V GitHubu (https://github.com/tjsrepy1718/turnaj) nahraj ten nový public-data.json do stejné složky, kde je index.html. vždycky se musí jmenovat "public-data.json"
-
-Jak to nahrát na GitHub
-Na GitHubu otevři repo a použij Add file → Upload files nebo přímo editaci souboru přes webové rozhraní.
-
-Vyber nový public_data.json.
-
-Potvrď commit změny.
-
-Co aktualizovat pokaždé
-Kdykoliv změníš týmy, výsledky nebo střelce v admin.html, musíš znovu kliknout na export pro GIT.
-
-Starý public-data.json pak v repu přepiš novým souborem.
-
-index.html pak při načtení vezme nová data z public-data.json.
-
-výsledky pro rodiče jsou tady https://tjsrepy1718.github.io/turnaj/
-
-PŘÍPADNĚ QR KÓD PRO RODIČE JE TADY <img width="450" height="450" alt="image" src="https://github.com/user-attachments/assets/973448b4-076c-4475-ba9b-630c2866dca3" />
+Načíst týmy
+Vygenerovat zápasy
 
 
+Zapisuj výsledky a tiskni přehledy
+
+✅ Funguje kompletně offline
+
+🎨 Barvy týmů
+
+Výběr přes barevný picker
+Automatický kontrast textu („Auto text“)
+Náhled přímo v administraci
+
+Barvy se zobrazují:
+
+v rozpisu (jen v buňkách týmů)
+ve výsledkové tabulce
 
 
+📅 Rozpis zápasů
+Automaticky generovaný podle:
+
+počtu hřišť
+délky zápasu
+pauzy
+
+Zobrazuje:
+
+čas začátku i konce
+hřiště
+
+✅ Možnost upravit pořadí zápasů
+
+📊 Výsledky
+
+Automatická tabulka (body, skóre, pořadí)
+
+Kritéria řazení:
+
+body
+vzájemný zápas
+rozdíl gólů
+abeceda
+
+✅ Real-time aktualizace
+
+🔢 Ruční matice
+
+Přehled domácí × hosté
+Zadání skóre ve formátu 2:1
+Automatické propsání do výsledků
+
+Diagonála (stejný tým):
+
+✔ šrafovaná
+✔ optimalizovaná pro tisk
+
+
+⚽ Střelci
+
+Automatické přidávání ze zápasů
+Ruční přidání střelce
+Tabulka střelců
+Editace a mazání
+
+
+🖨️ Tisk
+🎨 Barevný tisk
+
+zachovává barvy týmů
+
+⚫ Černobílý tisk (optimalizovaný)
+
+žádná tlačítka ani ovládací prvky
+žádné černé hlavičky (lepší čitelnost)
+šrafovaná diagonála v matici
+upravené barvy pro tisk
+
+💡 Doporučení:
+Zapnout „Background graphics“ v nastavení tisku
+
+🌐 QR / Export
+
+Vytvoření QR kódu pro sdílení
+Export:
+
+Plain Textindex.htmlZobrazit více řádků
+➡️ pro publikaci (např. GitHub Pages)
+
+💾 Zálohování
+Export:
+
+JSON soubor (kompletní stav turnaje)
+
+Import:
+
+obnova dat kdykoliv
+
+✅ Doporučeno zálohovat před většími změnami
+
+📦 Nasazení (GitHub Pages)
+
+Nahraj index.html (exportovaný soubor)
+Zapni GitHub Pages
+Sdílej odkaz nebo QR kód
+
+
+🧠 Technické info
+
+čisté HTML + JavaScript
+bez externích knihoven
+data uložená v localStorage
+
+✅ Kompatibilita:
+
+Chrome
+Edge
+Firefox
+
+
+✏️ Možná vylepšení (future)
+
+export do CSV / PDF
+více skupin (ligy)
+playoff systém
+více dní / rozpis na více dní
+
+
+📜 Licence
+Tento projekt je určen pro nekomerční použití.
+
+✅ Použití zdarma pro vlastní turnaje
+✅ Úpravy a sdílení (nekomerčně)
+❌ Nesmí být použit v placené platformě nebo za účelem zisku, bez předchozí domluvy s autorem
+
+💼 Komerční použití je možné pouze po domluvě:
+📧 t.bruckner@seznam.cz
+
+👤 Autor
+Tomáš Bruckner
+📧 t.bruckner@seznam.cz
