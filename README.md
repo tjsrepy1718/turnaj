@@ -1,197 +1,143 @@
-🏆 Turnaj Admin
-Jednoduchý webový nástroj (⏱️ 1 HTML soubor) pro organizaci sportovních turnajů 
-– bez instalace
-- bez serveru
-- plně funkční offline v prohlížeči.
-  
+# 🏆 Turnaj Admin
+
+Jednoduchý webový nástroj (⏱️ 1 HTML soubor) pro organizaci sportovních turnajů – bez instalace, bez serveru, plně funkční **offline v prohlížeči**.
+
 👉 Ideální pro: malé turnaje, školní akce, amatérský fotbal, volejbal apod.
 
-✅ Hlavní vlastnosti
+---
 
+## ✅ Hlavní vlastnosti
 
-✅ Správa turnaje (název, organizátor, místo, datum)
+- ✅ Správa turnaje (název, organizátor, místo, datum)  
+- ✅ Zápisy týmů + barevné označení (color picker)  
+- ✅ Automatické generování rozpisu zápasů  
+- ✅ Ruční úpravy výsledků  
+- ✅ Výsledková tabulka (automatický výpočet)  
+- ✅ Ruční matice (domácí × hosté)  
+- ✅ Správa střelců  
+- ✅ Export veřejné webové stránky (HTML)  
+- ✅ QR kód pro sdílení výsledků  
+- ✅ Lokální zálohy (JSON)  
+- ✅ Tisk (barevný i černobílý – optimalizovaný)  
 
-✅ Zápisy týmů + barevné označení (color picker)
+---
 
-✅ Automatické generování rozpisu zápasů
+## 🚀 Použití
 
-✅ Ruční úpravy výsledků
+1. Stáhni soubor `admin.html` nebo `admin_final.html`  
+2. Otevři ho v prohlížeči  
+3. Vyplň údaje o turnaji  
+4. Zadej týmy  
+5. Klikni:
+   - **Načíst týmy**
+   - **Vygenerovat zápasy**
+6. Zapisuj výsledky a tiskni přehledy  
 
-✅ Výsledková tabulka (automatický výpočet)
+✅ Funguje kompletně offline  
 
-✅ Ruční matice (domácí × hosté)
+---
 
-✅ Správa střelců
+## 🎨 Barvy týmů
 
-✅ Export veřejné webové stránky (HTML)
+- Výběr přes **barevný picker**
+- Automatický kontrast textu („Auto text“)
+- Náhled přímo v administraci
 
-✅ QR kód pro sdílení výsledků
+---
 
-✅ Lokální zálohy (JSON)
+## 📅 Rozpis zápasů
 
-✅ Tisk (barevný i černobílý – optimalizovaný)
+- Automatické generování podle nastavení  
+- Zobrazení času start + konec  
+- Úprava pořadí zápasů  
 
+---
 
+## 📊 Výsledky
 
+- Automatická tabulka  
+- Kritéria:
+  - body
+  - vzájemný zápas
+  - rozdíl gólů
+  - abeceda  
 
+---
 
-🚀 Použití
+## 🔢 Ruční matice
 
-Stáhni soubor admin.html nebo otevři https://tjsrepy1718.github.io/turnaj/admin.html
+- Zadání výsledků `2:1`
+- Automatické propsání do tabulky
+- ✔ šrafovaná diagonála (optimalizovaná pro tisk)
 
-Otevři ho v prohlížeči
+---
 
-Vyplň údaje o turnaji
+## ⚽ Střelci
 
-Zadej týmy
+- Automatické + ruční přidání  
+- Tabulka střelců  
+- Editace / mazání  
 
-Klikni:
+---
 
-Načíst týmy
+## 🖨️ Tisk
 
-Vygenerovat zápasy
+### Barevný
+- zachovává barvy
 
-Zapisuj výsledky a tiskni přehledy
+### Černobílý
+- bez tlačítek  
+- bez černých hlaviček  
+- šrafovaná diagonála  
 
-✅ Funguje kompletně offline
+💡 Zapni **Background graphics**  
 
-🎨 Barvy týmů
+---
 
-Výběr přes barevný picker
+## 🌐 QR / Export
 
-Automatický kontrast textu („Auto text“)
+- QR kód
+- Export `index.html` (např. GitHub Pages)
 
-Náhled přímo v administraci
+---
 
-Barvy se zobrazují:
+## 💾 Zálohování
 
-v rozpisu (jen v buňkách týmů)
+- JSON export/import  
+- Doporučeno před změnami  
 
-ve výsledkové tabulce
+---
 
+## 📦 GitHub Pages
 
-📅 Rozpis zápasů
-Automaticky generovaný podle:
+1. nahraj `index.html`
+2. zapni Pages
+3. sdílej link / QR
 
-počtu hřišť
-délky zápasu
-pauzy
+---
 
-Zobrazuje:
+## 🧠 Technické info
 
-čas začátku i konce
-hřiště
+- čisté HTML + JS  
+- localStorage  
+- Chrome / Edge / Firefox  
 
-✅ Možnost upravit pořadí zápasů
+---
 
-📊 Výsledky
+## 📜 Licence
 
-Automatická tabulka (body, skóre, pořadí)
+Projekt je určen pro **nekomerční použití**
 
-Kritéria řazení:
+- ✅ zdarma pro všechny  
+- ❌ zákaz monetizace  
+- ❌ zákaz použití v placených platformách  
 
-body
+💼 Komerční použití po domluvě:  
+t.bruckner@seznam.cz  
 
-vzájemný zápas
+---
 
-rozdíl gólů
+## 👤 Autor
 
-abeceda
-
-✅ Real-time aktualizace
-
-🔢 Ruční matice
-
-Přehled domácí × hosté
-
-Zadání skóre ve formátu 2:1
-
-Automatické propsání do výsledků
-
-Diagonála (stejný tým):
-
-✔ šrafovaná
-✔ optimalizovaná pro tisk
-
-
-⚽ Střelci
-
-Automatické přidávání ze zápasů
-
-Ruční přidání střelce
-
-Tabulka střelců
-
-Editace a mazání
-
-
-🖨️ Tisk
-
-🎨 Barevný tisk
-
-zachovává barvy týmů
-
-⚫ Černobílý tisk (optimalizovaný)
-
-žádná tlačítka ani ovládací prvky, žádné černé hlavičky (lepší čitelnost), šrafovaná diagonála v matici, upravené barvy pro tisk
-
-💡 Doporučení:
-Zapnout „Background graphics“ v nastavení tisku
-
-🌐 QR / Export
-
-Vytvoření QR kódu pro sdílení
-Export:
-
-Plain Textindex.htmlZobrazit více řádků
-
-➡️ pro publikaci (např. GitHub Pages)
-
-💾 Zálohování
-Export:
-JSON soubor (kompletní stav turnaje)
-
-Import:
-obnova dat kdykoliv
-✅ Doporučeno zálohovat před většími změnami
-
-📦 Nasazení (GitHub Pages)
-Nahraj index.html (exportovaný soubor)
-Zapni GitHub Pages
-Sdílej odkaz nebo QR kód
-
-
-🧠 Technické info
-
-čisté HTML + JavaScript
-bez externích knihoven
-data uložená v localStorage
-
-✅ Kompatibilita:
-
-Chrome
-Edge
-Firefox
-
-
-✏️ Možná vylepšení (future)
-
-export do CSV / PDF
-více skupin (ligy)
-playoff systém
-více dní / rozpis na více dní
-
-
-📜 Licence
-Tento projekt je určen pro nekomerční použití.
-
-✅ Použití zdarma pro vlastní turnaje
-✅ Úpravy a sdílení (nekomerčně)
-❌ Nesmí být použit v placené platformě nebo za účelem zisku, bez předchozí domluvy s autorem
-
-💼 Komerční použití je možné pouze po domluvě:
-📧 t.bruckner@seznam.cz
-
-👤 Autor
-Tomáš Bruckner
-📧 t.bruckner@seznam.cz
+Tomáš Bruckner  
+t.bruckner@seznam.cz
