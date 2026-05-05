@@ -1,9 +1,4 @@
-1-grafická úprava rozpisu zápasů pro lepší viditelnost - done
-2-lepší zápis barver pro týmy než jen v hexu + úprava tabulek aby barevné označení bylo jen v buňce týmu - done
-3- v rospisu dodělat aby se zobrzoval i konec zápasu ne jen začátek - done
-4- tisk background grafic je při tisku na prd(musí se vybrat v tiskovém menu, je to nejednoznačné a kdo to má hledat?), jinak zobrazuje jen základní černobílý tisk - done
-5- nepropisuje a neukládá do exportu hodnoty ze záložky zadávání- zůstávají tam defaultní hodnoty viz níže: done
-6- opravit QR kód - done
-
+1-export prázdné stránky, která by načítala json data ze stejné složky, ve které je umístěna
+2-export csv, pdf, jpg/png
 
 
